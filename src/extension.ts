@@ -1,5 +1,8 @@
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
+// Copyright (C) 2023, Quack AI.
+
+// This program is licensed under the Apache License 2.0.
+// See LICENSE or go to <https://www.apache.org/licenses/LICENSE-2.0> for full license details.
+
 import * as vscode from "vscode";
 import { v4 as uuidv4 } from "uuid";
 import clipboardy from "clipboardy";
@@ -16,8 +19,6 @@ import {
 } from "./util/github";
 import { fetchRepoGuidelines, QuackGuideline } from "./quack";
 
-// This method is called when your extension is activated
-// Your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
   // Generate or retrieve the user's UUID from storage
   let stateId: string | undefined = context.globalState.get("userId");
@@ -221,7 +222,7 @@ export function activate(context: vscode.ExtensionContext) {
   vscode.commands.executeCommand("quackai-companion.fetchGuidelines");
 }
 
-// This method is called when your extension is deactivated
+
 export function deactivate() {
   // telemetryClient?.shutdownAsync();
 }
