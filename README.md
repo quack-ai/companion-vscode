@@ -52,7 +52,7 @@ This extension guides you through your code contributions with Quack as a compan
 
 Once installed, when you open a public GitHub project, the extension will activate like below:
 
-![sidebar](media/quack-sidebar.png)
+![Companion sidebar](https://github.com/quack-ai/companion/blob/main/media/quack-sidebar.png)
 
 You'll find two main sections (with ongoing development):
 
@@ -67,7 +67,7 @@ Install [VSCode](https://code.visualstudio.com/Download)
 
 ### Install the extension
 
-![installation](media/extension-search.png)
+![Extension installation](https://github.com/quack-ai/companion/blob/main/media/extension-search.png)
 
 Either:
 
