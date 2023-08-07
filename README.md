@@ -22,7 +22,7 @@
 
 <p align="center">
   <a href="https://marketplace.visualstudio.com/items?itemName=quackai.quack-companion">
-    <img src="https://img.shields.io/visual-studio-marketplace/v/:quackai.quack-companion?logo=visualstudiocode&logoColor=fff&style=flat-square" alt="VS Marketplace">
+    <img src="https://img.shields.io/visual-studio-marketplace/v/quackai.quack-companion?logo=visualstudiocode&logoColor=fff&style=flat-square&label=VS%20Marketplace" alt="VS Marketplace">
   </a>
   <a href="https://github.com/nodejs/node">
     <img src="https://img.shields.io/badge/Node-18-339933?style=flat-square&logo=nodedotjs&logoColor=white" alt="Node.js">
