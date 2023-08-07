@@ -50,24 +50,24 @@
     "viewsContainers": {
       "activitybar": [
         {
-          "id": "quackai-companion",
+          "id": "quack-companion",
           "title": "Quack Companion",
           "icon": "media/quack-white.svg"
         }
       ]
     },
     "views": {
-      "quackai-companion": [
+      "quack-companion": [
         {
           "type": "webview",
-          "id": "quackai-companion.scopeView",
+          "id": "quack-companion.scopeView",
           "name": "Contribution scoping",
           "icon": "media/quack-white.svg",
           "contextualTitle": "Contribution scoping"
         },
         {
           "type": "webview",
-          "id": "quackai-companion.guidelineView",
+          "id": "quack-companion.guidelineView",
           "name": "Guidelines",
           "icon": "media/quack-white.svg",
           "contextualTitle": "Guidelines"
@@ -76,34 +76,34 @@
     },
     "commands": [
       {
-        "command": "quackai-companion.fetchGuidelines",
+        "command": "quack-companion.fetchGuidelines",
         "category": "Quack AI",
         "title": "Fetch contribution guidelines"
       },
       {
-        "command": "quackai-companion.findStarterIssues",
+        "command": "quack-companion.findStarterIssues",
         "category": "Quack AI",
         "title": "Find starter issues"
       },
       {
-        "command": "quackai-companion.defineGoal",
+        "command": "quack-companion.defineGoal",
         "category": "Quack AI",
         "title": "Define your contribution goal"
       },
       {
-        "command": "quackai-companion.debugInfo",
+        "command": "quack-companion.debugInfo",
         "category": "Quack AI",
         "title": "Get debug information"
       }
     ],
     "keybindings": [
       {
-        "command": "quackai-companion.fetchGuidelines",
+        "command": "quack-companion.fetchGuidelines",
         "mac": "cmd+shift+g",
         "key": "ctrl+shift+g"
       },
       {
-        "command": "quackai-companion.debugInfo",
+        "command": "quack-companion.debugInfo",
         "mac": "cmd+shift+d",
         "key": "ctrl+shift+d"
       }

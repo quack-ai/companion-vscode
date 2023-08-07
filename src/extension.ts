@@ -4,6 +4,7 @@
 // See LICENSE or go to <https://www.apache.org/licenses/LICENSE-2.0> for full license details.
 
 import * as vscode from "vscode";
+import * as os from "os";
 import { v4 as uuidv4 } from "uuid";
 import clipboardy from "clipboardy";
 import { GuidelineProvider } from "./webviews/GuidelineProvider";
@@ -31,14 +32,14 @@ export function activate(context: vscode.ExtensionContext) {
   const scopeView = new ScopeProvider(context.extensionUri);
   context.subscriptions.push(
     vscode.window.registerWebviewViewProvider(
-      "quackai-companion.scopeView",
+      "quack-companion.scopeView",
       scopeView,
     ),
   );
   const guidelineView = new GuidelineProvider(context.extensionUri);
   context.subscriptions.push(
     vscode.window.registerWebviewViewProvider(
-      "quackai-companion.guidelineView",
+      "quack-companion.guidelineView",
       guidelineView,
     ),
   );
@@ -49,14 +50,14 @@ export function activate(context: vscode.ExtensionContext) {
     vscode.StatusBarAlignment.Right,
   );
   refreshStatusBar.text = "$(refresh) Refresh guidelines";
-  refreshStatusBar.command = "quackai-companion.fetchGuidelines";
+  refreshStatusBar.command = "quack-companion.fetchGuidelines";
   refreshStatusBar.show();
   // Find starter issues
   const starterStatusBar = vscode.window.createStatusBarItem(
     vscode.StatusBarAlignment.Right,
   );
   starterStatusBar.text = "$(search-fuzzy) Find starter issues";
-  starterStatusBar.command = "quackai-companion.findStarterIssues";
+  starterStatusBar.command = "quack-companion.findStarterIssues";
   starterStatusBar.show();
 
   interface TransformedGuideline {
@@ -67,7 +68,7 @@ export function activate(context: vscode.ExtensionContext) {
 
   context.subscriptions.push(
     vscode.commands.registerCommand(
-      "quackai-companion.fetchGuidelines",
+      "quack-companion.fetchGuidelines",
       async () => {
         const repoName: string = await getCurrentRepoName();
         const ghRepo: GitHubRepo = await getRepoDetails(repoName);
@@ -95,7 +96,7 @@ export function activate(context: vscode.ExtensionContext) {
 
   context.subscriptions.push(
     vscode.commands.registerCommand(
-      "quackai-companion.findStarterIssues",
+      "quack-companion.findStarterIssues",
       async () => {
         const currentName: string = await getCurrentRepoName();
         const repoName = await vscode.window.showInputBox({
@@ -141,85 +142,83 @@ export function activate(context: vscode.ExtensionContext) {
   );
 
   context.subscriptions.push(
-    vscode.commands.registerCommand(
-      "quackai-companion.defineGoal",
-      async () => {
-        const contribGoal = await vscode.window.showInputBox({
-          prompt: "What are you working on?",
-          placeHolder: "A few words about your intended PR",
-        });
-        if (contribGoal === undefined) {
+    vscode.commands.registerCommand("quack-companion.defineGoal", async () => {
+      const contribGoal = await vscode.window.showInputBox({
+        prompt: "What are you working on?",
+        placeHolder: "A few words about your intended PR",
+      });
+      if (contribGoal === undefined) {
+        return;
+      }
+      // Send to webview
+      scopeView._view?.webview.postMessage({
+        type: "goal-definition",
+        value: contribGoal,
+      });
+      const currentName: string = await getCurrentRepoName();
+      // Telemetry
+      telemetryClient?.capture({
+        distinctId: userId,
+        event: "vscode-goal-definition",
+        properties: {
+          repository: currentName,
+        },
+      });
+      // Check that the contribution is well aligned
+      const answer = await vscode.window.showInformationMessage(
+        "Do you wish to check whether there is an existing GitHub issue/PR already?",
+        "yes",
+        "no",
+      );
+      if (answer === "yes") {
+        const relatedIssues: GithubIssue[] = await searchIssues(
+          currentName,
+          contribGoal,
+        );
+        // Display
+        // Let user pick one
+        const ghIssue = await vscode.window.showQuickPick(
+          relatedIssues.map((issue) => {
+            return {
+              label: issue.title,
+              detail: issue.body,
+              html_url: issue.html_url,
+            };
+          }),
+          {
+            matchOnDetail: true,
+          },
+        );
+
+        if (ghIssue === undefined) {
           return;
         }
-        // Send to webview
-        scopeView._view?.webview.postMessage({
-          type: "goal-definition",
-          value: contribGoal,
-        });
-        const currentName: string = await getCurrentRepoName();
-        // Telemetry
-        telemetryClient?.capture({
-          distinctId: userId,
-          event: "vscode-goal-definition",
-          properties: {
-            repository: currentName,
-          },
-        });
-        // Check that the contribution is well aligned
-        const answer = await vscode.window.showInformationMessage(
-          "Do you wish to check whether there is an existing GitHub issue/PR already?",
-          "yes",
-          "no",
-        );
-        if (answer === "yes") {
-          const relatedIssues: GithubIssue[] = await searchIssues(
-            currentName,
-            contribGoal,
-          );
-          // Display
-          // Let user pick one
-          const ghIssue = await vscode.window.showQuickPick(
-            relatedIssues.map((issue) => {
-              return {
-                label: issue.title,
-                detail: issue.body,
-                html_url: issue.html_url,
-              };
-            }),
-            {
-              matchOnDetail: true,
-            },
-          );
-
-          if (ghIssue === undefined) {
-            return;
-          }
-          vscode.env.openExternal(vscode.Uri.parse(ghIssue.html_url));
-        }
-      },
-    ),
+        vscode.env.openExternal(vscode.Uri.parse(ghIssue.html_url));
+      }
+    }),
   );
 
   context.subscriptions.push(
-    vscode.commands.registerCommand("quackai-companion.debugInfo", async () => {
+    vscode.commands.registerCommand("quack-companion.debugInfo", async () => {
       const extensionVersion =
-        vscode.extensions.getExtension("quackai-companion")?.packageJSON
-          .version;
+        vscode.extensions.getExtension("quackai.quack-companion")?.packageJSON
+          .version || "N/A";
       const vscodeVersion = vscode.version;
-      if (extensionVersion && vscodeVersion) {
-        const info = `Extension Version: ${extensionVersion}\nVSCode Version: ${vscodeVersion}`;
-        clipboardy.writeSync(info);
-        vscode.window.showInformationMessage(
-          "Version info copied to clipboard.",
+      const osName = os.platform();
+      const osVersion = os.release();
+      const info = `OS: ${osName} ${osVersion}\nVSCode Version: ${vscodeVersion}\nExtension Version: ${extensionVersion}`;
+      clipboardy.writeSync(info);
+      vscode.window.showInformationMessage("Version info copied to clipboard.");
+      if (extensionVersion === "N/A") {
+        vscode.window.showWarningMessage(
+          "Could not retrieve extension version.",
         );
-      } else {
-        vscode.window.showErrorMessage("Could not retrieve debug info.");
       }
     }),
   );
 
   // Commands to be run when activating
-  vscode.commands.executeCommand("quackai-companion.fetchGuidelines");
+  vscode.commands.executeCommand("quack-companion.fetchGuidelines");
 }
 
 export function deactivate() {
