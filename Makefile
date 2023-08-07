@@ -1,10 +1,12 @@
-# Run it
+build:
+	yarn
+	yarn compile
+
 run:
+	yarn
 	yarn watch
 
-# Compile it
-build:
-	yarn compile
+package:
 	vsce package
 
 style:
