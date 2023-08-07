@@ -21,6 +21,32 @@ This project uses the following integrations to ensure proper codebase maintenan
 
 As a contributor, you will only have to ensure coverage of your code by adding appropriate unit testing of your code.
 
+## Developer installation
+
+### Prerequisites
+
+- [Node.js](https://nodejs.org/en)
+- [Yarn](https://yarnpkg.com/getting-started/install)
+- [VSCode](https://code.visualstudio.com/Download)
+- [Make](https://www.gnu.org/software/make/) (optional)
+
+### Configuration
+
+When running the project, you can specify some configurations, which can be done using a `.env` file.
+This file has no required keys but optionally, the following information can be added:
+
+- `POSTHOG_KEY`: your key for analytics using PostHog
+- `POSTHOG_HOST`: the URL of the Posthog host
+
+So your `.env` file should look like something similar to:
+
+```
+POSTHOG_KEY='phc_my_fancy_posthog_key'
+POSTHOG_HOST='https://app.posthog.com'
+```
+
+The file should be placed at the root folder of your local copy of the project.
+
 ## Feedback
 
 ### Feature requests & bug report
@@ -73,6 +99,16 @@ The previous command won't modify anything in your codebase. Some fixes (import 
 ```shell
 make style
 ```
+
+#### Testing your modification
+
+Before opening a PR, run your modifications locally with:
+
+```shell
+make run
+```
+
+Now by pressing F5, you'll open a new window with your local version of the extension loaded. Make sure it doesn't break previous behaviours.
 
 ### Submit your modifications
 
