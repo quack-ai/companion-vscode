@@ -37,7 +37,6 @@ See LICENSE or go to <https://www.apache.org/licenses/LICENSE-2.0> for full lice
     }
     .title {
         cursor: pointer;
-        font-weight: bold;
     }
 
     .details {
@@ -46,31 +45,6 @@ See LICENSE or go to <https://www.apache.org/licenses/LICENSE-2.0> for full lice
         border-left: 2px solid #007acc;
         padding-left: 10px;
         margin-top: 5px;
-    }
-    .checkbox {
-        -webkit-appearance: none;
-        -moz-appearance: none;
-        appearance: none;
-        width: 20px;
-        height: 20px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        background-color: white;
-        cursor: pointer;
-        vertical-align: middle;
-    }
-
-    .checkbox:checked {
-        background-color: #007acc;
-        border: none;
-    }
-
-    .checkbox:checked::before {
-        content: "\2713"; /* Checkmark icon */
-        color: white;
-        display: block;
-        text-align: left;
-        line-height: 20px;
     }
 </style>
 
@@ -87,7 +61,7 @@ See LICENSE or go to <https://www.apache.org/licenses/LICENSE-2.0> for full lice
             class="title" 
             on:click={() => guideline.expanded = !guideline.expanded}
         >
-        {guideline.expanded ? "▼" : "►"} {guideline.title}
+        {guideline.title} {guideline.expanded ? "▼" : "◂"}
         </span>
         {#if guideline.expanded}
             <p class="details">{guideline.details}</p>

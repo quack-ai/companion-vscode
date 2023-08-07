@@ -222,7 +222,6 @@ export function activate(context: vscode.ExtensionContext) {
   vscode.commands.executeCommand("quackai-companion.fetchGuidelines");
 }
 
-
 export function deactivate() {
   telemetryClient?.shutdownAsync();
 }
