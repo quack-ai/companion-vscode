@@ -1,0 +1,39 @@
+name: style
+
+on:
+  push:
+    branches: main
+  pull_request:
+    branches: main
+
+jobs:
+  prettier:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        node: [18]
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node }}
+      - name: Run prettier
+        run: |
+          yarn add --dev --exact prettier
+          yarn format:check
+  eslint:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        node: [18]
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node }}
+      - name: Run eslint
+        run: |
+          yarn add --dev --exact eslint
+          yarn lint:check

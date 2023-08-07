@@ -1,0 +1,30 @@
+"ext: tests":
+  - src/tests/*
+
+"ext: scripts":
+  - scripts/*
+
+"module: app":
+  - src/app.py
+
+"topic: build":
+  - package.json
+  - yarn.lock
+
+"topic: ci":
+  - .github/*
+
+"topic: docker":
+  - docker-compose.yml
+  - docker-compose.test.yml
+  - Dockerfile
+  - traefik.yml
+
+"topic: documentation":
+  - README.md
+  - CONTRIBUTING.md
+  - CHANGELOG.md
+  - CODE_OF_CONDUCT.md
+
+"type: code quality":
+  - .eslintrc.json
