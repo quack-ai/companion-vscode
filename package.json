@@ -1,0 +1,155 @@
+{
+  "name": "quack-companion",
+  "displayName": "Quack Companion",
+  "version": "0.0.1",
+  "license": "Apache-2.0",
+  "publisher": "quackai",
+  "description": "Your companion for code contributions",
+  "pricing": "Free",
+  "author": {
+    "name": "F-G Fernandez",
+    "url": "https://github.com/frgfm"
+  },
+  "categories": [
+    "Programming Languages",
+    "Machine Learning",
+    "Education"
+  ],
+  "keywords": [
+    "ai",
+    "assistant",
+    "contribution",
+    "quackai",
+    "deep learning",
+    "llm",
+    "copilot",
+    "chatgpt",
+    "openai"
+  ],
+  "icon": "media/quack-logo.png",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/quack-ai/companion"
+  },
+  "bugs": {
+    "url": "https://github.com/quack-ai/companion/issues",
+    "email": "support@quack-ai.com"
+  },
+  "homepage": "https://quack-ai.com",
+  "type": "commonjs",
+  "engines": {
+    "vscode": "^1.74.0"
+  },
+  "extensionKind": [
+    "ui",
+    "workspace"
+  ],
+  "activationEvents": [],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "quack-companion",
+          "title": "Quack Companion",
+          "icon": "media/quack-white.svg"
+        }
+      ]
+    },
+    "views": {
+      "quack-companion": [
+        {
+          "type": "webview",
+          "id": "quack-companion.scopeView",
+          "name": "Contribution scoping",
+          "icon": "media/quack-white.svg",
+          "contextualTitle": "Contribution scoping"
+        },
+        {
+          "type": "webview",
+          "id": "quack-companion.guidelineView",
+          "name": "Guidelines",
+          "icon": "media/quack-white.svg",
+          "contextualTitle": "Guidelines"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "quack-companion.fetchGuidelines",
+        "category": "Quack AI",
+        "title": "Fetch contribution guidelines"
+      },
+      {
+        "command": "quack-companion.findStarterIssues",
+        "category": "Quack AI",
+        "title": "Find starter issues"
+      },
+      {
+        "command": "quack-companion.defineGoal",
+        "category": "Quack AI",
+        "title": "Define your contribution goal"
+      },
+      {
+        "command": "quack-companion.debugInfo",
+        "category": "Quack AI",
+        "title": "Get debug information"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "quack-companion.fetchGuidelines",
+        "mac": "cmd+shift+g",
+        "key": "ctrl+shift+g"
+      },
+      {
+        "command": "quack-companion.debugInfo",
+        "mac": "cmd+shift+d",
+        "key": "ctrl+shift+d"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "yarn run compile",
+    "compile": "rollup -c && webpack --mode production",
+    "watch": "concurrently \"rollup -c -w\" \"webpack --mode development --watch\"",
+    "lint:check": "eslint src --ext ts",
+    "lint:fix": "eslint --fix src --ext ts",
+    "format:check": "npx prettier . --check",
+    "format:fix": "npx prettier . --write"
+  },
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^25.0.3",
+    "@rollup/plugin-node-resolve": "^15.1.0",
+    "@rollup/plugin-typescript": "^11.1.2",
+    "@tsconfig/svelte": "^5.0.0",
+    "@types/glob": "^8.1.0",
+    "@types/node": "20.2.5",
+    "@types/uuid": "^9.0.2",
+    "@types/vscode": "^1.74.0",
+    "@typescript-eslint/eslint-plugin": "^5.59.8",
+    "@typescript-eslint/parser": "^5.59.8",
+    "concurrently": "^8.2.0",
+    "eslint": "^8.41.0",
+    "glob": "^8.1.0",
+    "prettier": "^3.0.1",
+    "rollup": "^2.3.4",
+    "rollup-plugin-polyfill-node": "^0.12.0",
+    "rollup-plugin-svelte": "^6.0.0",
+    "rollup-plugin-terser": "^7.0.2",
+    "svelte": "^4.1.2",
+    "svelte-check": "^3.4.6",
+    "svelte-preprocess": "^5.0.4",
+    "ts-loader": "^9.4.3",
+    "webpack": "^5.85.0",
+    "webpack-cli": "^5.1.1"
+  },
+  "dependencies": {
+    "axios": "^1.4.0",
+    "clipboardy": "^3.0.0",
+    "dotenv": "^16.3.1",
+    "posthog-node": "^3.1.1",
+    "typescript": "^5.1.6",
+    "uuid": "^9.0.0"
+  }
+}

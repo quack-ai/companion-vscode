@@ -1,0 +1,24 @@
+name: builds
+
+on:
+  push:
+    branches: main
+  pull_request:
+    branches: main
+
+jobs:
+  compile:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        node: [18]
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node }}
+      - name: Build the extension
+        run: |
+          yarn
+          yarn compile

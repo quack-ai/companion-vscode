@@ -1,0 +1,48 @@
+"ext: media":
+  - media/*
+
+"ext: styles":
+  - styles/*
+
+"ext: svelte":
+  - svelte/*
+
+"module: quack":
+  - src/quack.ts
+
+"module: telemetry":
+  - src/telemetry.ts
+
+"module: util":
+  - src/util/*
+
+"module: webviews":
+  - src/webviews/*
+
+"module: extension":
+  - src/extension.ts
+
+"topic: build":
+  - package.json
+  - yarn.lock
+  - tsconfig.json
+  - rollup.config.js
+  - webpack.config.js
+
+"topic: ci":
+  - .github/*
+
+"topic: docker":
+  - docker-compose.yml
+  - docker-compose.test.yml
+  - Dockerfile
+  - traefik.yml
+
+"topic: documentation":
+  - README.md
+  - CONTRIBUTING.md
+  - CHANGELOG.md
+  - CODE_OF_CONDUCT.md
+
+"type: code quality":
+  - .eslintrc.json
