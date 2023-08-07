@@ -67,6 +67,8 @@ Install [VSCode](https://code.visualstudio.com/Download)
 
 ### Install the extension
 
+![installation](media/extension-search.png)
+
 Either:
 
 - Follow the instructions on the online [VS Marketplace page](https://marketplace.visualstudio.com/items?itemName=quackai.quack-companion)
