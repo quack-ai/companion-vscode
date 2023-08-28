@@ -7,7 +7,7 @@ import * as vscode from "vscode";
 import { ChildProcess, spawn } from "child_process";
 
 function getGitHubURLFromOutput(output: string): string | null {
-  const remoteRegex = /origin\s+https:\/\/github.com\/(.+?)\.git\s+\(fetch\)/;
+  const remoteRegex = /origin\s+https:\/\/github.com\/(.+?)\.git\s+\(fetch\) | origin\s+git@github.com:(.+?)\.git\s+\(fetch\)/;
   const match = remoteRegex.exec(output);
   return match ? match[1] : null;
 }
