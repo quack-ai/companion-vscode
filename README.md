@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://quack-ai.com"><img src="https://uploads-ssl.webflow.com/64a6527708bc7f2ce5fd6b2a/64a654825ed3d444b47c4935_quack-logo%20(copy).png" width="100" height="100"></a>
+  <a href="https://quack-ai.com"><img src="https://quack-ai.com/quack.png" width="100" height="100"></a>
 </p>
 <h1 align="center">
  Quack Companion
