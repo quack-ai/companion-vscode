@@ -76,6 +76,11 @@ export function activate(context: vscode.ExtensionContext) {
           ghRepo.id,
         );
 
+        // If no guidelines exists, say it in the console
+        if (guidelines.length === 0) {
+          vscode.window.showInformationMessage("No guidelines specified yet.");
+        }
+
         // Display in the sidebar
         guidelineView._view?.webview.postMessage({
           type: "repo-guidelines",
