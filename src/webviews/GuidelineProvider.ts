@@ -4,73 +4,86 @@
 // See LICENSE or go to <https://www.apache.org/licenses/LICENSE-2.0> for full license details.
 
 import * as vscode from "vscode";
-import { getNonce } from "../util/getNonce";
 
 interface Label {
   id: number;
   name: string;
 }
 
+export interface GuidelineState {
+  id: number;
+  title: string;
+  details: string;
+  completed: boolean;
+}
+
 export class GuidelineProvider implements vscode.WebviewViewProvider {
-  _view?: vscode.WebviewView;
-  _doc?: vscode.TextDocument;
+  private _guidelines: GuidelineState[];
+  private _view?: vscode.WebviewView;
 
-  constructor(private readonly _extensionUri: vscode.Uri) {}
+  constructor(private readonly _extensionUri: vscode.Uri) {
+    this._guidelines = [];
+  }
 
-  public async resolveWebviewView(webviewView: vscode.WebviewView) {
-    this._view = webviewView;
-
-    webviewView.webview.options = {
-      // Allow scripts in the webview
+  resolveWebviewView(
+    panel: vscode.WebviewView,
+    context: vscode.WebviewViewResolveContext,
+    _token: vscode.CancellationToken,
+  ) {
+    this._view = panel;
+    // Set the webview options
+    panel.webview.options = {
       enableScripts: true,
-
       localResourceRoots: [this._extensionUri],
     };
 
-    webviewView.webview.html = this._getHtmlForWebview(webviewView.webview);
+    // And set the html of the webview's content
+    panel.webview.html = this._getHtmlForWebview(panel.webview);
   }
 
-  public revive(panel: vscode.WebviewView) {
-    this._view = panel;
+  public refresh(guidelines: GuidelineState[]) {
+    this._guidelines = guidelines;
+    if (this._view && this._view.webview) {
+      this._view.webview.html = this._getHtmlForWebview(this._view.webview);
+    }
   }
 
-  private _getHtmlForWebview(webview: vscode.Webview) {
-    const styleResetUri = webview.asWebviewUri(
-      vscode.Uri.joinPath(this._extensionUri, "styles", "reset.css"),
-    );
-    const styleVSCodeUri = webview.asWebviewUri(
-      vscode.Uri.joinPath(this._extensionUri, "styles", "vscode.css"),
-    );
-    const scriptUri = webview.asWebviewUri(
-      vscode.Uri.joinPath(this._extensionUri, "out", "compiled/guideline.js"),
-    );
-    const styleMainUri = webview.asWebviewUri(
-      vscode.Uri.joinPath(this._extensionUri, "out", "compiled/guideline.css"),
-    );
+  private _getHtmlForWebview(panel: vscode.Webview): string {
+    const titlesHtml = this._guidelines
+      .map(
+        (item) => `
+        <li title="${item.details}">
+            <input type="checkbox" ${
+              item.completed ? "checked" : ""
+            } disabled> ${item.title}
+        </li>
+    `,
+      )
+      .join("");
 
-    // Use a nonce to only allow a specific script to be run.
-    const nonce = getNonce();
-
-    return `<!DOCTYPE html>
-			<html lang="en">
-			<head>
-				<meta charset="UTF-8">
-				<!--
-					Use a content security policy to only allow loading images from https or from our extension directory,
-					and only allow scripts that have a specific nonce.
-        -->
-        <meta http-equiv="Content-Security-Policy" content="img-src https: data:; style-src 'unsafe-inline' ${webview.cspSource}; script-src 'nonce-${nonce}';">
-				<meta name="viewport" content="width=device-width, initial-scale=1.0">
-				<link href="${styleResetUri}" rel="stylesheet">
-				<link href="${styleVSCodeUri}" rel="stylesheet">
-        <link href="${styleMainUri}" rel="stylesheet">
-        <script nonce="${nonce}">
-          const tsvscode = acquireVsCodeApi();
-        </script>
-			</head>
-      <body>
-				<script nonce="${nonce}" src="${scriptUri}"></script>
-			</body>
-			</html>`;
+    return `
+          <!DOCTYPE html>
+          <html lang="en">
+          <head>
+              <meta charset="UTF-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1.0">
+              <title>Guidelines</title>
+              <style>
+                ul {
+                    padding-left: 0; /* Removes padding */
+                    list-style-type: none; /* Removes bullet points */
+                }
+                li {
+                    margin: 0; /* Removes margin */
+                }
+              </style>
+          </head>
+          <body>
+              <ul>
+                  ${titlesHtml}
+              </ul>
+          </body>
+          </html>
+      `;
   }
 }
