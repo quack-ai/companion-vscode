@@ -25,6 +25,12 @@ export interface GithubIssue {
 }
 
 export async function getRepoDetails(repoName: string): Promise<any> {
+  const cachedData = vscode.workspace
+    .getConfiguration()
+    .get("quack-companion.repoDetails");
+  if (cachedData) {
+    return cachedData;
+  }
   try {
     // Check that it's a public repo
     const response: AxiosResponse<any> = await axios.get(
@@ -33,7 +39,14 @@ export async function getRepoDetails(repoName: string): Promise<any> {
 
     // Handle the response
     if (response.status === 200) {
-      // The request was successful, and you can process the response data here
+      // Save to cache
+      await vscode.workspace
+        .getConfiguration()
+        .update(
+          "quack-companion.repoDetails",
+          response.data,
+          vscode.ConfigurationTarget.Global,
+        );
       return response.data;
     } else {
       // The request returned a non-200 status code (e.g., 404)

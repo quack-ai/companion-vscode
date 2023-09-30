@@ -4,9 +4,7 @@ This program is licensed under the Apache License 2.0.
 See LICENSE or go to <https://www.apache.org/licenses/LICENSE-2.0> for full license details. -->
 
 <script lang="ts">
-    import type internal from "stream";
     import { onMount } from "svelte";
-
     type quackGuideline = { id: number, order: number, repo_id: number, title: string, details: string, created_at: string, updated_at: string, completed: boolean, expanded: boolean };
 
     let submitted = false;

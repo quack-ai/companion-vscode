@@ -13,6 +13,12 @@ export interface QuackGuideline {
 }
 
 export async function fetchRepoGuidelines(repoId: number): Promise<any> {
+  const cachedData = vscode.workspace
+    .getConfiguration()
+    .get("quack-companion.repoGuidelines");
+  if (cachedData) {
+    return cachedData;
+  }
   try {
     // Retrieve the guidelines
     const response: AxiosResponse<any> = await axios.get(
@@ -21,7 +27,14 @@ export async function fetchRepoGuidelines(repoId: number): Promise<any> {
 
     // Handle the response
     if (response.status === 200) {
-      // The request was successful, and you can process the response data here
+      // Save to cache
+      await vscode.workspace
+        .getConfiguration()
+        .update(
+          "quack-companion.repoGuidelines",
+          response.data,
+          vscode.ConfigurationTarget.Global,
+        );
       return response.data;
     } else {
       // The request returned a non-200 status code (e.g., 404)
