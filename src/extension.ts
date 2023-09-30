@@ -8,7 +8,6 @@ import * as os from "os";
 import { v4 as uuidv4 } from "uuid";
 import clipboardy from "clipboardy";
 import { GuidelineProvider } from "./webviews/GuidelineProvider";
-import { ScopeProvider } from "./webviews/ScopeProvider";
 import telemetryClient from "./telemetry";
 import { getCurrentRepoName } from "./util/session";
 import {
@@ -29,13 +28,6 @@ export function activate(context: vscode.ExtensionContext) {
   }
 
   // Side bar
-  const scopeView = new ScopeProvider(context.extensionUri);
-  context.subscriptions.push(
-    vscode.window.registerWebviewViewProvider(
-      "quack-companion.scopeView",
-      scopeView,
-    ),
-  );
   const guidelineView = new GuidelineProvider(context.extensionUri);
   context.subscriptions.push(
     vscode.window.registerWebviewViewProvider(
@@ -91,11 +83,13 @@ export function activate(context: vscode.ExtensionContext) {
           vscode.window.showInformationMessage("No guidelines specified yet.");
         }
 
-        // Display in the sidebar
-        guidelineView._view?.webview.postMessage({
-          type: "repo-guidelines",
-          value: guidelines,
-        });
+        // Notify the webview to update its content
+        guidelineView.refresh(
+          guidelines.map((guideline: any) => ({
+            ...guideline,
+            completed: false,
+          })),
+        );
 
         // Telemetry
         telemetryClient?.capture({
@@ -165,11 +159,6 @@ export function activate(context: vscode.ExtensionContext) {
       if (contribGoal === undefined) {
         return;
       }
-      // Send to webview
-      scopeView._view?.webview.postMessage({
-        type: "goal-definition",
-        value: contribGoal,
-      });
       const currentName: string = await getCurrentRepoName();
       // Telemetry
       telemetryClient?.capture({
