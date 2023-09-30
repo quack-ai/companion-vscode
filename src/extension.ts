@@ -71,10 +71,20 @@ export function activate(context: vscode.ExtensionContext) {
       "quack-companion.fetchGuidelines",
       async () => {
         const repoName: string = await getCurrentRepoName();
-        const ghRepo: GitHubRepo = await getRepoDetails(repoName);
-        const guidelines: QuackGuideline[] = await fetchRepoGuidelines(
-          ghRepo.id,
-        );
+        // Check the cache
+        const cachedGuidelines: QuackGuideline[] | undefined =
+          context.globalState.get("quack-companion.repoGuidelines");
+        var guidelines: QuackGuideline[] = [];
+        if (cachedGuidelines) {
+          guidelines = cachedGuidelines;
+        } else {
+          const ghRepo: GitHubRepo = await getRepoDetails(repoName);
+          guidelines = await fetchRepoGuidelines(ghRepo.id);
+          context.globalState.update(
+            "quack-companion.repoGuidelines",
+            guidelines,
+          );
+        }
 
         // If no guidelines exists, say it in the console
         if (guidelines.length === 0) {

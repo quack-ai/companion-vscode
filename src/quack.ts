@@ -8,17 +8,12 @@ import axios, { AxiosResponse } from "axios";
 
 export interface QuackGuideline {
   id: number;
+  order: number;
   title: string;
   details: string;
 }
 
 export async function fetchRepoGuidelines(repoId: number): Promise<any> {
-  const cachedData = vscode.workspace
-    .getConfiguration()
-    .get("quack-companion.repoGuidelines");
-  if (cachedData) {
-    return cachedData;
-  }
   try {
     // Retrieve the guidelines
     const response: AxiosResponse<any> = await axios.get(
@@ -27,15 +22,9 @@ export async function fetchRepoGuidelines(repoId: number): Promise<any> {
 
     // Handle the response
     if (response.status === 200) {
-      // Save to cache
-      await vscode.workspace
-        .getConfiguration()
-        .update(
-          "quack-companion.repoGuidelines",
-          response.data,
-          vscode.ConfigurationTarget.Global,
-        );
-      return response.data;
+      return response.data.sort(
+        (a: QuackGuideline, b: QuackGuideline) => a.order - b.order,
+      );
     } else {
       // The request returned a non-200 status code (e.g., 404)
       // Show an error message or handle the error accordingly
