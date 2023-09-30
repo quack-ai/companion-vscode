@@ -8,6 +8,7 @@ import axios, { AxiosResponse } from "axios";
 
 export interface QuackGuideline {
   id: number;
+  order: number;
   title: string;
   details: string;
 }
@@ -21,6 +22,9 @@ export async function fetchRepoGuidelines(repoId: number): Promise<any> {
 
     // Handle the response
     if (response.status === 200) {
+      return response.data.sort(
+        (a: QuackGuideline, b: QuackGuideline) => a.order - b.order,
+      );
     } else {
       // The request returned a non-200 status code (e.g., 404)
       // Show an error message or handle the error accordingly
