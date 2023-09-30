@@ -60,13 +60,6 @@
       "quack-companion": [
         {
           "type": "webview",
-          "id": "quack-companion.scopeView",
-          "name": "Contribution scoping",
-          "icon": "media/quack-white.svg",
-          "contextualTitle": "Contribution scoping"
-        },
-        {
-          "type": "webview",
           "id": "quack-companion.guidelineView",
           "name": "Guidelines",
           "icon": "media/quack-white.svg",
