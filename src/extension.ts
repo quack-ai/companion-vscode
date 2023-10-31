@@ -94,7 +94,11 @@ export function activate(context: vscode.ExtensionContext) {
           vscode.window.showErrorMessage("Please authenticate");
           return;
         }
-        const guidelines: QuackGuideline[] = await fetchRepoGuidelines(ghRepo.id, endpoint, quackToken);
+        const guidelines: QuackGuideline[] = await fetchRepoGuidelines(
+          ghRepo.id,
+          endpoint,
+          quackToken,
+        );
         context.workspaceState.update(
           "quack-companion.repoGuidelines",
           guidelines,
