@@ -1,7 +1,7 @@
 {
   "name": "quack-companion",
   "displayName": "Quack Companion",
-  "version": "0.0.2",
+  "version": "0.0.3.dev0",
   "license": "Apache-2.0",
   "publisher": "quackai",
   "description": "Your companion for code contributions",
@@ -52,17 +52,17 @@
         {
           "id": "quack-companion",
           "title": "Quack Companion",
-          "icon": "media/quack-white.svg"
+          "icon": "media/dark/quack.svg"
         }
       ]
     },
     "views": {
       "quack-companion": [
         {
-          "type": "webview",
-          "id": "quack-companion.guidelineView",
+          "type": "tree",
+          "id": "quack-companion.guidelineTreeView",
           "name": "Guidelines",
-          "icon": "media/quack-white.svg",
+          "icon": "media/dark/quack.svg",
           "contextualTitle": "Guidelines"
         }
       ]
@@ -71,7 +71,11 @@
       {
         "command": "quack-companion.fetchGuidelines",
         "category": "Quack AI",
-        "title": "Fetch contribution guidelines"
+        "title": "Fetch contribution guidelines",
+        "icon": {
+          "light": "media/light/refresh.svg",
+          "dark": "media/dark/refresh.svg"
+        }
       },
       {
         "command": "quack-companion.findStarterIssues",
@@ -87,6 +91,23 @@
         "command": "quack-companion.debugInfo",
         "category": "Quack AI",
         "title": "Get debug information"
+      },
+      {
+        "command": "quack-companion.setEndpoint",
+        "category": "Quack AI",
+        "title": "Set the API endpoint"
+      },
+      {
+        "command": "quack-companion.loginQuack",
+        "category": "Quack AI",
+        "title": "Log in with GitHub"
+      }
+    ],
+    "viewsWelcome": [
+      {
+        "view": "quack-companion.authView",
+        "contents": "Welcome to Quack extension! Let's get you started\n[Authenticate](command:quack-companion.loginQuack)",
+        "when": "!quack-companion.hasQuackToken"
       }
     ],
     "keybindings": [
