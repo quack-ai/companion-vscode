@@ -76,6 +76,15 @@ export class GuidelineTreeProvider
     this._onDidChangeTreeData.fire();
   }
 
+  refreshItem(guidelineId: number, completed: boolean): void {
+    let item = this._guidelineItems.find(g => g.guideline.id === guidelineId);
+    if (item) {
+      item.guideline.completed = completed;
+      this._guidelineItems.forEach((item) => item.updateIconPath());
+      this._onDidChangeTreeData.fire();
+    }
+  }
+
   getTreeItem(element: GuidelineTreeItem): vscode.TreeItem {
     return element;
   }

@@ -13,6 +13,18 @@ export interface QuackGuideline {
   details: string;
 }
 
+export interface ComplianceResult {
+  guideline_id: number;
+  is_compliant: boolean;
+  comment: string;
+}
+
+export interface GuidelineCompliance {
+  is_compliant: boolean;
+  comment: string;
+  // suggestion: string;
+}
+
 export async function verifyQuackEndpoint(
   endpointURL: string,
 ): Promise<boolean> {
@@ -31,11 +43,45 @@ export async function verifyQuackEndpoint(
   }
 }
 
+export async function authenticate(
+  githubToken: string,
+  endpointURL: string,
+): Promise<string> {
+  const quackURL = new URL("/api/v1/login/token", endpointURL).toString();
+  try {
+    // Retrieve the guidelines
+    const response: AxiosResponse<any> = await axios.post(quackURL, {
+      github_token: githubToken,
+    });
+
+    // Handle the response
+    if (response.status === 200) {
+      return response.data.access_token;
+    } else {
+      // The request returned a non-200 status code (e.g., 404)
+      // Show an error message or handle the error accordingly
+      vscode.window.showErrorMessage(
+        `Quack API returned status code ${response.status}`,
+      );
+      throw new Error("Unable to authenticate");
+    }
+  } catch (error) {
+    // Handle other errors that may occur during the request
+    console.error("Error fetching repository details:", error);
+
+    // Show an error message or handle the error accordingly
+    vscode.window.showErrorMessage(
+      "Failed to fetch repository details. Make sure the repository exists and is public.",
+    );
+    throw new Error("Unable to authenticate");
+  }
+}
+
 export async function fetchRepoGuidelines(
   repoId: number,
   endpointURL: string,
   token: string,
-): Promise<any> {
+): Promise<QuackGuideline[]> {
   const quackURL = new URL(
     `/api/v1/repos/${repoId}/guidelines`,
     endpointURL,
@@ -57,7 +103,7 @@ export async function fetchRepoGuidelines(
       vscode.window.showErrorMessage(
         `Quack API returned status code ${response.status}`,
       );
-      return null; // or throw an error, return an empty object, etc.
+      throw new Error("Unable to fetch guidelines");
     }
   } catch (error) {
     // Handle other errors that may occur during the request
@@ -67,40 +113,76 @@ export async function fetchRepoGuidelines(
     vscode.window.showErrorMessage(
       "Failed to fetch repository details. Make sure the repository exists and is public.",
     );
-    return null; // or throw an error, return an empty object, etc.
+    throw new Error("Unable to fetch guidelines");
   }
 }
 
-export async function authenticate(
-  githubToken: string,
+export async function analyzeSnippet(
+  repoId: number,
+  code: string,
   endpointURL: string,
-): Promise<any> {
-  const quackURL = new URL("/api/v1/login/token", endpointURL).toString();
+  token: string,
+): Promise<ComplianceResult[]> {
+  const quackURL = new URL(
+    `/api/v1/compute/analyze/${repoId}`,
+    endpointURL,
+  ).toString();
   try {
-    // Retrieve the guidelines
-    const response: AxiosResponse<any> = await axios.post(quackURL, {
-      github_token: githubToken,
-    });
+    const response: AxiosResponse<any> = await axios.post(
+      quackURL,
+      { code: code },
+      { headers: { Authorization: `Bearer ${token}` } },
+    );
 
     // Handle the response
     if (response.status === 200) {
-      return response.data.access_token;
+      return response.data;
     } else {
       // The request returned a non-200 status code (e.g., 404)
-      // Show an error message or handle the error accordingly
       vscode.window.showErrorMessage(
         `Quack API returned status code ${response.status}`,
       );
-      return null; // or throw an error, return an empty object, etc.
+      throw new Error("Unable to analyze code");
     }
   } catch (error) {
     // Handle other errors that may occur during the request
-    console.error("Error fetching repository details:", error);
+    console.error("Error sending Quack API request:", error);
+    vscode.window.showErrorMessage("Invalid API request.");
+    throw new Error("Unable to analyze code");
+  }
+}
 
-    // Show an error message or handle the error accordingly
-    vscode.window.showErrorMessage(
-      "Failed to fetch repository details. Make sure the repository exists and is public.",
+export async function checkSnippet(
+  guidelineId: number,
+  code: string,
+  endpointURL: string,
+  token: string,
+): Promise<ComplianceResult> {
+  const quackURL = new URL(
+    `/api/v1/compute/check/${guidelineId}`,
+    endpointURL,
+  ).toString();
+  try {
+    const response: AxiosResponse<any> = await axios.post(
+      quackURL,
+      { code: code },
+      { headers: { Authorization: `Bearer ${token}` } },
     );
-    return null; // or throw an error, return an empty object, etc.
+
+    // Handle the response
+    if (response.status === 200) {
+      return response.data;
+    } else {
+      // The request returned a non-200 status code (e.g., 404)
+      vscode.window.showErrorMessage(
+        `Quack API returned status code ${response.status}`,
+      );
+      throw new Error("Unable to analyze code");
+    }
+  } catch (error) {
+    // Handle other errors that may occur during the request
+    console.error("Error sending Quack API request:", error);
+    vscode.window.showErrorMessage("Invalid API request.");
+    throw new Error("Unable to analyze code");
   }
 }
