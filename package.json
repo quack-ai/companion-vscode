@@ -1,7 +1,7 @@
 {
   "name": "quack-companion",
   "displayName": "Quack Companion",
-  "version": "0.0.3.dev0",
+  "version": "0.0.3",
   "license": "Apache-2.0",
   "publisher": "quackai",
   "description": "Your companion for code contributions",
@@ -58,6 +58,14 @@
     },
     "views": {
       "quack-companion": [
+        {
+          "type": "tree",
+          "id": "quack-companion.authView",
+          "name": "Authentication",
+          "icon": "media/dark/quack.svg",
+          "contextualTitle": "Authentication",
+          "when": "!quack-companion.hasQuackToken"
+        },
         {
           "type": "tree",
           "id": "quack-companion.guidelineTreeView",

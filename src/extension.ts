@@ -308,6 +308,8 @@ export function activate(context: vscode.ExtensionContext) {
   );
   // Commands to be run when activating
   vscode.commands.executeCommand("quack-companion.fetchGuidelines");
+  // Update context
+  updateContext(context);
 }
 
 export function deactivate() {
