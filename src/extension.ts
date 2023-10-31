@@ -7,7 +7,7 @@ import * as vscode from "vscode";
 import * as os from "os";
 import { v4 as uuidv4 } from "uuid";
 import clipboardy from "clipboardy";
-import { GuidelineProvider } from "./webviews/GuidelineProvider";
+import { GuidelineTreeProvider } from "./webviews/guidelineView";
 import telemetryClient from "./telemetry";
 import { getCurrentRepoName } from "./util/session";
 import {
@@ -17,33 +17,53 @@ import {
   GithubIssue,
   searchIssues,
 } from "./util/github";
-import { fetchRepoGuidelines, QuackGuideline } from "./quack";
+import {
+  fetchRepoGuidelines,
+  QuackGuideline,
+  verifyQuackEndpoint,
+  authenticate,
+} from "./quack";
+
+function updateContext(context: vscode.ExtensionContext) {
+  const quackToken = context.workspaceState.get<string>(
+    "quack-companion.quackToken",
+  );
+  vscode.commands.executeCommand(
+    "setContext",
+    "quack-companion.hasQuackToken",
+    !!quackToken,
+  );
+}
 
 export function activate(context: vscode.ExtensionContext) {
   // Generate or retrieve the user's UUID from storage
-  let stateId: string | undefined = context.globalState.get("userId");
+  let stateId: string | undefined = context.workspaceState.get("userId");
   const userId: string = stateId || uuidv4();
   if (!stateId) {
-    context.globalState.update("userId", userId);
+    context.workspaceState.update("userId", userId);
+  }
+
+  // Default endpoint
+  let endpointURL: string | undefined = context.workspaceState.get(
+    "quack-companion.endpointURL",
+  );
+  if (!endpointURL) {
+    context.workspaceState.update(
+      "quack-companion.endpointURL",
+      "https://api.quackai.com",
+    );
   }
 
   // Side bar
-  const guidelineView = new GuidelineProvider(context.extensionUri);
+  const guidelineTreeView = new GuidelineTreeProvider(context.extensionUri);
   context.subscriptions.push(
-    vscode.window.registerWebviewViewProvider(
-      "quack-companion.guidelineView",
-      guidelineView,
+    vscode.window.registerTreeDataProvider(
+      "quack-companion.guidelineTreeView",
+      guidelineTreeView,
     ),
   );
 
   // Status bar buttons
-  // Guideline refresh
-  const refreshStatusBar = vscode.window.createStatusBarItem(
-    vscode.StatusBarAlignment.Right,
-  );
-  refreshStatusBar.text = "$(refresh) Refresh guidelines";
-  refreshStatusBar.command = "quack-companion.fetchGuidelines";
-  refreshStatusBar.show();
   // Find starter issues
   const starterStatusBar = vscode.window.createStatusBarItem(
     vscode.StatusBarAlignment.Right,
@@ -63,20 +83,26 @@ export function activate(context: vscode.ExtensionContext) {
       "quack-companion.fetchGuidelines",
       async () => {
         const repoName: string = await getCurrentRepoName();
-        // Check the cache
-        const cachedGuidelines: QuackGuideline[] | undefined =
-          context.globalState.get("quack-companion.repoGuidelines");
-        var guidelines: QuackGuideline[] = [];
-        if (cachedGuidelines) {
-          guidelines = cachedGuidelines;
-        } else {
-          const ghRepo: GitHubRepo = await getRepoDetails(repoName);
-          guidelines = await fetchRepoGuidelines(ghRepo.id);
-          context.globalState.update(
-            "quack-companion.repoGuidelines",
-            guidelines,
-          );
+        const ghRepo: GitHubRepo = await getRepoDetails(repoName);
+        const endpoint: string =
+          context.workspaceState.get("quack-companion.endpointURL") ||
+          "https://api.quackai.com";
+        const quackToken = context.workspaceState.get<string>(
+          "quack-companion.quackToken",
+        );
+        if (!quackToken) {
+          vscode.window.showErrorMessage("Please authenticate");
+          return;
         }
+        const guidelines: QuackGuideline[] = await fetchRepoGuidelines(
+          ghRepo.id,
+          endpoint,
+          quackToken,
+        );
+        context.workspaceState.update(
+          "quack-companion.repoGuidelines",
+          guidelines,
+        );
 
         // If no guidelines exists, say it in the console
         if (guidelines.length === 0) {
@@ -84,7 +110,7 @@ export function activate(context: vscode.ExtensionContext) {
         }
 
         // Notify the webview to update its content
-        guidelineView.refresh(
+        guidelineTreeView.refresh(
           guidelines.map((guideline: any) => ({
             ...guideline,
             completed: false,
@@ -221,8 +247,69 @@ export function activate(context: vscode.ExtensionContext) {
     }),
   );
 
+  context.subscriptions.push(
+    vscode.commands.registerCommand("quack-companion.setEndpoint", async () => {
+      // Get user input
+      const quackEndpoint = await vscode.window.showInputBox({
+        prompt: "Enter the endpoint URL for Quack API",
+        placeHolder: "https://api.quackai.com/",
+        ignoreFocusOut: true, // This keeps the input box open when focus is lost, which can prevent some confusion
+      });
+      if (quackEndpoint) {
+        console.log(quackEndpoint);
+        const isValid: boolean = await verifyQuackEndpoint(quackEndpoint);
+        if (isValid) {
+          // Update the global context state
+          await context.workspaceState.update(
+            "quack-companion.endpointURL",
+            quackEndpoint,
+          );
+          vscode.window.showInformationMessage(
+            "Quack endpoint set successfully",
+          );
+        } else {
+          vscode.window.showErrorMessage(
+            "Failed to access a Quack API instance at the specified URL",
+          );
+        }
+      } else {
+        vscode.window.showErrorMessage("Quack endpoint URL is required");
+      }
+    }),
+  );
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand("quack-companion.loginQuack", async () => {
+      // GitHub login
+      const session = await vscode.authentication.getSession(
+        "github",
+        ["read:user"],
+        { createIfNone: true },
+      );
+      await context.workspaceState.update(
+        "quack-companion.githubToken",
+        session.accessToken,
+      );
+      // Quack login
+      const endpoint: string =
+        context.workspaceState.get("quack-companion.endpointURL") ||
+        "https://api.quackai.com";
+      const quackToken = await authenticate(session.accessToken, endpoint);
+      if (quackToken) {
+        await context.workspaceState.update(
+          "quack-companion.quackToken",
+          quackToken,
+        );
+        vscode.window.showInformationMessage("Authentication successful");
+        // Make state available to viewsWelcome
+        updateContext(context);
+      }
+    }),
+  );
   // Commands to be run when activating
   vscode.commands.executeCommand("quack-companion.fetchGuidelines");
+  // Update context
+  updateContext(context);
 }
 
 export function deactivate() {
