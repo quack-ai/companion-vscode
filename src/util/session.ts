@@ -56,3 +56,35 @@ export async function getCurrentRepoName(): Promise<string> {
     });
   });
 }
+
+export function getEditor(): vscode.TextEditor {
+  // Snippet
+  const editor = vscode.window.activeTextEditor;
+  if (!editor) {
+    vscode.window.showWarningMessage("No active editor.");
+    throw new Error("No active editor.");
+  }
+  return editor;
+}
+
+export function getSelectionText(): string {
+  // Snippet
+  const editor = getEditor();
+  const selectionText = editor.document.getText(editor.selection);
+  if (selectionText.length === 0) {
+    vscode.window.showWarningMessage("No snippet selected.");
+    throw new Error("No snippet selected.");
+  }
+  return selectionText;
+}
+
+export function getSelectionRange(): vscode.Range {
+  // Snippet
+  const editor = getEditor();
+  return new vscode.Range(
+    editor.selection.start.line,
+    editor.selection.start.character,
+    editor.selection.end.line,
+    editor.selection.end.character,
+  );
+}

@@ -77,15 +77,6 @@
     },
     "commands": [
       {
-        "command": "quack-companion.fetchGuidelines",
-        "category": "Quack AI",
-        "title": "Fetch contribution guidelines",
-        "icon": {
-          "light": "media/light/refresh.svg",
-          "dark": "media/dark/refresh.svg"
-        }
-      },
-      {
         "command": "quack-companion.findStarterIssues",
         "category": "Quack AI",
         "title": "Find starter issues"
@@ -108,7 +99,34 @@
       {
         "command": "quack-companion.loginQuack",
         "category": "Quack AI",
-        "title": "Log in with GitHub"
+        "title": "Log in with GitHub & Quack"
+      },
+      {
+        "command": "quack-companion.fetchGuidelines",
+        "category": "Quack AI",
+        "title": "Fetch contribution guidelines",
+        "icon": {
+          "light": "media/light/refresh.svg",
+          "dark": "media/dark/refresh.svg"
+        }
+      },
+      {
+        "command": "quack-companion.analyzeCode",
+        "category": "Quack AI",
+        "title": "Analyze code with Quack AI",
+        "icon": {
+          "light": "media/light/debug-rerun.svg",
+          "dark": "media/dark/debug-rerun.svg"
+        }
+      },
+      {
+        "command": "quack-companion.analyzeCodeMonoGuideline",
+        "category": "Quack AI",
+        "title": "Analyze code snippet in respect to a specific guideline",
+        "icon": {
+          "light": "media/light/debug-rerun.svg",
+          "dark": "media/dark/debug-rerun.svg"
+        }
       }
     ],
     "viewsWelcome": [
@@ -125,11 +143,43 @@
         "key": "ctrl+shift+g"
       },
       {
+        "command": "quack-companion.analyzeCode",
+        "mac": "cmd+shift+q",
+        "key": "ctrl+shift+q"
+      },
+      {
         "command": "quack-companion.debugInfo",
         "mac": "cmd+shift+d",
         "key": "ctrl+shift+d"
       }
-    ]
+    ],
+    "menus": {
+      "editor/context": [
+        {
+          "command": "quack-companion.analyzeCode",
+          "when": "editorHasSelection && resourceLangId == 'python'"
+        }
+      ],
+      "view/title": [
+        {
+          "command": "quack-companion.fetchGuidelines",
+          "when": "view == quack-companion.guidelineTreeView",
+          "group": "navigation"
+        },
+        {
+          "command": "quack-companion.analyzeCode",
+          "when": "view == quack-companion.guidelineTreeView",
+          "group": "navigation"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "quack-companion.analyzeCodeMonoGuideline",
+          "when": "view == quack-companion.guidelineTreeView && viewItem == guidelineTreeItem",
+          "group": "inline"
+        }
+      ]
+    }
   },
   "scripts": {
     "vscode:prepublish": "yarn run compile",
