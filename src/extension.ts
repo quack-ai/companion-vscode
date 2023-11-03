@@ -36,7 +36,6 @@ import {
   authenticate,
 } from "./quack";
 
-
 function updateContext(context: vscode.ExtensionContext) {
   const quackToken = context.workspaceState.get<string>(
     "quack-companion.quackToken",
@@ -314,43 +313,54 @@ export function activate(context: vscode.ExtensionContext) {
           endpoint,
           quackToken,
         );
+        const statusIndexMap: { [key: number]: number } = {};
+        complianceStatus.forEach((item: ComplianceResult, index: number) => {
+          statusIndexMap[item.guideline_id] = index;
+        });
         diagnosticCollection.clear();
         // Notify the webview to update its content
         guidelineTreeView.refresh(
           guidelines.map((guideline: QuackGuideline, index: number) => ({
             ...guideline,
-            completed: complianceStatus[index].is_compliant,
+            completed:
+              complianceStatus[statusIndexMap[guideline.id]].is_compliant,
           })),
         );
         // Send messages
         const selectionRange = getSelectionRange();
         var diagnostics: vscode.Diagnostic[] = [];
-        complianceStatus.forEach(
-          (guidelineStatus: GuidelineCompliance, index: number) => {
-            if (!guidelineStatus.is_compliant) {
-              vscode.window.showWarningMessage(
-                guidelines[index].title + ". " + guidelineStatus.comment,
-              );
-              const diagnostic = new vscode.Diagnostic(
-                selectionRange,
-                guidelines[index].title + "\n\n" + guidelineStatus.comment,
-                vscode.DiagnosticSeverity.Warning,
-              );
-              diagnostic.source = "Quack Companion";
-              // diagnostic.code = guidelines[index].title;
-              // // Add the replacement
-              // const relatedInfo = new vscode.DiagnosticRelatedInformation(
-              //   new vscode.Location(
-              //     editor.document.uri,
-              //     selectionRange,
-              //   ),
-              //   guidelineStatus.suggestion,
-              // );
-              // diagnostic.relatedInformation = [relatedInfo];
-              diagnostics.push(diagnostic);
-            }
-          },
-        );
+        const guidelineIndexMap: { [key: number]: number } = {};
+        guidelines.forEach((item: QuackGuideline, index: number) => {
+          guidelineIndexMap[item.id] = index;
+        });
+        complianceStatus.forEach((item: ComplianceResult, index: number) => {
+          if (!item.is_compliant) {
+            vscode.window.showWarningMessage(
+              guidelines[guidelineIndexMap[item.guideline_id]].title +
+                ". " +
+                item.comment,
+            );
+            const diagnostic = new vscode.Diagnostic(
+              selectionRange,
+              guidelines[guidelineIndexMap[item.guideline_id]].title +
+                "\n\n" +
+                item.comment,
+              vscode.DiagnosticSeverity.Warning,
+            );
+            diagnostic.source = "Quack Companion";
+            // diagnostic.code = guidelines[index].title;
+            // // Add the replacement
+            // const relatedInfo = new vscode.DiagnosticRelatedInformation(
+            //   new vscode.Location(
+            //     editor.document.uri,
+            //     selectionRange,
+            //   ),
+            //   item.suggestion,
+            // );
+            // diagnostic.relatedInformation = [relatedInfo];
+            diagnostics.push(diagnostic);
+          }
+        });
         diagnosticCollection.set(getEditor().document.uri, diagnostics);
       }
       statusBarItem.dispose();
@@ -410,23 +420,26 @@ export function activate(context: vscode.ExtensionContext) {
             return;
           }
           // Notify the webview to update its content
-          guidelineTreeView.refreshItem(item.guideline.id, complianceStatus.is_compliant);
+          guidelineTreeView.refreshItem(
+            item.guideline.id,
+            complianceStatus.is_compliant,
+          );
           // Send messages
-        const selectionRange = getSelectionRange();
-        var diagnostics: vscode.Diagnostic[] = [];
-        if (!complianceStatus.is_compliant) {
-          vscode.window.showWarningMessage(
-            item.guideline.title + ". " + complianceStatus.comment,
-          );
-          const diagnostic = new vscode.Diagnostic(
-            selectionRange,
-            item.guideline.title + "\n\n" + complianceStatus.comment,
-            vscode.DiagnosticSeverity.Warning,
-          );
-          diagnostic.source = "Quack Companion";
-          diagnostics.push(diagnostic);
-        }
-        diagnosticCollection.set(getEditor().document.uri, diagnostics);
+          const selectionRange = getSelectionRange();
+          var diagnostics: vscode.Diagnostic[] = [];
+          if (!complianceStatus.is_compliant) {
+            vscode.window.showWarningMessage(
+              item.guideline.title + ". " + complianceStatus.comment,
+            );
+            const diagnostic = new vscode.Diagnostic(
+              selectionRange,
+              item.guideline.title + "\n\n" + complianceStatus.comment,
+              vscode.DiagnosticSeverity.Warning,
+            );
+            diagnostic.source = "Quack Companion";
+            diagnostics.push(diagnostic);
+          }
+          diagnosticCollection.set(getEditor().document.uri, diagnostics);
           statusBarItem.dispose();
           // Telemetry
           telemetryClient?.capture({
@@ -476,6 +489,7 @@ export function activate(context: vscode.ExtensionContext) {
             "quack-companion.quackToken",
             undefined,
           );
+          updateContext(context);
           vscode.window.showInformationMessage(
             "Quack endpoint set successfully",
           );
