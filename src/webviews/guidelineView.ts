@@ -77,7 +77,7 @@ export class GuidelineTreeProvider
   }
 
   refreshItem(guidelineId: number, completed: boolean): void {
-    let item = this._guidelineItems.find(g => g.guideline.id === guidelineId);
+    let item = this._guidelineItems.find((g) => g.guideline.id === guidelineId);
     if (item) {
       item.guideline.completed = completed;
       this._guidelineItems.forEach((item) => item.updateIconPath());
