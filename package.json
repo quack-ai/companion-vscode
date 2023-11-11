@@ -205,7 +205,7 @@
     "webpack-cli": "^5.1.1"
   },
   "dependencies": {
-    "axios": "^1.4.0",
+    "axios": "^1.6.0",
     "clipboardy": "^3.0.0",
     "dotenv": "^16.3.1",
     "posthog-node": "^3.1.1",
