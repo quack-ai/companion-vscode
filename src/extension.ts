@@ -28,6 +28,7 @@ import {
 import {
   analyzeSnippet,
   checkSnippet,
+  addRepoToWaitlist,
   fetchRepoGuidelines,
   QuackGuideline,
   ComplianceResult,
@@ -127,11 +128,6 @@ export function activate(context: vscode.ExtensionContext) {
           guidelines,
         );
 
-        // If no guidelines exists, say it in the console
-        if (guidelines.length === 0) {
-          vscode.window.showInformationMessage("No guidelines specified yet.");
-        }
-
         // Notify the webview to update its content
         guidelineTreeView.refresh(
           guidelines.map((guideline: any) => ({
@@ -139,6 +135,24 @@ export function activate(context: vscode.ExtensionContext) {
             completed: false,
           })),
         );
+
+        // If no guidelines exists, say it in the console
+        if (guidelines.length === 0) {
+          vscode.window.showInformationMessage("No guidelines specified yet.");
+          const answer = await vscode.window.showInformationMessage(
+            "No guidelines specified yet. Do you wish to request some?",
+            "yes",
+            "no",
+          );
+          if (answer === "yes") {
+            // add to waitlist
+            await addRepoToWaitlist(
+              ghRepo.id,
+              endpoint,
+              quackToken,
+            );
+          }
+        }
 
         // Telemetry
         telemetryClient?.capture({
