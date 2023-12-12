@@ -31,7 +31,7 @@ export async function verifyQuackEndpoint(
   try {
     // Check the swagger
     const swaggerURL: string = new URL("/docs", endpointURL).toString();
-    const response: AxiosResponse<any> = await axios.head(swaggerURL);
+    const response: AxiosResponse<any> = await axios.get(swaggerURL);
     // Handle the response
     if (response.status === 200) {
       return true;
@@ -184,5 +184,39 @@ export async function checkSnippet(
     console.error("Error sending Quack API request:", error);
     vscode.window.showErrorMessage("Invalid API request.");
     throw new Error("Unable to analyze code");
+  }
+}
+
+export async function addRepoToWaitlist(
+  repoId: number,
+  endpointURL: string,
+  token: string,
+): Promise<null> {
+  const quackURL = new URL(
+    `/api/v1/repos/${repoId}/waitlist`,
+    endpointURL,
+  ).toString();
+  try {
+    const response: AxiosResponse<any> = await axios.post(
+      quackURL,
+      {},
+      { headers: { Authorization: `Bearer ${token}` } },
+    );
+
+    // Handle the response
+    if (response.status === 200) {
+      return null;
+    } else {
+      // The request returned a non-200 status code (e.g., 404)
+      vscode.window.showErrorMessage(
+        `Quack API returned status code ${response.status}`,
+      );
+      throw new Error("Unable to add repo to waitlist");
+    }
+  } catch (error) {
+    // Handle other errors that may occur during the request
+    console.error("Error sending Quack API request:", error);
+    vscode.window.showErrorMessage("Invalid API request.");
+    throw new Error("Unable to add repo to waitlist");
   }
 }

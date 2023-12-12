@@ -77,16 +77,6 @@
     },
     "commands": [
       {
-        "command": "quack-companion.findStarterIssues",
-        "category": "Quack AI",
-        "title": "Find starter issues"
-      },
-      {
-        "command": "quack-companion.defineGoal",
-        "category": "Quack AI",
-        "title": "Define your contribution goal"
-      },
-      {
         "command": "quack-companion.debugInfo",
         "category": "Quack AI",
         "title": "Get debug information"

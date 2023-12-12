@@ -28,6 +28,7 @@ import {
 import {
   analyzeSnippet,
   checkSnippet,
+  addRepoToWaitlist,
   fetchRepoGuidelines,
   QuackGuideline,
   ComplianceResult,
@@ -127,11 +128,6 @@ export function activate(context: vscode.ExtensionContext) {
           guidelines,
         );
 
-        // If no guidelines exists, say it in the console
-        if (guidelines.length === 0) {
-          vscode.window.showInformationMessage("No guidelines specified yet.");
-        }
-
         // Notify the webview to update its content
         guidelineTreeView.refresh(
           guidelines.map((guideline: any) => ({
@@ -139,6 +135,20 @@ export function activate(context: vscode.ExtensionContext) {
             completed: false,
           })),
         );
+
+        // If no guidelines exists, say it in the console
+        if (guidelines.length === 0) {
+          vscode.window.showInformationMessage("No guidelines specified yet.");
+          const answer = await vscode.window.showInformationMessage(
+            "No guidelines specified yet. Do you wish to request some?",
+            "yes",
+            "no",
+          );
+          if (answer === "yes") {
+            // add to waitlist
+            await addRepoToWaitlist(ghRepo.id, endpoint, quackToken);
+          }
+        }
 
         // Telemetry
         telemetryClient?.capture({
@@ -154,105 +164,6 @@ export function activate(context: vscode.ExtensionContext) {
   );
 
   context.subscriptions.push(
-    vscode.commands.registerCommand(
-      "quack-companion.findStarterIssues",
-      async () => {
-        const currentName: string = await getCurrentRepoName();
-        const repoName = await vscode.window.showInputBox({
-          prompt: "To which repo would you like to contribute?",
-          placeHolder: currentName,
-        });
-        if (repoName === undefined) {
-          return;
-        }
-        const selectedRepo = await getRepoDetails(repoName);
-        const ghIssues: GithubIssue[] = await fetchStarterIssues(selectedRepo);
-
-        // Telemetry
-        telemetryClient?.capture({
-          distinctId: userId,
-          event: "vscode-find-starter-issues",
-          properties: {
-            repository: repoName,
-          },
-        });
-
-        // Let user pick one
-        const ghIssue = await vscode.window.showQuickPick(
-          ghIssues.map((issue) => {
-            return {
-              label: issue.title,
-              detail: issue.body,
-              url: issue.html_url,
-            };
-          }),
-          {
-            matchOnDetail: true,
-          },
-        );
-
-        if (ghIssue === undefined) {
-          return;
-        } else {
-          vscode.env.openExternal(vscode.Uri.parse(ghIssue.url));
-        }
-      },
-    ),
-  );
-
-  context.subscriptions.push(
-    vscode.commands.registerCommand("quack-companion.defineGoal", async () => {
-      const contribGoal = await vscode.window.showInputBox({
-        prompt: "What are you working on?",
-        placeHolder: "A few words about your intended PR",
-      });
-      if (contribGoal === undefined) {
-        return;
-      }
-      const currentName: string = await getCurrentRepoName();
-      // Telemetry
-      telemetryClient?.capture({
-        distinctId: userId,
-        event: "vscode-goal-definition",
-        properties: {
-          repository: currentName,
-        },
-      });
-      // Check that the contribution is well aligned
-      const answer = await vscode.window.showInformationMessage(
-        "Do you wish to check whether there is an existing GitHub issue/PR already?",
-        "yes",
-        "no",
-      );
-      if (answer === "yes") {
-        const relatedIssues: GithubIssue[] = await searchIssues(
-          currentName,
-          contribGoal,
-        );
-        // Display
-        // Let user pick one
-        const ghIssue = await vscode.window.showQuickPick(
-          relatedIssues.map((issue) => {
-            return {
-              label: issue.title,
-              detail: issue.body,
-              html_url: issue.html_url,
-            };
-          }),
-          {
-            matchOnDetail: true,
-          },
-        );
-
-        if (ghIssue === undefined) {
-          return;
-        }
-        vscode.env.openExternal(vscode.Uri.parse(ghIssue.html_url));
-      }
-    }),
-  );
-
-  context.subscriptions.push(
     vscode.commands.registerCommand("quack-companion.debugInfo", async () => {
       const extensionVersion =
         vscode.extensions.getExtension("quackai.quack-companion")?.packageJSON
@@ -260,7 +171,11 @@ export function activate(context: vscode.ExtensionContext) {
       const vscodeVersion = vscode.version;
       const osName = os.platform();
       const osVersion = os.release();
-      const info = `OS: ${osName} ${osVersion}\nVSCode Version: ${vscodeVersion}\nExtension Version: ${extensionVersion}`;
+      const usedEndpoint: string = await context.workspaceState.get(
+        "quack-companion.endpointURL",
+        "https://api.quackai.com/",
+      );
+      const info = `OS: ${osName} ${osVersion}\nVSCode Version: ${vscodeVersion}\nExtension Version: ${extensionVersion}\nEndpoint: ${usedEndpoint}`;
       clipboardy.writeSync(info);
       vscode.window.showInformationMessage("Version info copied to clipboard.");
       if (extensionVersion === "N/A") {
