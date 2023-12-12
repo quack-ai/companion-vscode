@@ -18,10 +18,7 @@ import {
   getSelectionRange,
   getEditor,
 } from "./util/session";
-import {
-  getRepoDetails,
-  GitHubRepo,
-} from "./util/github";
+import { getRepoDetails, GitHubRepo } from "./util/github";
 import {
   analyzeSnippet,
   checkSnippet,
@@ -53,9 +50,11 @@ export async function activate(context: vscode.ExtensionContext) {
   }
 
   // Config check
-  let config = vscode.workspace.getConfiguration('api');
+  let config = vscode.workspace.getConfiguration("api");
   // Validate endpoint
-  const isValidEndpoint: boolean = await verifyQuackEndpoint(config.get("endpoint") as string);
+  const isValidEndpoint: boolean = await verifyQuackEndpoint(
+    config.get("endpoint") as string,
+  );
   if (!isValidEndpoint) {
     vscode.window.showErrorMessage("Invalid API endpoint");
   }
@@ -123,7 +122,11 @@ export async function activate(context: vscode.ExtensionContext) {
           );
           if (answer === "yes") {
             // add to waitlist
-            await addRepoToWaitlist(ghRepo.id, config.get("endpoint") as string, quackToken);
+            await addRepoToWaitlist(
+              ghRepo.id,
+              config.get("endpoint") as string,
+              quackToken,
+            );
           }
         }
 
@@ -148,7 +151,9 @@ export async function activate(context: vscode.ExtensionContext) {
       const vscodeVersion = vscode.version;
       const osName = os.platform();
       const osVersion = os.release();
-      const info = `OS: ${osName} ${osVersion}\nVSCode Version: ${vscodeVersion}\nExtension Version: ${extensionVersion}\nEndpoint: ${config.get("endpoint")}`;
+      const info = `OS: ${osName} ${osVersion}\nVSCode Version: ${vscodeVersion}\nExtension Version: ${extensionVersion}\nEndpoint: ${config.get(
+        "endpoint",
+      )}`;
       clipboardy.writeSync(info);
       vscode.window.showInformationMessage("Version info copied to clipboard.");
       if (extensionVersion === "N/A") {
@@ -393,7 +398,10 @@ export async function activate(context: vscode.ExtensionContext) {
         session.accessToken,
       );
       // Quack login
-      const quackToken = await authenticate(session.accessToken, config.get("endpoint") as string);
+      const quackToken = await authenticate(
+        session.accessToken,
+        config.get("endpoint") as string,
+      );
       if (quackToken) {
         await context.workspaceState.update(
           "quack-companion.quackToken",
