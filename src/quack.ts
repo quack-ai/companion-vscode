@@ -31,7 +31,7 @@ export async function verifyQuackEndpoint(
   try {
     // Check the swagger
     const swaggerURL: string = new URL("/docs", endpointURL).toString();
-    const response: AxiosResponse<any> = await axios.head(swaggerURL);
+    const response: AxiosResponse<any> = await axios.get(swaggerURL);
     // Handle the response
     if (response.status === 200) {
       return true;
