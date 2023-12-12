@@ -187,7 +187,6 @@ export async function checkSnippet(
   }
 }
 
-
 export async function addRepoToWaitlist(
   repoId: number,
   endpointURL: string,
