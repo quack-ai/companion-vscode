@@ -274,7 +274,8 @@ export function activate(context: vscode.ExtensionContext) {
       const vscodeVersion = vscode.version;
       const osName = os.platform();
       const osVersion = os.release();
-      const info = `OS: ${osName} ${osVersion}\nVSCode Version: ${vscodeVersion}\nExtension Version: ${extensionVersion}`;
+      const usedEndpoint: string = await context.workspaceState.get("quack-companion.endpointURL", "https://api.quackai.com/");
+      const info = `OS: ${osName} ${osVersion}\nVSCode Version: ${vscodeVersion}\nExtension Version: ${extensionVersion}\nEndpoint: ${usedEndpoint}`;
       clipboardy.writeSync(info);
       vscode.window.showInformationMessage("Version info copied to clipboard.");
       if (extensionVersion === "N/A") {
