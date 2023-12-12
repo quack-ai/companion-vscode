@@ -31,4 +31,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.0.1] - 2023-08-07
 
-Initial release
+### Added
+
+- Add commands to fetch guidelines, retrieve diagnostic information (#1)
+- Add display for guidelines
