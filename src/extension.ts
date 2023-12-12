@@ -146,11 +146,7 @@ export function activate(context: vscode.ExtensionContext) {
           );
           if (answer === "yes") {
             // add to waitlist
-            await addRepoToWaitlist(
-              ghRepo.id,
-              endpoint,
-              quackToken,
-            );
+            await addRepoToWaitlist(ghRepo.id, endpoint, quackToken);
           }
         }
 
