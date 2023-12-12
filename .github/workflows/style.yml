@@ -20,7 +20,7 @@ jobs:
           node-version: ${{ matrix.node }}
       - name: Run prettier
         run: |
-          yarn add --dev --exact prettier
+          yarn install --dev --exact --frozen-lockfile
           yarn format:check
   eslint:
     runs-on: ${{ matrix.os }}
@@ -35,5 +35,5 @@ jobs:
           node-version: ${{ matrix.node }}
       - name: Run eslint
         run: |
-          yarn add --dev --exact eslint
+          yarn install --dev --exact --frozen-lockfile
           yarn lint:check
