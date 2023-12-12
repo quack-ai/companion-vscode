@@ -47,6 +47,18 @@
   "activationEvents": [],
   "main": "./dist/extension.js",
   "contributes": {
+    "configuration": [
+      {
+        "title": "Quack companion",
+        "properties": {
+          "api.endpoint": {
+            "type": "string",
+            "default": "https://api.quackai.com",
+            "description": "Quack API endpoint"
+          }
+        }
+      }
+    ],
     "viewsContainers": {
       "activitybar": [
         {

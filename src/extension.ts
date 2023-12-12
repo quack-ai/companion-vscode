@@ -20,10 +20,7 @@ import {
 } from "./util/session";
 import {
   getRepoDetails,
-  fetchStarterIssues,
   GitHubRepo,
-  GithubIssue,
-  searchIssues,
 } from "./util/github";
 import {
   analyzeSnippet,
@@ -32,7 +29,6 @@ import {
   fetchRepoGuidelines,
   QuackGuideline,
   ComplianceResult,
-  GuidelineCompliance,
   verifyQuackEndpoint,
   authenticate,
 } from "./quack";
@@ -48,7 +44,7 @@ function updateContext(context: vscode.ExtensionContext) {
   );
 }
 
-export function activate(context: vscode.ExtensionContext) {
+export async function activate(context: vscode.ExtensionContext) {
   // Generate or retrieve the user's UUID from storage
   let stateId: string | undefined = context.workspaceState.get("userId");
   const userId: string = stateId || uuidv4();
@@ -56,15 +52,12 @@ export function activate(context: vscode.ExtensionContext) {
     context.workspaceState.update("userId", userId);
   }
 
-  // Default endpoint
-  let endpointURL: string | undefined = context.workspaceState.get(
-    "quack-companion.endpointURL",
-  );
-  if (!endpointURL) {
-    context.workspaceState.update(
-      "quack-companion.endpointURL",
-      "https://api.quackai.com",
-    );
+  // Config check
+  let config = vscode.workspace.getConfiguration('api');
+  // Validate endpoint
+  const isValidEndpoint: boolean = await verifyQuackEndpoint(config.get("endpoint") as string);
+  if (!isValidEndpoint) {
+    vscode.window.showErrorMessage("Invalid API endpoint");
   }
 
   // Side bar
@@ -77,13 +70,6 @@ export function activate(context: vscode.ExtensionContext) {
   );
 
   // Status bar buttons
-  // Find starter issues
-  const starterStatusBar = vscode.window.createStatusBarItem(
-    vscode.StatusBarAlignment.Right,
-  );
-  starterStatusBar.text = "$(search-fuzzy) Find starter issues";
-  starterStatusBar.command = "quack-companion.findStarterIssues";
-  starterStatusBar.show();
   // Check compliance
   const complianceStatusBar = vscode.window.createStatusBarItem(
     vscode.StatusBarAlignment.Right,
@@ -91,12 +77,6 @@ export function activate(context: vscode.ExtensionContext) {
   complianceStatusBar.text = "$(pass) Check compliance";
   complianceStatusBar.command = "quack-companion.checkCompliance";
   complianceStatusBar.show();
-
-  interface TransformedGuideline {
-    id: number;
-    label: string;
-    detail: string;
-  }
 
   // Diagnostic/warning collection
   const diagnosticCollection =
@@ -108,9 +88,6 @@ export function activate(context: vscode.ExtensionContext) {
       async () => {
         const repoName: string = await getCurrentRepoName();
         const ghRepo: GitHubRepo = await getRepoDetails(repoName);
-        const endpoint: string =
-          context.workspaceState.get("quack-companion.endpointURL") ||
-          "https://api.quackai.com";
         const quackToken = context.workspaceState.get<string>(
           "quack-companion.quackToken",
         );
@@ -120,7 +97,7 @@ export function activate(context: vscode.ExtensionContext) {
         }
         const guidelines: QuackGuideline[] = await fetchRepoGuidelines(
           ghRepo.id,
-          endpoint,
+          config.get("endpoint") as string,
           quackToken,
         );
         context.workspaceState.update(
@@ -146,7 +123,7 @@ export function activate(context: vscode.ExtensionContext) {
           );
           if (answer === "yes") {
             // add to waitlist
-            await addRepoToWaitlist(ghRepo.id, endpoint, quackToken);
+            await addRepoToWaitlist(ghRepo.id, config.get("endpoint") as string, quackToken);
           }
         }
 
@@ -171,11 +148,7 @@ export function activate(context: vscode.ExtensionContext) {
       const vscodeVersion = vscode.version;
       const osName = os.platform();
       const osVersion = os.release();
-      const usedEndpoint: string = await context.workspaceState.get(
-        "quack-companion.endpointURL",
-        "https://api.quackai.com/",
-      );
-      const info = `OS: ${osName} ${osVersion}\nVSCode Version: ${vscodeVersion}\nExtension Version: ${extensionVersion}\nEndpoint: ${usedEndpoint}`;
+      const info = `OS: ${osName} ${osVersion}\nVSCode Version: ${vscodeVersion}\nExtension Version: ${extensionVersion}\nEndpoint: ${config.get("endpoint")}`;
       clipboardy.writeSync(info);
       vscode.window.showInformationMessage("Version info copied to clipboard.");
       if (extensionVersion === "N/A") {
@@ -211,9 +184,6 @@ export function activate(context: vscode.ExtensionContext) {
       }
 
       if (guidelines.length > 0) {
-        const endpoint: string =
-          context.workspaceState.get("quack-companion.endpointURL") ||
-          "https://api.quackai.com";
         const quackToken = context.workspaceState.get<string>(
           "quack-companion.quackToken",
         );
@@ -225,7 +195,7 @@ export function activate(context: vscode.ExtensionContext) {
         const complianceStatus: ComplianceResult[] = await analyzeSnippet(
           ghRepo.id,
           codeSnippet,
-          endpoint,
+          config.get("endpoint") as string,
           quackToken,
         );
         const statusIndexMap: { [key: number]: number } = {};
@@ -300,9 +270,6 @@ export function activate(context: vscode.ExtensionContext) {
           // Snippet
           const codeSnippet = getSelectionText();
           // API prep
-          const endpoint: string =
-            context.workspaceState.get("quack-companion.endpointURL") ||
-            "https://api.quackai.com";
           const quackToken = context.workspaceState.get<string>(
             "quack-companion.quackToken",
           );
@@ -320,7 +287,7 @@ export function activate(context: vscode.ExtensionContext) {
           const complianceStatus: ComplianceResult = await checkSnippet(
             item.guideline.id,
             codeSnippet,
-            endpoint,
+            config.get("endpoint") as string,
             quackToken,
           );
           //
@@ -383,22 +350,16 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(
     vscode.commands.registerCommand("quack-companion.setEndpoint", async () => {
       // Get user input
-      const defaultEndpoint: string =
-        (await context.workspaceState.get("quack-companion.endpointURL")) ||
-        "https://api.quackai.com/";
       const quackEndpoint = await vscode.window.showInputBox({
         prompt: "Enter the endpoint URL for Quack API",
-        placeHolder: defaultEndpoint,
+        placeHolder: config.get("endpoint"),
         ignoreFocusOut: true, // This keeps the input box open when focus is lost, which can prevent some confusion
       });
       if (quackEndpoint) {
         const isValid: boolean = await verifyQuackEndpoint(quackEndpoint);
         if (isValid) {
-          // Update the global context state
-          await context.workspaceState.update(
-            "quack-companion.endpointURL",
-            quackEndpoint,
-          );
+          // Update the workspace config entry
+          config.update("endpoint", quackEndpoint, false);
           // Reset the token
           await context.workspaceState.update(
             "quack-companion.quackToken",
@@ -432,10 +393,7 @@ export function activate(context: vscode.ExtensionContext) {
         session.accessToken,
       );
       // Quack login
-      const endpoint: string =
-        context.workspaceState.get("quack-companion.endpointURL") ||
-        "https://api.quackai.com";
-      const quackToken = await authenticate(session.accessToken, endpoint);
+      const quackToken = await authenticate(session.accessToken, config.get("endpoint") as string);
       if (quackToken) {
         await context.workspaceState.update(
           "quack-companion.quackToken",
