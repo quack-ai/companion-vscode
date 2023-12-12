@@ -8,7 +8,7 @@ import { PostHog } from "posthog-node";
 import * as path from "path";
 import * as dotenv from "dotenv";
 
-let telemetryClient: PostHog | null = null;
+let analyticsClient: PostHog | null = null;
 const telemetryLevel: string = vscode.workspace
   .getConfiguration("telemetry")
   .get("telemetryLevel", "all");
@@ -17,11 +17,15 @@ const telemetryLevel: string = vscode.workspace
 const envPath = path.join(path.dirname(__dirname), ".env");
 dotenv.config({ path: envPath });
 
-if (process.env.POSTHOG_KEY && telemetryLevel === "all") {
-  telemetryClient = new PostHog(process.env.POSTHOG_KEY, {
+if (
+  process.env.POSTHOG_KEY &&
+  vscode.env.isTelemetryEnabled &&
+  telemetryLevel === "all"
+) {
+  analyticsClient = new PostHog(process.env.POSTHOG_KEY, {
     host: process.env.POSTHOG_HOST,
   });
   console.log("Collecting anonymized usage data");
 }
 
-export default telemetryClient;
+export default analyticsClient;

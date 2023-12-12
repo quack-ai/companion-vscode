@@ -11,7 +11,7 @@
   - src/quack.ts
 
 "module: telemetry":
-  - src/telemetry.ts
+  - src/analytics.ts
 
 "module: util":
   - src/util/*

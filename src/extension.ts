@@ -11,7 +11,7 @@ import {
   GuidelineTreeItem,
   GuidelineTreeProvider,
 } from "./webviews/guidelineView";
-import telemetryClient from "./telemetry";
+import analyticsClient from "./analytics";
 import {
   getCurrentRepoName,
   getSelectionText,
@@ -131,7 +131,7 @@ export async function activate(context: vscode.ExtensionContext) {
         }
 
         // Telemetry
-        telemetryClient?.capture({
+        analyticsClient?.capture({
           distinctId: userId,
           event: "vscode-fetch-guidelines",
           properties: {
@@ -257,7 +257,7 @@ export async function activate(context: vscode.ExtensionContext) {
       // console.log(vscode.window.activeTextEditor?.document.languageId);
 
       // Telemetry
-      telemetryClient?.capture({
+      analyticsClient?.capture({
         distinctId: userId,
         event: "vscode-analyze-code",
         properties: {
@@ -329,7 +329,7 @@ export async function activate(context: vscode.ExtensionContext) {
           diagnosticCollection.set(getEditor().document.uri, diagnostics);
           statusBarItem.dispose();
           // Telemetry
-          telemetryClient?.capture({
+          analyticsClient?.capture({
             distinctId: userId,
             event: "vscode-analyze-code-mono",
             properties: {
@@ -420,5 +420,5 @@ export async function activate(context: vscode.ExtensionContext) {
 }
 
 export function deactivate() {
-  telemetryClient?.shutdownAsync();
+  analyticsClient?.shutdownAsync();
 }
