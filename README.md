@@ -6,6 +6,13 @@
 </h1>
 
 <p align="center">
+  <a href="https://github.com/quack-ai/companion">VSCode extension</a> ・
+  <a href="https://github.com/quack-ai/contribution-api">Backend API</a> ・
+  <a href="https://github.com/quack-ai/platform">Guideline management platform</a>
+</p>
+<h2 align="center"></h2>
+
+<p align="center">
   <a href="https://github.com/quack-ai/companion/actions/workflows/builds.yml">
     <img alt="CI Status" src="https://img.shields.io/github/actions/workflow/status/quack-ai/companion/builds.yml?branch=main&label=CI&logo=github&style=flat-square">
   </a>
