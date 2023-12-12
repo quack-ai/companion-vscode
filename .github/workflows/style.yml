@@ -21,6 +21,7 @@ jobs:
       - name: Run prettier
         run: |
           yarn install --dev --exact --frozen-lockfile
+          yarn prettier --version
           yarn format:check
   eslint:
     runs-on: ${{ matrix.os }}
@@ -36,4 +37,5 @@ jobs:
       - name: Run eslint
         run: |
           yarn install --dev --exact --frozen-lockfile
+          yarn eslint --version
           yarn lint:check
