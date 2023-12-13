@@ -99,9 +99,14 @@
         "title": "Set the API endpoint"
       },
       {
-        "command": "quack-companion.loginQuack",
-        "category": "Quack AI",
-        "title": "Log in with GitHub & Quack"
+        "command": "quack-companion.logIn",
+        "category": "Quack Companion",
+        "title": "Log in with GitHub"
+      },
+      {
+        "command": "quack-companion.logOut",
+        "category": "Quack Companion",
+        "title": "Log out"
       },
       {
         "command": "quack-companion.fetchGuidelines",

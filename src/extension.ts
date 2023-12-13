@@ -413,6 +413,16 @@ export async function activate(context: vscode.ExtensionContext) {
       }
     }),
   );
+  context.subscriptions.push(
+    vscode.commands.registerCommand("quack-companion.logOut", async () => {
+      // Clear tokens
+      await context.workspaceState.update("quack-companion.quackToken", undefined);
+      await context.workspaceState.update("quack-companion.githubToken", undefined);
+      vscode.window.showInformationMessage("Logout successful");
+      // Make state available to viewsWelcome
+      updateContext(context);
+    }),
+  );
   // Update context
   updateContext(context);
   // Commands to be run when activating
