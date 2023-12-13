@@ -196,37 +196,59 @@
           {
             "id": "sign-up",
             "title": "Sign-up using GitHub",
-            "description": "Go to [Quack platform](https://app.quackai.com/), click on **Login with GitHub** and follow the instructions.",
-            "media": {"image": "media/quack-logo.png", "altText": "Quack logo"},
-            "completionEvents": ["onLink:https://app.quackai.com/"]
+            "description": "Go to Quack platform, click on **Login with GitHub** and follow the instructions.\n[Visit Quack platform](https://app.quackai.com/)",
+            "media": {
+              "image": "media/quack-logo.png",
+              "altText": "Quack logo"
+            },
+            "completionEvents": [
+              "onLink:https://app.quackai.com/"
+            ]
           },
           {
             "id": "guideline-parsing",
             "title": "Parse contribution guidelines from your repo",
             "description": "Now select your repo, click on **Connect repo**, then on **Parse guidelines**.",
-            "media": {"image": "media/quack-logo.png", "altText": "Quack logo"},
+            "media": {
+              "image": "media/quack-logo.png",
+              "altText": "Quack logo"
+            },
             "completionEvents": []
           },
           {
             "id": "guideline-editing",
             "title": "Edit your guidelines",
             "description": "Create guidelines or edit them by clicking on them.",
-            "media": {"image": "media/quack-logo.png", "altText": "Quack logo"},
+            "media": {
+              "image": "media/quack-logo.png",
+              "altText": "Quack logo"
+            },
             "completionEvents": []
           },
           {
             "id": "extension-installation",
             "title": "Install the VSCode extension",
             "description": "Go to VSCode marketplace and install Quack Companion.",
-            "media": {"image": "media/quack-logo.png", "altText": "Quack logo"},
-            "completionEvents": ["onExtensionInstalled:quack-companion"]
+            "media": {
+              "image": "media/quack-logo.png",
+              "altText": "Quack logo"
+            },
+            "completionEvents": [
+              "onExtensionInstalled:quack-companion"
+            ]
           },
           {
             "id": "vscode-fetch",
             "title": "Check the access for your contributors in VSCode",
-            "description": "Click on the Quack view, and authenticate. Your guidelines should be fetched automatically",
-            "media": {"image": "media/quack-logo.png", "altText": "Quack logo"},
-            "completionEvents": ["onCommand:quack-companion.loginQuack", "onCommand:quack-companion.fetchGuidelines"]
+            "description": "Click on the Quack view, and authenticate. Your guidelines should be fetched automatically.\n[Authenticate](command:quack-companion.logIn)",
+            "media": {
+              "image": "media/quack-logo.png",
+              "altText": "Quack logo"
+            },
+            "completionEvents": [
+              "onCommand:quack-companion.logIn",
+              "onCommand:quack-companion.fetchGuidelines"
+            ]
           }
         ]
       },
@@ -238,30 +260,49 @@
           {
             "id": "vscode-endpoint",
             "title": "Specify your custom Quack API endpoint",
-            "description": "If you're running on a custom API endpoint, run the command ``Quack Companion: Set the API endpoint`` to specify it.",
-            "media": {"image": "media/quack-logo.png", "altText": "Quack logo"},
-            "completionEvents": ["onCommand:quack-companion.setEndpoint"]
+            "description": "If you're running on a custom API endpoint, specify it first.\n[Set custom endpoint](command:quack-companion.setEndpoint)",
+            "media": {
+              "image": "media/quack-logo.png",
+              "altText": "Quack logo"
+            },
+            "completionEvents": [
+              "onCommand:quack-companion.setEndpoint"
+            ]
           },
           {
             "id": "vscode-authenticate",
             "title": "Authenticate using GitHub",
-            "description": "Go to the Quack tab, click on **Authenticate** and follow the instructions.",
-            "media": {"image": "media/quack-logo.png", "altText": "Quack logo"},
-            "completionEvents": ["onCommand:quack-companion.logIn"]
+            "description": "Click on **Authenticate** and follow the instructions.\n[Authenticate](command:quack-companion.logIn)",
+            "media": {
+              "image": "media/quack-logo.png",
+              "altText": "Quack logo"
+            },
+            "completionEvents": [
+              "onCommand:quack-companion.logIn"
+            ]
           },
           {
             "id": "vscode-request",
             "title": "Request guidelines for a repo",
             "description": "If the selected repo doesn't have any guidelines yet, you will be ask whether you'd like to request some.",
-            "media": {"image": "media/quack-logo.png", "altText": "Quack logo"},
+            "media": {
+              "image": "media/quack-logo.png",
+              "altText": "Quack logo"
+            },
             "completionEvents": []
           },
           {
             "id": "vscode-analyze",
             "title": "Analyze code with Quack",
             "description": "Select a code section and click on **Analyze code with Quack** (arrow symbol in your Quack tab)",
-            "media": {"image": "media/quack-logo.png", "altText": "Quack logo"},
-            "completionEvents": ["onCommand:quack-companion.analyzeCode", "onCommand:quack-companion.analyzeCodeMonoGuideline"]
+            "media": {
+              "image": "media/quack-logo.png",
+              "altText": "Quack logo"
+            },
+            "completionEvents": [
+              "onCommand:quack-companion.analyzeCode",
+              "onCommand:quack-companion.analyzeCodeMonoGuideline"
+            ]
           }
         ]
       }
