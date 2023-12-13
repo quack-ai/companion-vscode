@@ -325,7 +325,7 @@
     "lint:check": "eslint src --ext ts",
     "lint:fix": "eslint --fix src --ext ts",
     "format:check": "npx prettier . --check",
-    "format:fix": "npx prettier . --write",
+    "format:fix": "npx prettier . --write"
   },
   "dependencies": {
     "axios": "^1.6.0",
