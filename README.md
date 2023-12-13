@@ -27,6 +27,7 @@
   </a>
 </p>
 
+
 <p align="center">
   <a href="https://marketplace.visualstudio.com/items?itemName=quackai.quack-companion">
     <img src="https://img.shields.io/visual-studio-marketplace/v/quackai.quack-companion?logo=visualstudiocode&logoColor=fff&style=flat-square&label=VS%20Marketplace" alt="VS Marketplace">
@@ -51,20 +52,25 @@
   </a>
 </p>
 
-This extension guides you through your code contributions with Quack as a companion. The extension provides you with curated contribution guidelines from maintainers and assists you in meeting them.
+![Compliance hint](media/compliance_hint.png)
+
+This extension guides you through your code contributions with Quack as a companion. The extension provides curated contribution guidelines from maintainers and assists you in meeting them.
 
 ## Quick Tour
 
 ### Contribution guidance
 
-Once installed, when you open a public GitHub project, the extension will activate like below:
+![Guideline view](media/guideline_list.png)
 
-![Companion sidebar](https://github.com/quack-ai/companion/blob/main/media/quack-sidebar.png)
-
-You'll find two main sections (with ongoing development):
-
-- **Contribution scoping**: everything for you to pick an issue/feature to work on, and ensure it's adequate to the project.
+Once installed, when you open a public GitHub project, the extension will give you a new tab wher you'll find:
 - **Guidelines**: automatic compliance of contribution guidelines, so that you can avoid the back-and-forth between the PR reviews and your IDE!
+- **Code chat** (coming soon)
+
+### Walthrough tutorial
+
+![Developer walkthrough](media/dev_walkthrough.png)
+
+With our walkthrough tutorial, you're only a few clicks away from having your own coding companion.
 
 ## Setup
 
@@ -73,8 +79,6 @@ You'll find two main sections (with ongoing development):
 Install [VSCode](https://code.visualstudio.com/Download)
 
 ### Install the extension
-
-![Extension installation](https://github.com/quack-ai/companion/blob/main/media/extension-search.png)
 
 Either:
 
