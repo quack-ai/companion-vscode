@@ -29,15 +29,14 @@ interface GithubUser {
   login: string;
 }
 
-
 export async function getUser(githubtoken: string): Promise<GithubUser> {
   try {
     // Check that it's a public repo
     const response: AxiosResponse<any> = await axios.get(
       `https://api.github.com/user`,
       {
-        headers: { Authorization: `Bearer ${githubtoken}` }
-      }
+        headers: { Authorization: `Bearer ${githubtoken}` },
+      },
     );
 
     // Handle the response

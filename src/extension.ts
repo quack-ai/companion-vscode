@@ -43,7 +43,9 @@ function updateContext(context: vscode.ExtensionContext) {
 
 export async function activate(context: vscode.ExtensionContext) {
   // Fallback for analytics identifier: Generate or retrieve the user's UUID from storage
-  let stateId: string | undefined = context.workspaceState.get("quack-companion.userId");
+  let stateId: string | undefined = context.workspaceState.get(
+    "quack-companion.userId",
+  );
   const userId: string = stateId || uuidv4();
   if (!stateId) {
     context.workspaceState.update("quack-companion.userId", userId);
@@ -147,7 +149,8 @@ export async function activate(context: vscode.ExtensionContext) {
 
         // Telemetry
         analyticsClient?.capture({
-          distinctId: context.workspaceState.get("quack-companion.userId") || userId,
+          distinctId:
+            context.workspaceState.get("quack-companion.userId") || userId,
           event: "vscode-fetch-guidelines",
           properties: {
             repository: repoName,
@@ -178,7 +181,8 @@ export async function activate(context: vscode.ExtensionContext) {
       vscode.window.showInformationMessage("Version info copied to clipboard.");
       // Telemetry
       analyticsClient?.capture({
-        distinctId: context.workspaceState.get("quack-companion.userId") || userId,
+        distinctId:
+          context.workspaceState.get("quack-companion.userId") || userId,
         event: "vscode-debug-info",
       });
     }),
@@ -286,7 +290,8 @@ export async function activate(context: vscode.ExtensionContext) {
 
       // Telemetry
       analyticsClient?.capture({
-        distinctId: context.workspaceState.get("quack-companion.userId") || userId,
+        distinctId:
+          context.workspaceState.get("quack-companion.userId") || userId,
         event: "vscode-analyze-code",
         properties: {
           repository: repoName,
@@ -369,7 +374,8 @@ export async function activate(context: vscode.ExtensionContext) {
           statusBarItem.dispose();
           // Telemetry
           analyticsClient?.capture({
-            distinctId: context.workspaceState.get("quack-companion.userId") || userId,
+            distinctId:
+              context.workspaceState.get("quack-companion.userId") || userId,
             event: "vscode-analyze-code-mono",
             properties: {
               repository: await getCurrentRepoName(),
@@ -422,7 +428,8 @@ export async function activate(context: vscode.ExtensionContext) {
         vscode.window.showErrorMessage("Quack endpoint URL is required");
       }
       analyticsClient?.capture({
-        distinctId: context.workspaceState.get("quack-companion.userId") || userId,
+        distinctId:
+          context.workspaceState.get("quack-companion.userId") || userId,
         event: "vscode-set-endpoint",
       });
     }),
@@ -481,7 +488,8 @@ export async function activate(context: vscode.ExtensionContext) {
       // Make state available to viewsWelcome
       updateContext(context);
       analyticsClient?.capture({
-        distinctId: context.workspaceState.get("quack-companion.userId") || userId,
+        distinctId:
+          context.workspaceState.get("quack-companion.userId") || userId,
         event: "vscode-logout",
       });
     }),
