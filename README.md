@@ -90,7 +90,7 @@ Either:
 The ultimate goal for this extension is to offer a smooth contribution experience for any developer.
 The development efforts will be focused on achieving the following milestones:
 
-- 🤝 Turn contribution guidelines into a live pair coding experience
+- 🤝 Turn contribution guidelines into a live pair coding experience (code completion & code chat)
 - 🐣 Help any developer find a starter contribution opportunity
 - ⚖️ Ensure alignment between the contribution goal and the project's priorities
 
