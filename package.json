@@ -139,7 +139,7 @@
     "viewsWelcome": [
       {
         "view": "quack-companion.authView",
-        "contents": "Welcome to Quack extension! Let's get you started\n[Authenticate](command:quack-companion.loginIn)",
+        "contents": "Welcome to Quack extension! Let's get you started\n[Authenticate](command:quack-companion.logIn)",
         "when": "!quack-companion.hasQuackToken"
       }
     ],
