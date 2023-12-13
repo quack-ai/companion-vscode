@@ -56,7 +56,13 @@ export async function activate(context: vscode.ExtensionContext) {
     config.get("endpoint") as string,
   );
   if (!isValidEndpoint) {
-    vscode.window.showErrorMessage("Invalid API endpoint");
+    vscode.window
+      .showErrorMessage("Invalid API endpoint", "Configure endpoint")
+      .then((choice) => {
+        if (choice === "Configure endpoint") {
+          vscode.commands.executeCommand("quack-companion.setEndpoint");
+        }
+      });
   }
 
   // Side bar
@@ -91,7 +97,13 @@ export async function activate(context: vscode.ExtensionContext) {
           "quack-companion.quackToken",
         );
         if (!quackToken) {
-          vscode.window.showErrorMessage("Please authenticate");
+          vscode.window
+            .showErrorMessage("Please authenticate", "Authenticate")
+            .then((choice) => {
+              if (choice === "Authenticate") {
+                vscode.commands.executeCommand("quack-companion.logIn");
+              }
+            });
           return;
         }
         const guidelines: QuackGuideline[] = await fetchRepoGuidelines(
@@ -114,20 +126,23 @@ export async function activate(context: vscode.ExtensionContext) {
 
         // If no guidelines exists, say it in the console
         if (guidelines.length === 0) {
-          vscode.window.showInformationMessage("No guidelines specified yet.");
-          const answer = await vscode.window.showInformationMessage(
-            "No guidelines specified yet. Do you wish to request some?",
-            "yes",
-            "no",
-          );
-          if (answer === "yes") {
-            // add to waitlist
-            await addRepoToWaitlist(
-              ghRepo.id,
-              config.get("endpoint") as string,
-              quackToken,
-            );
-          }
+          vscode.window
+            .showInformationMessage(
+              "No guidelines specified yet. Do you wish to request some?",
+              "Request guidelines",
+            )
+            .then((choice) => {
+              if (choice === "Request guidelines") {
+                addRepoToWaitlist(
+                  ghRepo.id,
+                  config.get("endpoint") as string,
+                  quackToken,
+                );
+                vscode.window.showInformationMessage(
+                  "Request sent (automatic guideline extraction has been queued).",
+                );
+              }
+            });
         }
 
         // Telemetry
@@ -184,7 +199,14 @@ export async function activate(context: vscode.ExtensionContext) {
       if (cachedGuidelines) {
         guidelines = cachedGuidelines;
       } else {
-        vscode.window.showErrorMessage("Please refresh guidelines");
+        vscode.window
+          .showErrorMessage("Please refresh guidelines", "Fetch guidelines")
+          .then((choice) => {
+            if (choice === "Fetch guidelines") {
+              vscode.commands.executeCommand("quack-companion.fetchGuidelines");
+            }
+          });
+
         return;
       }
 
@@ -193,7 +215,13 @@ export async function activate(context: vscode.ExtensionContext) {
           "quack-companion.quackToken",
         );
         if (!quackToken) {
-          vscode.window.showErrorMessage("Please authenticate");
+          vscode.window
+            .showErrorMessage("Please authenticate", "Authenticate")
+            .then((choice) => {
+              if (choice === "Authenticate") {
+                vscode.commands.executeCommand("quack-companion.logIn");
+              }
+            });
           return;
         }
         // Check compliance
@@ -225,11 +253,11 @@ export async function activate(context: vscode.ExtensionContext) {
         });
         complianceStatus.forEach((item: ComplianceResult, index: number) => {
           if (!item.is_compliant) {
-            vscode.window.showWarningMessage(
-              guidelines[guidelineIndexMap[item.guideline_id]].title +
-                ". " +
-                item.comment,
-            );
+            // vscode.window.showWarningMessage(
+            //   guidelines[guidelineIndexMap[item.guideline_id]].title +
+            //     ". " +
+            //     item.comment,
+            // );
             const diagnostic = new vscode.Diagnostic(
               selectionRange,
               guidelines[guidelineIndexMap[item.guideline_id]].title +
@@ -279,7 +307,13 @@ export async function activate(context: vscode.ExtensionContext) {
             "quack-companion.quackToken",
           );
           if (!quackToken) {
-            vscode.window.showErrorMessage("Please authenticate");
+            vscode.window
+              .showErrorMessage("Please authenticate", "Authenticate")
+              .then((choice) => {
+                if (choice === "Authenticate") {
+                  vscode.commands.executeCommand("quack-companion.logIn");
+                }
+              });
             return;
           }
           // Status bar
@@ -303,7 +337,15 @@ export async function activate(context: vscode.ExtensionContext) {
           if (cachedGuidelines) {
             guidelines = cachedGuidelines;
           } else {
-            vscode.window.showErrorMessage("Please refresh guidelines");
+            vscode.window
+              .showErrorMessage("Please refresh guidelines", "Fetch guidelines")
+              .then((choice) => {
+                if (choice === "Fetch guidelines") {
+                  vscode.commands.executeCommand(
+                    "quack-companion.fetchGuidelines",
+                  );
+                }
+              });
             return;
           }
           // Notify the webview to update its content
