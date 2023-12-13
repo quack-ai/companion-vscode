@@ -63,7 +63,7 @@
           },
           "analytics.key": {
             "type": "string",
-            "default": "phc_OKaA8uq4QwSbj9gic6PFb9ZJXtiZPeLfLZ7Ltpcvcy4",
+            "default": "phc_mU5797H4W1GELY5wmpxxSK9EWZyW4Eev5WZOtuqXMPE",
             "description": "The project key for PostHog"
           }
         }
