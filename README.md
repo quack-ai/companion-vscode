@@ -27,7 +27,6 @@
   </a>
 </p>
 
-
 <p align="center">
   <a href="https://marketplace.visualstudio.com/items?itemName=quackai.quack-companion">
     <img src="https://img.shields.io/visual-studio-marketplace/v/quackai.quack-companion?logo=visualstudiocode&logoColor=fff&style=flat-square&label=VS%20Marketplace" alt="VS Marketplace">
@@ -63,6 +62,7 @@ This extension guides you through your code contributions with Quack as a compan
 ![Guideline view](media/guideline_list.png)
 
 Once installed, when you open a public GitHub project, the extension will give you a new tab wher you'll find:
+
 - **Guidelines**: automatic compliance of contribution guidelines, so that you can avoid the back-and-forth between the PR reviews and your IDE!
 - **Code chat** (coming soon)
 
