@@ -22,7 +22,7 @@ if (
   analyticsClient = new PostHog(config.get("key") as string, {
     host: config.get("host") || "https://app.posthog.com",
   });
-  console.log("Collecting anonymized usage data");
+  console.log("Sending usage data");
 }
 
 export default analyticsClient;
