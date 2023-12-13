@@ -198,8 +198,8 @@
             "title": "Sign-up using GitHub",
             "description": "Go to Quack platform, click on **Login with GitHub** and follow the instructions.\n[Visit Quack platform](https://app.quackai.com/)",
             "media": {
-              "image": "media/quack-logo.png",
-              "altText": "Quack logo"
+              "image": "media/github_auth.png",
+              "altText": "GitHub authentication"
             },
             "completionEvents": [
               "onLink:https://app.quackai.com/"
@@ -210,8 +210,8 @@
             "title": "Parse contribution guidelines from your repo",
             "description": "Now select your repo, click on **Connect repo**, then on **Parse guidelines**.",
             "media": {
-              "image": "media/quack-logo.png",
-              "altText": "Quack logo"
+              "image": "media/guideline_dashboard.png",
+              "altText": "Guideline management dashboard"
             },
             "completionEvents": []
           },
@@ -220,8 +220,8 @@
             "title": "Edit your guidelines",
             "description": "Create guidelines or edit them by clicking on them.",
             "media": {
-              "image": "media/quack-logo.png",
-              "altText": "Quack logo"
+              "image": "media/editor_view.png",
+              "altText": "Guideline edition view"
             },
             "completionEvents": []
           },
@@ -230,7 +230,7 @@
             "title": "Install the VSCode extension",
             "description": "Go to VSCode marketplace and install Quack Companion.",
             "media": {
-              "image": "media/quack-logo.png",
+              "image": "media/marketplace_page.png",
               "altText": "Quack logo"
             },
             "completionEvents": [
@@ -242,7 +242,7 @@
             "title": "Check the access for your contributors in VSCode",
             "description": "Click on the Quack view, and authenticate. Your guidelines should be fetched automatically.\n[Authenticate](command:quack-companion.logIn)",
             "media": {
-              "image": "media/quack-logo.png",
+              "image": "media/guideline_list.png",
               "altText": "Quack logo"
             },
             "completionEvents": [
@@ -274,8 +274,8 @@
             "title": "Authenticate using GitHub",
             "description": "Click on **Authenticate** and follow the instructions.\n[Authenticate](command:quack-companion.logIn)",
             "media": {
-              "image": "media/quack-logo.png",
-              "altText": "Quack logo"
+              "image": "media/github_auth.png",
+              "altText": "GitHub authentication"
             },
             "completionEvents": [
               "onCommand:quack-companion.logIn"
@@ -296,8 +296,8 @@
             "title": "Analyze code with Quack",
             "description": "Select a code section and click on **Analyze code with Quack** (arrow symbol in your Quack tab)",
             "media": {
-              "image": "media/quack-logo.png",
-              "altText": "Quack logo"
+              "image": "media/compliance_hint.png",
+              "altText": "Code compliance hint"
             },
             "completionEvents": [
               "onCommand:quack-companion.analyzeCode",
