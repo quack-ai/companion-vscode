@@ -181,7 +181,30 @@
           "group": "inline"
         }
       ]
-    }
+    },
+    "walkthroughs": [
+      {
+        "id": "sample",
+        "title": "Sample title",
+        "description": "Sample description",
+        "steps": [
+          {
+            "id": "step1",
+            "title": "Step 1",
+            "description": "Step 1 description",
+            "media": {"image": "media/quack-sidebar.png", "altText": "Empty image"},
+            "completionEvents": ["onCommand:quack-companion.debugInfo"]
+          },
+          {
+            "id": "step2",
+            "title": "Step 2",
+            "description": "Step 2 description",
+            "media": {"image": "media/quack-sidebar.png", "altText": "Empty image"},
+            "completionEvents": ["onSettingChanged:api.endpoint"]
+          }
+        ]
+      }
+    ]
   },
   "scripts": {
     "vscode:prepublish": "yarn run compile",
