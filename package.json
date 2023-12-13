@@ -90,12 +90,12 @@
     "commands": [
       {
         "command": "quack-companion.debugInfo",
-        "category": "Quack AI",
+        "category": "Quack Companion",
         "title": "Get debug information"
       },
       {
         "command": "quack-companion.setEndpoint",
-        "category": "Quack AI",
+        "category": "Quack Companion",
         "title": "Set the API endpoint"
       },
       {
@@ -110,7 +110,7 @@
       },
       {
         "command": "quack-companion.fetchGuidelines",
-        "category": "Quack AI",
+        "category": "Quack Companion",
         "title": "Fetch contribution guidelines",
         "icon": {
           "light": "media/light/refresh.svg",
@@ -119,7 +119,7 @@
       },
       {
         "command": "quack-companion.analyzeCode",
-        "category": "Quack AI",
+        "category": "Quack Companion",
         "title": "Analyze code with Quack AI",
         "icon": {
           "light": "media/light/debug-rerun.svg",
@@ -128,7 +128,7 @@
       },
       {
         "command": "quack-companion.analyzeCodeMonoGuideline",
-        "category": "Quack AI",
+        "category": "Quack Companion",
         "title": "Analyze code snippet in respect to a specific guideline",
         "icon": {
           "light": "media/light/debug-rerun.svg",
