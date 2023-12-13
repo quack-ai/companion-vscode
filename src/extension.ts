@@ -253,11 +253,6 @@ export async function activate(context: vscode.ExtensionContext) {
         });
         complianceStatus.forEach((item: ComplianceResult, index: number) => {
           if (!item.is_compliant) {
-            // vscode.window.showWarningMessage(
-            //   guidelines[guidelineIndexMap[item.guideline_id]].title +
-            //     ". " +
-            //     item.comment,
-            // );
             const diagnostic = new vscode.Diagnostic(
               selectionRange,
               guidelines[guidelineIndexMap[item.guideline_id]].title +
@@ -357,9 +352,6 @@ export async function activate(context: vscode.ExtensionContext) {
           const selectionRange = getSelectionRange();
           var diagnostics: vscode.Diagnostic[] = [];
           if (!complianceStatus.is_compliant) {
-            vscode.window.showWarningMessage(
-              item.guideline.title + ". " + complianceStatus.comment,
-            );
             const diagnostic = new vscode.Diagnostic(
               selectionRange,
               item.guideline.title + "\n\n" + complianceStatus.comment,
