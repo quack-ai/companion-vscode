@@ -166,16 +166,16 @@ export async function activate(context: vscode.ExtensionContext) {
       const vscodeVersion = vscode.version;
       const osName = os.platform();
       const osVersion = os.release();
-      const info = `OS: ${osName} ${osVersion}\nVSCode Version: ${vscodeVersion}\nExtension Version: ${extensionVersion}\nEndpoint: ${config.get(
-        "endpoint",
-      )}`;
-      clipboardy.writeSync(info);
-      vscode.window.showInformationMessage("Version info copied to clipboard.");
       if (extensionVersion === "N/A") {
         vscode.window.showWarningMessage(
           "Could not retrieve extension version.",
         );
       }
+      const info = `OS: ${osName} ${osVersion}\nVSCode Version: ${vscodeVersion}\nExtension Version: ${extensionVersion}\nEndpoint: ${config.get(
+        "endpoint",
+      )}`;
+      clipboardy.writeSync(info);
+      vscode.window.showInformationMessage("Version info copied to clipboard.");
     }),
   );
 
