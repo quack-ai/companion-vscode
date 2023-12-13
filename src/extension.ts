@@ -18,7 +18,7 @@ import {
   getSelectionRange,
   getEditor,
 } from "./util/session";
-import { getRepoDetails, GitHubRepo } from "./util/github";
+import { getUser, getRepoDetails, GitHubRepo } from "./util/github";
 import {
   analyzeSnippet,
   checkSnippet,
@@ -42,11 +42,13 @@ function updateContext(context: vscode.ExtensionContext) {
 }
 
 export async function activate(context: vscode.ExtensionContext) {
-  // Generate or retrieve the user's UUID from storage
-  let stateId: string | undefined = context.workspaceState.get("userId");
+  // Fallback for analytics identifier: Generate or retrieve the user's UUID from storage
+  let stateId: string | undefined = context.workspaceState.get(
+    "quack-companion.userId",
+  );
   const userId: string = stateId || uuidv4();
   if (!stateId) {
-    context.workspaceState.update("userId", userId);
+    context.workspaceState.update("quack-companion.userId", userId);
   }
 
   // Config check
@@ -56,7 +58,13 @@ export async function activate(context: vscode.ExtensionContext) {
     config.get("endpoint") as string,
   );
   if (!isValidEndpoint) {
-    vscode.window.showErrorMessage("Invalid API endpoint");
+    vscode.window
+      .showErrorMessage("Invalid API endpoint", "Configure endpoint")
+      .then((choice) => {
+        if (choice === "Configure endpoint") {
+          vscode.commands.executeCommand("quack-companion.setEndpoint");
+        }
+      });
   }
 
   // Side bar
@@ -91,7 +99,13 @@ export async function activate(context: vscode.ExtensionContext) {
           "quack-companion.quackToken",
         );
         if (!quackToken) {
-          vscode.window.showErrorMessage("Please authenticate");
+          vscode.window
+            .showErrorMessage("Please authenticate", "Authenticate")
+            .then((choice) => {
+              if (choice === "Authenticate") {
+                vscode.commands.executeCommand("quack-companion.logIn");
+              }
+            });
           return;
         }
         const guidelines: QuackGuideline[] = await fetchRepoGuidelines(
@@ -114,25 +128,29 @@ export async function activate(context: vscode.ExtensionContext) {
 
         // If no guidelines exists, say it in the console
         if (guidelines.length === 0) {
-          vscode.window.showInformationMessage("No guidelines specified yet.");
-          const answer = await vscode.window.showInformationMessage(
-            "No guidelines specified yet. Do you wish to request some?",
-            "yes",
-            "no",
-          );
-          if (answer === "yes") {
-            // add to waitlist
-            await addRepoToWaitlist(
-              ghRepo.id,
-              config.get("endpoint") as string,
-              quackToken,
-            );
-          }
+          vscode.window
+            .showInformationMessage(
+              "No guidelines specified yet. Do you wish to request some?",
+              "Request guidelines",
+            )
+            .then((choice) => {
+              if (choice === "Request guidelines") {
+                addRepoToWaitlist(
+                  ghRepo.id,
+                  config.get("endpoint") as string,
+                  quackToken,
+                );
+                vscode.window.showInformationMessage(
+                  "Request sent (automatic guideline extraction has been queued).",
+                );
+              }
+            });
         }
 
         // Telemetry
         analyticsClient?.capture({
-          distinctId: userId,
+          distinctId:
+            context.workspaceState.get("quack-companion.userId") || userId,
           event: "vscode-fetch-guidelines",
           properties: {
             repository: repoName,
@@ -151,16 +169,22 @@ export async function activate(context: vscode.ExtensionContext) {
       const vscodeVersion = vscode.version;
       const osName = os.platform();
       const osVersion = os.release();
-      const info = `OS: ${osName} ${osVersion}\nVSCode Version: ${vscodeVersion}\nExtension Version: ${extensionVersion}\nEndpoint: ${config.get(
-        "endpoint",
-      )}`;
-      clipboardy.writeSync(info);
-      vscode.window.showInformationMessage("Version info copied to clipboard.");
       if (extensionVersion === "N/A") {
         vscode.window.showWarningMessage(
           "Could not retrieve extension version.",
         );
       }
+      const info = `OS: ${osName} ${osVersion}\nVSCode Version: ${vscodeVersion}\nExtension Version: ${extensionVersion}\nEndpoint: ${config.get(
+        "endpoint",
+      )}`;
+      clipboardy.writeSync(info);
+      vscode.window.showInformationMessage("Version info copied to clipboard.");
+      // Telemetry
+      analyticsClient?.capture({
+        distinctId:
+          context.workspaceState.get("quack-companion.userId") || userId,
+        event: "vscode-debug-info",
+      });
     }),
   );
 
@@ -184,7 +208,14 @@ export async function activate(context: vscode.ExtensionContext) {
       if (cachedGuidelines) {
         guidelines = cachedGuidelines;
       } else {
-        vscode.window.showErrorMessage("Please refresh guidelines");
+        vscode.window
+          .showErrorMessage("Please refresh guidelines", "Fetch guidelines")
+          .then((choice) => {
+            if (choice === "Fetch guidelines") {
+              vscode.commands.executeCommand("quack-companion.fetchGuidelines");
+            }
+          });
+
         return;
       }
 
@@ -193,7 +224,13 @@ export async function activate(context: vscode.ExtensionContext) {
           "quack-companion.quackToken",
         );
         if (!quackToken) {
-          vscode.window.showErrorMessage("Please authenticate");
+          vscode.window
+            .showErrorMessage("Please authenticate", "Authenticate")
+            .then((choice) => {
+              if (choice === "Authenticate") {
+                vscode.commands.executeCommand("quack-companion.logIn");
+              }
+            });
           return;
         }
         // Check compliance
@@ -225,11 +262,6 @@ export async function activate(context: vscode.ExtensionContext) {
         });
         complianceStatus.forEach((item: ComplianceResult, index: number) => {
           if (!item.is_compliant) {
-            vscode.window.showWarningMessage(
-              guidelines[guidelineIndexMap[item.guideline_id]].title +
-                ". " +
-                item.comment,
-            );
             const diagnostic = new vscode.Diagnostic(
               selectionRange,
               guidelines[guidelineIndexMap[item.guideline_id]].title +
@@ -258,7 +290,8 @@ export async function activate(context: vscode.ExtensionContext) {
 
       // Telemetry
       analyticsClient?.capture({
-        distinctId: userId,
+        distinctId:
+          context.workspaceState.get("quack-companion.userId") || userId,
         event: "vscode-analyze-code",
         properties: {
           repository: repoName,
@@ -279,7 +312,13 @@ export async function activate(context: vscode.ExtensionContext) {
             "quack-companion.quackToken",
           );
           if (!quackToken) {
-            vscode.window.showErrorMessage("Please authenticate");
+            vscode.window
+              .showErrorMessage("Please authenticate", "Authenticate")
+              .then((choice) => {
+                if (choice === "Authenticate") {
+                  vscode.commands.executeCommand("quack-companion.logIn");
+                }
+              });
             return;
           }
           // Status bar
@@ -303,7 +342,15 @@ export async function activate(context: vscode.ExtensionContext) {
           if (cachedGuidelines) {
             guidelines = cachedGuidelines;
           } else {
-            vscode.window.showErrorMessage("Please refresh guidelines");
+            vscode.window
+              .showErrorMessage("Please refresh guidelines", "Fetch guidelines")
+              .then((choice) => {
+                if (choice === "Fetch guidelines") {
+                  vscode.commands.executeCommand(
+                    "quack-companion.fetchGuidelines",
+                  );
+                }
+              });
             return;
           }
           // Notify the webview to update its content
@@ -315,9 +362,6 @@ export async function activate(context: vscode.ExtensionContext) {
           const selectionRange = getSelectionRange();
           var diagnostics: vscode.Diagnostic[] = [];
           if (!complianceStatus.is_compliant) {
-            vscode.window.showWarningMessage(
-              item.guideline.title + ". " + complianceStatus.comment,
-            );
             const diagnostic = new vscode.Diagnostic(
               selectionRange,
               item.guideline.title + "\n\n" + complianceStatus.comment,
@@ -330,7 +374,8 @@ export async function activate(context: vscode.ExtensionContext) {
           statusBarItem.dispose();
           // Telemetry
           analyticsClient?.capture({
-            distinctId: userId,
+            distinctId:
+              context.workspaceState.get("quack-companion.userId") || userId,
             event: "vscode-analyze-code-mono",
             properties: {
               repository: await getCurrentRepoName(),
@@ -382,6 +427,11 @@ export async function activate(context: vscode.ExtensionContext) {
       } else {
         vscode.window.showErrorMessage("Quack endpoint URL is required");
       }
+      analyticsClient?.capture({
+        distinctId:
+          context.workspaceState.get("quack-companion.userId") || userId,
+        event: "vscode-set-endpoint",
+      });
     }),
   );
 
@@ -397,6 +447,12 @@ export async function activate(context: vscode.ExtensionContext) {
         "quack-companion.githubToken",
         session.accessToken,
       );
+      // Analytics identifier
+      const githubUser = await getUser(session.accessToken);
+      await context.workspaceState.update(
+        "quack-companion.userId",
+        githubUser.id,
+      );
       // Quack login
       const quackToken = await authenticate(
         session.accessToken,
@@ -411,6 +467,10 @@ export async function activate(context: vscode.ExtensionContext) {
         // Make state available to viewsWelcome
         updateContext(context);
       }
+      analyticsClient?.capture({
+        distinctId: githubUser.id,
+        event: "vscode-login",
+      });
     }),
   );
   context.subscriptions.push(
@@ -427,6 +487,11 @@ export async function activate(context: vscode.ExtensionContext) {
       vscode.window.showInformationMessage("Logout successful");
       // Make state available to viewsWelcome
       updateContext(context);
+      analyticsClient?.capture({
+        distinctId:
+          context.workspaceState.get("quack-companion.userId") || userId,
+        event: "vscode-logout",
+      });
     }),
   );
   // Update context

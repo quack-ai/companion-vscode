@@ -17,7 +17,13 @@ export async function getCurrentRepoName(): Promise<string> {
   return new Promise((resolve, reject) => {
     const workspaceFolders = vscode.workspace.workspaceFolders;
     if (!workspaceFolders) {
-      vscode.window.showErrorMessage("No workspace opened.");
+      vscode.window
+        .showErrorMessage("No workspace opened.", "Open Folder")
+        .then((choice) => {
+          if (choice === "Open Folder") {
+            vscode.commands.executeCommand("vscode.openFolder");
+          }
+        });
       reject("No workspace opened.");
       return;
     }
@@ -50,7 +56,7 @@ export async function getCurrentRepoName(): Promise<string> {
       if (repoName) {
         resolve(repoName);
       } else {
-        vscode.window.showInformationMessage("No remote GitHub URL found.");
+        vscode.window.showWarningMessage("No remote GitHub URL found.");
         resolve(""); // Return a default value (empty string) if GitHub URL is not found.
       }
     });

@@ -24,6 +24,44 @@ export interface GithubIssue {
   created_at: string;
 }
 
+interface GithubUser {
+  id: string;
+  login: string;
+}
+
+export async function getUser(githubtoken: string): Promise<GithubUser> {
+  try {
+    // Check that it's a public repo
+    const response: AxiosResponse<any> = await axios.get(
+      `https://api.github.com/user`,
+      {
+        headers: { Authorization: `Bearer ${githubtoken}` },
+      },
+    );
+
+    // Handle the response
+    if (response.status === 200) {
+      return response.data;
+    } else {
+      // The request returned a non-200 status code (e.g., 404)
+      // Show an error message or handle the error accordingly
+      vscode.window.showErrorMessage(
+        `GitHub API returned status code ${response.status}`,
+      );
+      throw new Error("Failed GitHub API call.");
+    }
+  } catch (error) {
+    // Handle other errors that may occur during the request
+    console.error("Error fetching repository details:", error);
+
+    // Show an error message or handle the error accordingly
+    vscode.window.showErrorMessage(
+      "Failed to fetch repository details. Make sure the repository exists and is public.",
+    );
+    throw new Error("Failed GitHub API call.");
+  }
+}
+
 export async function getRepoDetails(repoName: string): Promise<any> {
   try {
     // Check that it's a public repo
@@ -66,7 +104,7 @@ export async function fetchStarterIssues(repo: GitHubRepo): Promise<any> {
     if (ghLabels.status !== 200) {
       // The request was successful, and you can process the response data here
       vscode.window.showErrorMessage(
-        `Fetchign labels from GitHub API returned status code ${ghLabels.status}`,
+        `Fetching labels from GitHub API returned status code ${ghLabels.status}`,
       );
       return null;
     }
@@ -113,11 +151,11 @@ export async function fetchStarterIssues(repo: GitHubRepo): Promise<any> {
     }
   } catch (error) {
     // Handle other errors that may occur during the request
-    console.error("Error fetching repository details:", error);
+    console.error("Error fetching repository issues:", error);
 
     // Show an error message or handle the error accordingly
     vscode.window.showErrorMessage(
-      "Failed to fetch repository details. Make sure the repository exists and is public.",
+      "Failed to fetch repository issues. Make sure the repository exists and is public.",
     );
     return null; // or throw an error, return an empty object, etc.
   }
@@ -153,11 +191,11 @@ export async function searchIssues(
     }
   } catch (error) {
     // Handle other errors that may occur during the request
-    console.error("Error fetching repository details:", error);
+    console.error("Error fetching repository issues:", error);
 
     // Show an error message or handle the error accordingly
     vscode.window.showErrorMessage(
-      "Failed to fetch repository details. Make sure the repository exists and is public.",
+      "Failed to fetch repository issues. Make sure the repository exists and is public.",
     );
     return null; // or throw an error, return an empty object, etc.
   }
