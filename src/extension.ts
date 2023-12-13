@@ -386,7 +386,7 @@ export async function activate(context: vscode.ExtensionContext) {
   );
 
   context.subscriptions.push(
-    vscode.commands.registerCommand("quack-companion.loginQuack", async () => {
+    vscode.commands.registerCommand("quack-companion.logIn", async () => {
       // GitHub login
       const session = await vscode.authentication.getSession(
         "github",
@@ -411,6 +411,22 @@ export async function activate(context: vscode.ExtensionContext) {
         // Make state available to viewsWelcome
         updateContext(context);
       }
+    }),
+  );
+  context.subscriptions.push(
+    vscode.commands.registerCommand("quack-companion.logOut", async () => {
+      // Clear tokens
+      await context.workspaceState.update(
+        "quack-companion.quackToken",
+        undefined,
+      );
+      await context.workspaceState.update(
+        "quack-companion.githubToken",
+        undefined,
+      );
+      vscode.window.showInformationMessage("Logout successful");
+      // Make state available to viewsWelcome
+      updateContext(context);
     }),
   );
   // Update context

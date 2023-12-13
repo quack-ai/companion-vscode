@@ -1,7 +1,7 @@
 {
   "name": "quack-companion",
   "displayName": "Quack Companion",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "license": "Apache-2.0",
   "publisher": "quackai",
   "description": "Your companion for code contributions",
@@ -90,22 +90,27 @@
     "commands": [
       {
         "command": "quack-companion.debugInfo",
-        "category": "Quack AI",
+        "category": "Quack Companion",
         "title": "Get debug information"
       },
       {
         "command": "quack-companion.setEndpoint",
-        "category": "Quack AI",
+        "category": "Quack Companion",
         "title": "Set the API endpoint"
       },
       {
-        "command": "quack-companion.loginQuack",
-        "category": "Quack AI",
-        "title": "Log in with GitHub & Quack"
+        "command": "quack-companion.logIn",
+        "category": "Quack Companion",
+        "title": "Log in with GitHub"
+      },
+      {
+        "command": "quack-companion.logOut",
+        "category": "Quack Companion",
+        "title": "Log out"
       },
       {
         "command": "quack-companion.fetchGuidelines",
-        "category": "Quack AI",
+        "category": "Quack Companion",
         "title": "Fetch contribution guidelines",
         "icon": {
           "light": "media/light/refresh.svg",
@@ -114,7 +119,7 @@
       },
       {
         "command": "quack-companion.analyzeCode",
-        "category": "Quack AI",
+        "category": "Quack Companion",
         "title": "Analyze code with Quack AI",
         "icon": {
           "light": "media/light/debug-rerun.svg",
@@ -123,7 +128,7 @@
       },
       {
         "command": "quack-companion.analyzeCodeMonoGuideline",
-        "category": "Quack AI",
+        "category": "Quack Companion",
         "title": "Analyze code snippet in respect to a specific guideline",
         "icon": {
           "light": "media/light/debug-rerun.svg",
@@ -134,7 +139,7 @@
     "viewsWelcome": [
       {
         "view": "quack-companion.authView",
-        "contents": "Welcome to Quack extension! Let's get you started\n[Authenticate](command:quack-companion.loginQuack)",
+        "contents": "Welcome to Quack extension! Let's get you started\n[Authenticate](command:quack-companion.loginIn)",
         "when": "!quack-companion.hasQuackToken"
       }
     ],
@@ -181,7 +186,127 @@
           "group": "inline"
         }
       ]
-    }
+    },
+    "walkthroughs": [
+      {
+        "id": "quack-companion.maintainer-tutorial",
+        "title": "Getting started as a Maintainer",
+        "description": "Quick setup to provide contribution assistance to your repository contributors.",
+        "steps": [
+          {
+            "id": "sign-up",
+            "title": "Sign-up using GitHub",
+            "description": "Go to Quack platform, click on **Login with GitHub** and follow the instructions.\n[Visit Quack platform](https://app.quackai.com/)",
+            "media": {
+              "image": "media/quack-logo.png",
+              "altText": "Quack logo"
+            },
+            "completionEvents": [
+              "onLink:https://app.quackai.com/"
+            ]
+          },
+          {
+            "id": "guideline-parsing",
+            "title": "Parse contribution guidelines from your repo",
+            "description": "Now select your repo, click on **Connect repo**, then on **Parse guidelines**.",
+            "media": {
+              "image": "media/quack-logo.png",
+              "altText": "Quack logo"
+            },
+            "completionEvents": []
+          },
+          {
+            "id": "guideline-editing",
+            "title": "Edit your guidelines",
+            "description": "Create guidelines or edit them by clicking on them.",
+            "media": {
+              "image": "media/quack-logo.png",
+              "altText": "Quack logo"
+            },
+            "completionEvents": []
+          },
+          {
+            "id": "extension-installation",
+            "title": "Install the VSCode extension",
+            "description": "Go to VSCode marketplace and install Quack Companion.",
+            "media": {
+              "image": "media/quack-logo.png",
+              "altText": "Quack logo"
+            },
+            "completionEvents": [
+              "onExtensionInstalled:quack-companion"
+            ]
+          },
+          {
+            "id": "vscode-fetch",
+            "title": "Check the access for your contributors in VSCode",
+            "description": "Click on the Quack view, and authenticate. Your guidelines should be fetched automatically.\n[Authenticate](command:quack-companion.logIn)",
+            "media": {
+              "image": "media/quack-logo.png",
+              "altText": "Quack logo"
+            },
+            "completionEvents": [
+              "onCommand:quack-companion.logIn",
+              "onCommand:quack-companion.fetchGuidelines"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "quack-companion.contributor-tutorial",
+        "title": "Getting started as a Developer",
+        "description": "Quick setup to get contribution assistance",
+        "steps": [
+          {
+            "id": "vscode-endpoint",
+            "title": "Specify your custom Quack API endpoint",
+            "description": "If you're running on a custom API endpoint, specify it first.\n[Set custom endpoint](command:quack-companion.setEndpoint)",
+            "media": {
+              "image": "media/quack-logo.png",
+              "altText": "Quack logo"
+            },
+            "completionEvents": [
+              "onCommand:quack-companion.setEndpoint"
+            ]
+          },
+          {
+            "id": "vscode-authenticate",
+            "title": "Authenticate using GitHub",
+            "description": "Click on **Authenticate** and follow the instructions.\n[Authenticate](command:quack-companion.logIn)",
+            "media": {
+              "image": "media/quack-logo.png",
+              "altText": "Quack logo"
+            },
+            "completionEvents": [
+              "onCommand:quack-companion.logIn"
+            ]
+          },
+          {
+            "id": "vscode-request",
+            "title": "Request guidelines for a repo",
+            "description": "If the selected repo doesn't have any guidelines yet, you will be ask whether you'd like to request some.",
+            "media": {
+              "image": "media/quack-logo.png",
+              "altText": "Quack logo"
+            },
+            "completionEvents": []
+          },
+          {
+            "id": "vscode-analyze",
+            "title": "Analyze code with Quack",
+            "description": "Select a code section and click on **Analyze code with Quack** (arrow symbol in your Quack tab)",
+            "media": {
+              "image": "media/quack-logo.png",
+              "altText": "Quack logo"
+            },
+            "completionEvents": [
+              "onCommand:quack-companion.analyzeCode",
+              "onCommand:quack-companion.analyzeCodeMonoGuideline"
+            ]
+          }
+        ]
+      }
+    ]
   },
   "scripts": {
     "vscode:prepublish": "yarn run compile",
