@@ -386,7 +386,7 @@ export async function activate(context: vscode.ExtensionContext) {
   );
 
   context.subscriptions.push(
-    vscode.commands.registerCommand("quack-companion.loginQuack", async () => {
+    vscode.commands.registerCommand("quack-companion.logIn", async () => {
       // GitHub login
       const session = await vscode.authentication.getSession(
         "github",
