@@ -18,7 +18,7 @@ import {
   getSelectionRange,
   getEditor,
 } from "./util/session";
-import { getRepoDetails, GitHubRepo } from "./util/github";
+import { getUser, getRepoDetails, GitHubRepo } from "./util/github";
 import {
   analyzeSnippet,
   checkSnippet,
@@ -42,11 +42,11 @@ function updateContext(context: vscode.ExtensionContext) {
 }
 
 export async function activate(context: vscode.ExtensionContext) {
-  // Generate or retrieve the user's UUID from storage
-  let stateId: string | undefined = context.workspaceState.get("userId");
+  // Fallback for analytics identifier: Generate or retrieve the user's UUID from storage
+  let stateId: string | undefined = context.workspaceState.get("quack-companion.userId");
   const userId: string = stateId || uuidv4();
   if (!stateId) {
-    context.workspaceState.update("userId", userId);
+    context.workspaceState.update("quack-companion.userId", userId);
   }
 
   // Config check
@@ -147,7 +147,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
         // Telemetry
         analyticsClient?.capture({
-          distinctId: userId,
+          distinctId: context.workspaceState.get("quack-companion.userId") || userId,
           event: "vscode-fetch-guidelines",
           properties: {
             repository: repoName,
@@ -176,6 +176,11 @@ export async function activate(context: vscode.ExtensionContext) {
       )}`;
       clipboardy.writeSync(info);
       vscode.window.showInformationMessage("Version info copied to clipboard.");
+      // Telemetry
+      analyticsClient?.capture({
+        distinctId: context.workspaceState.get("quack-companion.userId") || userId,
+        event: "vscode-debug-info",
+      });
     }),
   );
 
@@ -281,7 +286,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
       // Telemetry
       analyticsClient?.capture({
-        distinctId: userId,
+        distinctId: context.workspaceState.get("quack-companion.userId") || userId,
         event: "vscode-analyze-code",
         properties: {
           repository: repoName,
@@ -364,7 +369,7 @@ export async function activate(context: vscode.ExtensionContext) {
           statusBarItem.dispose();
           // Telemetry
           analyticsClient?.capture({
-            distinctId: userId,
+            distinctId: context.workspaceState.get("quack-companion.userId") || userId,
             event: "vscode-analyze-code-mono",
             properties: {
               repository: await getCurrentRepoName(),
@@ -416,6 +421,10 @@ export async function activate(context: vscode.ExtensionContext) {
       } else {
         vscode.window.showErrorMessage("Quack endpoint URL is required");
       }
+      analyticsClient?.capture({
+        distinctId: context.workspaceState.get("quack-companion.userId") || userId,
+        event: "vscode-set-endpoint",
+      });
     }),
   );
 
@@ -431,6 +440,12 @@ export async function activate(context: vscode.ExtensionContext) {
         "quack-companion.githubToken",
         session.accessToken,
       );
+      // Analytics identifier
+      const githubUser = await getUser(session.accessToken);
+      await context.workspaceState.update(
+        "quack-companion.userId",
+        githubUser.id,
+      );
       // Quack login
       const quackToken = await authenticate(
         session.accessToken,
@@ -445,6 +460,10 @@ export async function activate(context: vscode.ExtensionContext) {
         // Make state available to viewsWelcome
         updateContext(context);
       }
+      analyticsClient?.capture({
+        distinctId: githubUser.id,
+        event: "vscode-login",
+      });
     }),
   );
   context.subscriptions.push(
@@ -461,6 +480,10 @@ export async function activate(context: vscode.ExtensionContext) {
       vscode.window.showInformationMessage("Logout successful");
       // Make state available to viewsWelcome
       updateContext(context);
+      analyticsClient?.capture({
+        distinctId: context.workspaceState.get("quack-companion.userId") || userId,
+        event: "vscode-logout",
+      });
     }),
   );
   // Update context

@@ -24,6 +24,45 @@ export interface GithubIssue {
   created_at: string;
 }
 
+interface GithubUser {
+  id: string;
+  login: string;
+}
+
+
+export async function getUser(githubtoken: string): Promise<GithubUser> {
+  try {
+    // Check that it's a public repo
+    const response: AxiosResponse<any> = await axios.get(
+      `https://api.github.com/user`,
+      {
+        headers: { Authorization: `Bearer ${githubtoken}` }
+      }
+    );
+
+    // Handle the response
+    if (response.status === 200) {
+      return response.data;
+    } else {
+      // The request returned a non-200 status code (e.g., 404)
+      // Show an error message or handle the error accordingly
+      vscode.window.showErrorMessage(
+        `GitHub API returned status code ${response.status}`,
+      );
+      throw new Error("Failed GitHub API call.");
+    }
+  } catch (error) {
+    // Handle other errors that may occur during the request
+    console.error("Error fetching repository details:", error);
+
+    // Show an error message or handle the error accordingly
+    vscode.window.showErrorMessage(
+      "Failed to fetch repository details. Make sure the repository exists and is public.",
+    );
+    throw new Error("Failed GitHub API call.");
+  }
+}
+
 export async function getRepoDetails(repoName: string): Promise<any> {
   try {
     // Check that it's a public repo
