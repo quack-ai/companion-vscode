@@ -8,13 +8,16 @@
   - svelte/*
 
 "module: quack":
-  - src/quack.ts
+  - src/util/quack.ts
 
 "module: telemetry":
-  - src/analytics.ts
+  - src/util/analytics.ts
 
-"module: util":
-  - src/util/*
+"module: github":
+  - src/util/github.ts
+
+"module: session":
+  - src/util/session.ts
 
 "module: webviews":
   - src/webviews/*
@@ -28,6 +31,7 @@
   - tsconfig.json
   - rollup.config.js
   - webpack.config.js
+  - .vscode/*
 
 "topic: ci":
   - .github/*
