@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.5] - 2023-12-14
+
+### Added
+
+- Cleans notification system (#23)
+- Improves README and creates walkthroughs (#20, #21)
+
+### Fixed
+
+- Fixes axios security issue by bumping posthog (#24)
+
+## [0.0.4] - 2023-12-12
+
 ### Added
 
 - Add the possibility to add repo to guideline extraction queue (#16)
