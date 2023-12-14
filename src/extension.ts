@@ -264,22 +264,20 @@ export async function activate(context: vscode.ExtensionContext) {
           if (!item.is_compliant) {
             const diagnostic = new vscode.Diagnostic(
               selectionRange,
-              guidelines[guidelineIndexMap[item.guideline_id]].title +
-                "\n\n" +
-                item.comment,
+              item.comment,
               vscode.DiagnosticSeverity.Warning,
             );
             diagnostic.source = "Quack Companion";
-            // diagnostic.code = guidelines[index].title;
-            // // Add the replacement
-            // const relatedInfo = new vscode.DiagnosticRelatedInformation(
-            //   new vscode.Location(
-            //     editor.document.uri,
-            //     selectionRange,
-            //   ),
-            //   item.suggestion,
-            // );
-            // diagnostic.relatedInformation = [relatedInfo];
+            diagnostic.code = guidelines[guidelineIndexMap[item.guideline_id]].title;
+            // Add the replacement
+            const relatedInfo = new vscode.DiagnosticRelatedInformation(
+              new vscode.Location(
+                getEditor().document.uri,
+                selectionRange,
+              ),
+              `Not compliant with ${diagnostic.code}`,
+            );
+            diagnostic.relatedInformation = [relatedInfo];
             diagnostics.push(diagnostic);
           }
         });
