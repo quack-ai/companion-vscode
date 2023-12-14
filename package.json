@@ -93,7 +93,8 @@
           "id": "quack-companion.guidelineTreeView",
           "name": "Guidelines",
           "icon": "media/dark/quack.svg",
-          "contextualTitle": "Guidelines"
+          "contextualTitle": "Guidelines",
+          "when": "quack-companion.hasQuackToken"
         }
       ]
     },
