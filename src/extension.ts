@@ -192,6 +192,7 @@ export async function activate(context: vscode.ExtensionContext) {
     vscode.commands.registerCommand("quack-companion.analyzeCode", async () => {
       // Snippet
       const codeSnippet = getSelectionText();
+      const selectionRange = getSelectionRange();
       const repoName: string = await getCurrentRepoName();
       const ghRepo: GitHubRepo = await getRepoDetails(repoName);
       // Status bar
@@ -254,7 +255,6 @@ export async function activate(context: vscode.ExtensionContext) {
           })),
         );
         // Send messages
-        const selectionRange = getSelectionRange();
         var diagnostics: vscode.Diagnostic[] = [];
         const guidelineIndexMap: { [key: number]: number } = {};
         guidelines.forEach((item: QuackGuideline, index: number) => {
