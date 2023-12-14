@@ -268,13 +268,11 @@ export async function activate(context: vscode.ExtensionContext) {
               vscode.DiagnosticSeverity.Warning,
             );
             diagnostic.source = "Quack Companion";
-            diagnostic.code = guidelines[guidelineIndexMap[item.guideline_id]].title;
+            diagnostic.code =
+              guidelines[guidelineIndexMap[item.guideline_id]].title;
             // Add the replacement
             const relatedInfo = new vscode.DiagnosticRelatedInformation(
-              new vscode.Location(
-                getEditor().document.uri,
-                selectionRange,
-              ),
+              new vscode.Location(getEditor().document.uri, selectionRange),
               `Not compliant with ${diagnostic.code}`,
             );
             diagnostic.relatedInformation = [relatedInfo];
