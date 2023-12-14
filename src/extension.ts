@@ -11,7 +11,7 @@ import {
   GuidelineTreeItem,
   GuidelineTreeProvider,
 } from "./webviews/guidelineView";
-import analyticsClient from "./analytics";
+import analyticsClient from "./util/analytics";
 import {
   getCurrentRepoName,
   getSelectionText,
@@ -28,7 +28,7 @@ import {
   ComplianceResult,
   verifyQuackEndpoint,
   authenticate,
-} from "./quack";
+} from "./util/quack";
 
 function updateContext(context: vscode.ExtensionContext) {
   const quackToken = context.workspaceState.get<string>(
