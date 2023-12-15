@@ -82,45 +82,45 @@
       "quack-companion": [
         {
           "type": "tree",
-          "id": "quack-companion.authView",
+          "id": "quack.authView",
           "name": "Authentication",
           "icon": "media/dark/quack.svg",
           "contextualTitle": "Authentication",
-          "when": "!quack-companion.hasQuackToken"
+          "when": "!quack.isAuthenticated"
         },
         {
           "type": "tree",
-          "id": "quack-companion.guidelineTreeView",
+          "id": "quack.guidelineTreeView",
           "name": "Guidelines",
           "icon": "media/dark/quack.svg",
           "contextualTitle": "Guidelines",
-          "when": "quack-companion.hasQuackToken"
+          "when": "quack.isAuthenticated"
         }
       ]
     },
     "commands": [
       {
-        "command": "quack-companion.debugInfo",
+        "command": "quack.getEnvInfo",
         "category": "Quack Companion",
-        "title": "Get debug information"
+        "title": "Get environment information for debugging purposes"
       },
       {
-        "command": "quack-companion.setEndpoint",
+        "command": "quack.setEndpoint",
         "category": "Quack Companion",
         "title": "Set the API endpoint"
       },
       {
-        "command": "quack-companion.logIn",
+        "command": "quack.login",
         "category": "Quack Companion",
         "title": "Log in with GitHub"
       },
       {
-        "command": "quack-companion.logOut",
+        "command": "quack.logout",
         "category": "Quack Companion",
         "title": "Log out"
       },
       {
-        "command": "quack-companion.fetchGuidelines",
+        "command": "quack.fetchGuidelines",
         "category": "Quack Companion",
         "title": "Fetch contribution guidelines",
         "icon": {
@@ -129,18 +129,18 @@
         }
       },
       {
-        "command": "quack-companion.analyzeCode",
+        "command": "quack.checkCodeAgainstGuideline",
         "category": "Quack Companion",
-        "title": "Analyze code with Quack AI",
+        "title": "Check code against guideline",
         "icon": {
           "light": "media/light/debug-rerun.svg",
           "dark": "media/dark/debug-rerun.svg"
         }
       },
       {
-        "command": "quack-companion.analyzeCodeMonoGuideline",
+        "command": "quack.checkCodeAgainstRepo",
         "category": "Quack Companion",
-        "title": "Analyze code snippet in respect to a specific guideline",
+        "title": "Check code against all repo guidelines",
         "icon": {
           "light": "media/light/debug-rerun.svg",
           "dark": "media/dark/debug-rerun.svg"
@@ -149,51 +149,51 @@
     ],
     "viewsWelcome": [
       {
-        "view": "quack-companion.authView",
-        "contents": "Welcome to Quack extension! Let's get you started\n[Authenticate](command:quack-companion.logIn)",
-        "when": "!quack-companion.hasQuackToken"
+        "view": "quack.authView",
+        "contents": "Welcome to Quack extension! Let's get you started\n[Authenticate](command:quack.login)",
+        "when": "!quack.hasQuackToken"
       }
     ],
     "keybindings": [
       {
-        "command": "quack-companion.fetchGuidelines",
+        "command": "quack.fetchGuidelines",
         "mac": "cmd+shift+g",
         "key": "ctrl+shift+g"
       },
       {
-        "command": "quack-companion.analyzeCode",
+        "command": "quack.checkCodeAgainstRepo",
         "mac": "cmd+shift+q",
         "key": "ctrl+shift+q"
       },
       {
-        "command": "quack-companion.debugInfo",
-        "mac": "cmd+shift+d",
-        "key": "ctrl+shift+d"
+        "command": "quack.getEnvInfo",
+        "mac": "cmd+shift+e",
+        "key": "ctrl+shift+e"
       }
     ],
     "menus": {
       "editor/context": [
         {
-          "command": "quack-companion.analyzeCode",
+          "command": "quack.checkCodeAgainstRepo",
           "when": "editorHasSelection && resourceLangId == 'python'"
         }
       ],
       "view/title": [
         {
-          "command": "quack-companion.fetchGuidelines",
-          "when": "view == quack-companion.guidelineTreeView",
+          "command": "quack.fetchGuidelines",
+          "when": "view == quack.guidelineTreeView",
           "group": "navigation"
         },
         {
-          "command": "quack-companion.analyzeCode",
-          "when": "view == quack-companion.guidelineTreeView",
+          "command": "quack.checkCodeAgainstRepo",
+          "when": "view == quack.guidelineTreeView",
           "group": "navigation"
         }
       ],
       "view/item/context": [
         {
-          "command": "quack-companion.analyzeCodeMonoGuideline",
-          "when": "view == quack-companion.guidelineTreeView && viewItem == guidelineTreeItem",
+          "command": "quack.checkCodeAgainstGuideline",
+          "when": "view == quack.guidelineTreeView && viewItem == guidelineTreeItem",
           "group": "inline"
         }
       ]
@@ -251,14 +251,14 @@
           {
             "id": "vscode-fetch",
             "title": "Check the access for your contributors in VSCode",
-            "description": "Click on the Quack view, and authenticate. Your guidelines should be fetched automatically.\n[Authenticate](command:quack-companion.logIn)",
+            "description": "Click on the Quack view, and authenticate. Your guidelines should be fetched automatically.\n[Authenticate](command:quack.login)",
             "media": {
               "image": "media/guideline_list.png",
               "altText": "Quack logo"
             },
             "completionEvents": [
-              "onCommand:quack-companion.logIn",
-              "onCommand:quack-companion.fetchGuidelines"
+              "onCommand:quack.login",
+              "onCommand:quack.fetchGuidelines"
             ]
           }
         ]
@@ -271,25 +271,25 @@
           {
             "id": "vscode-endpoint",
             "title": "Specify your custom Quack API endpoint",
-            "description": "If you're running on a custom API endpoint, specify it first.\n[Set custom endpoint](command:quack-companion.setEndpoint)",
+            "description": "If you're running on a custom API endpoint, specify it first.\n[Set custom endpoint](command:quack.setEndpoint)",
             "media": {
               "image": "media/quack-logo.png",
               "altText": "Quack logo"
             },
             "completionEvents": [
-              "onCommand:quack-companion.setEndpoint"
+              "onCommand:quack.setEndpoint"
             ]
           },
           {
             "id": "vscode-authenticate",
             "title": "Authenticate using GitHub",
-            "description": "Click on **Authenticate** and follow the instructions.\n[Authenticate](command:quack-companion.logIn)",
+            "description": "Click on **Authenticate** and follow the instructions.\n[Authenticate](command:quack.login)",
             "media": {
               "image": "media/github_auth.png",
               "altText": "GitHub authentication"
             },
             "completionEvents": [
-              "onCommand:quack-companion.logIn"
+              "onCommand:quack.login"
             ]
           },
           {
@@ -311,8 +311,8 @@
               "altText": "Code compliance hint"
             },
             "completionEvents": [
-              "onCommand:quack-companion.analyzeCode",
-              "onCommand:quack-companion.analyzeCodeMonoGuideline"
+              "onCommand:quack.checkCodeAgainstGuideline",
+              "onCommand:quack.checkCodeAgainstRepo"
             ]
           }
         ]
@@ -331,6 +331,7 @@
   "dependencies": {
     "axios": "^1.6.0",
     "clipboardy": "^3.0.0",
+    "node-machine-id": "^1.1.12",
     "posthog-node": "3.1.3",
     "typescript": "^5.1.6",
     "uuid": "^9.0.0"

@@ -5,6 +5,12 @@
 
 import * as vscode from "vscode";
 import axios, { AxiosResponse } from "axios";
+import analyticsClient from "./analytics";
+import { getExtensionVersion } from "../activation/environmentSetup";
+import { getUniqueId } from "./vscode";
+import { getGithubToken } from "./github";
+
+let config = vscode.workspace.getConfiguration("api");
 
 export interface QuackGuideline {
   id: number;
@@ -43,7 +49,7 @@ export async function verifyQuackEndpoint(
   }
 }
 
-export async function authenticate(
+export async function getToken(
   githubToken: string,
   endpointURL: string,
 ): Promise<string> {
@@ -187,7 +193,7 @@ export async function checkSnippet(
   }
 }
 
-export async function addRepoToWaitlist(
+export async function addRepoToQueue(
   repoId: number,
   endpointURL: string,
   token: string,

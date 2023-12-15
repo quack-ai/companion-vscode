@@ -7,6 +7,9 @@
 "ext: svelte":
   - svelte/*
 
+"module: commands":
+  - src/commands/*
+
 "module: quack":
   - src/util/quack.ts
 
@@ -18,6 +21,7 @@
 
 "module: session":
   - src/util/session.ts
+  - src/util/vscode.ts
 
 "module: webviews":
   - src/webviews/*
