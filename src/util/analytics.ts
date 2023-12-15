@@ -15,14 +15,14 @@ const telemetryLevel: string = vscode.workspace
 let config = vscode.workspace.getConfiguration("analytics");
 
 if (
-  config.get("key") &&
   vscode.env.isTelemetryEnabled &&
-  telemetryLevel === "all"
+  telemetryLevel === "all" &&
+  config.get("key")
 ) {
   analyticsClient = new PostHog(config.get("key") as string, {
     host: config.get("host") || "https://app.posthog.com",
   });
-  console.log("Sending usage data");
+  console.log("Sending analytics data");
 }
 
 export default analyticsClient;

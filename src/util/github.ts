@@ -5,6 +5,7 @@
 
 import * as vscode from "vscode";
 import axios, { AxiosResponse } from "axios";
+import { getCurrentRepoName } from "./session";
 
 interface Label {
   id: number;
@@ -25,7 +26,7 @@ export interface GithubIssue {
 }
 
 interface GithubUser {
-  id: string;
+  id: number;
   login: string;
 }
 
@@ -62,23 +63,22 @@ export async function getUser(githubtoken: string): Promise<GithubUser> {
   }
 }
 
-export async function getRepoDetails(repoName: string): Promise<any> {
+export async function getRepoDetails(
+  repoName: string,
+  githubToken: string,
+): Promise<GitHubRepo> {
   try {
     // Check that it's a public repo
     const response: AxiosResponse<any> = await axios.get(
       `https://api.github.com/repos/${repoName}`,
+      { headers: { Authorization: `Bearer ${githubToken}` } },
     );
 
     // Handle the response
     if (response.status === 200) {
       return response.data;
     } else {
-      // The request returned a non-200 status code (e.g., 404)
-      // Show an error message or handle the error accordingly
-      vscode.window.showErrorMessage(
-        `GitHub API returned status code ${response.status}`,
-      );
-      return null; // or throw an error, return an empty object, etc.
+      throw new Error(`GitHub API returned status code ${response.status}`);
     }
   } catch (error) {
     // Handle other errors that may occur during the request
@@ -88,115 +88,68 @@ export async function getRepoDetails(repoName: string): Promise<any> {
     vscode.window.showErrorMessage(
       "Failed to fetch repository details. Make sure the repository exists and is public.",
     );
-    return null; // or throw an error, return an empty object, etc.
+    throw new Error("Error fetching repository details:");
   }
 }
 
-export async function fetchStarterIssues(repo: GitHubRepo): Promise<any> {
-  try {
-    // Fetch list of labels
-    // https://docs.github.com/en/rest/search/search?apiVersion=2022-11-28#search-labels
-    const searchLabel = "good first issue";
-    const starterQuery: string = searchLabel.replace(/\s+/g, "+");
-    const ghLabels: AxiosResponse<any> = await axios.get(
-      `https://api.github.com/search/labels?repository_id=${repo.id}&q=${starterQuery}`,
-    );
-    if (ghLabels.status !== 200) {
-      // The request was successful, and you can process the response data here
-      vscode.window.showErrorMessage(
-        `Fetching labels from GitHub API returned status code ${ghLabels.status}`,
-      );
-      return null;
-    }
-    if (ghLabels.data.items.length === 0) {
-      vscode.window.showInformationMessage("No matching issues");
-      return null;
-    }
-    // Locate the good first issue
-    const starterLabel = ghLabels.data.items.find(
-      (label: Label) =>
-        label.name.trim().toLowerCase() === searchLabel.trim().toLowerCase(),
-    );
-    if (!starterLabel) {
-      vscode.window.showInformationMessage(
-        "Unable to locate good starter issues :(",
-      );
-      return;
-    }
 
-    // Find starter issues
-    const queryParams = {
-      labels: starterLabel.name,
-      is: "issue",
-      state: "open",
-      sort: "created",
-      per_page: 100,
-    };
-    const response: AxiosResponse<any> = await axios.get(
-      `https://api.github.com/repos/${repo.full_name}/issues`,
-      { params: queryParams },
+export async function getGithubToken(
+  context: vscode.ExtensionContext,
+): Promise<string> {
+  // Check if it's in cache
+  let cachedToken: string | undefined = context.globalState.get(
+    "quack-companion.githubToken",
+  );
+  if (cachedToken) {
+    return cachedToken;
+  } else {
+    const session = await vscode.authentication.getSession(
+      "github",
+      ["read:user"],
+      { createIfNone: true },
     );
-
-    // Handle the response
-    if (response.status === 200) {
-      // The request was successful, and you can process the response data here
-      return response.data;
-    } else {
-      // The request returned a non-200 status code (e.g., 404)
-      // Show an error message or handle the error accordingly
-      vscode.window.showErrorMessage(
-        `GitHub API returned status code ${response.status}`,
-      );
-      return null; // or throw an error, return an empty object, etc.
-    }
-  } catch (error) {
-    // Handle other errors that may occur during the request
-    console.error("Error fetching repository issues:", error);
-
-    // Show an error message or handle the error accordingly
-    vscode.window.showErrorMessage(
-      "Failed to fetch repository issues. Make sure the repository exists and is public.",
+    context.globalState.update(
+      "quack-companion.githubToken",
+      session.accessToken,
     );
-    return null; // or throw an error, return an empty object, etc.
+    return session.accessToken;
   }
 }
 
-export async function searchIssues(
-  repoName: string,
-  topic: string,
-): Promise<any> {
-  try {
-    // Find starter issues
-    const queryParams = {
-      q: `${topic} repo:${repoName} is:public`,
-      sort: "created",
-      per_page: 100,
-    };
-    const response: AxiosResponse<any> = await axios.get(
-      `https://api.github.com/search/issues`,
-      { params: queryParams },
+export async function getGithubUserId(
+  context: vscode.ExtensionContext,
+): Promise<string> {
+  // Check if it's in cache
+  let cachedId: string | undefined = context.globalState.get(
+    "quack-companion.githubUserId",
+  );
+  if (cachedId) {
+    return cachedId;
+  } else {
+    const user = await getUser(await getGithubToken(context));
+    await context.globalState.update(
+      "quack-companion.githubUserId",
+      user.id.toString(),
     );
+    return user.id.toString();
+  }
+}
 
-    // Handle the response
-    if (response.status === 200) {
-      // The request was successful, and you can process the response data here
-      return response.data.items;
-    } else {
-      // The request returned a non-200 status code (e.g., 404)
-      // Show an error message or handle the error accordingly
-      vscode.window.showErrorMessage(
-        `GitHub API returned status code ${response.status}`,
-      );
-      return null; // or throw an error, return an empty object, etc.
-    }
-  } catch (error) {
-    // Handle other errors that may occur during the request
-    console.error("Error fetching repository issues:", error);
-
-    // Show an error message or handle the error accordingly
-    vscode.window.showErrorMessage(
-      "Failed to fetch repository issues. Make sure the repository exists and is public.",
+export async function getActiveGithubRepo(
+  context: vscode.ExtensionContext,
+): Promise<GitHubRepo> {
+  // Check if it's in cache
+  let cachedRepo: GitHubRepo | undefined = context.workspaceState.get(
+    "quack-companion.githubRepo",
+  );
+  if (cachedRepo) {
+    return cachedRepo;
+  } else {
+    const repo = await getRepoDetails(
+      await getCurrentRepoName(),
+      await getGithubToken(context),
     );
-    return null; // or throw an error, return an empty object, etc.
+    await context.workspaceState.update("quack-companion.githubRepo", repo);
+    return repo;
   }
 }
