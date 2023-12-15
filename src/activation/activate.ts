@@ -40,14 +40,11 @@ export async function activateExtension(context: vscode.ExtensionContext) {
 
   // Diagnostic/warning collection
   const diagnosticCollection =
-    vscode.languages.createDiagnosticCollection("quack-companion");
+    vscode.languages.createDiagnosticCollection("quack");
   // Sidebar
   const provider = new GuidelineTreeProvider(context.extensionUri);
   context.subscriptions.push(
-    vscode.window.registerTreeDataProvider(
-      "quack-companion.guidelineTreeView",
-      provider,
-    ),
+    vscode.window.registerTreeDataProvider("quack.guidelineTreeView", provider),
   );
   // Register commands and providers
   // Diagnostics
@@ -113,13 +110,13 @@ export async function activateExtension(context: vscode.ExtensionContext) {
   }
 
   // // Commands to be run when activating
-  if (context.globalState.get("quack-companion.quackToken")) {
+  if (context.globalState.get("quack.quackToken")) {
     vscode.commands.executeCommand("quack.fetchGuidelines");
   }
   // Refresh state
   vscode.commands.executeCommand(
     "setContext",
     "quack.isAuthenticated",
-    !!context.globalState.get("quack-companion.quackToken"),
+    !!context.globalState.get("quack.quackToken"),
   );
 }

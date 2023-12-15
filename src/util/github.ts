@@ -92,14 +92,12 @@ export async function getRepoDetails(
   }
 }
 
-
 export async function getGithubToken(
   context: vscode.ExtensionContext,
 ): Promise<string> {
   // Check if it's in cache
-  let cachedToken: string | undefined = context.globalState.get(
-    "quack-companion.githubToken",
-  );
+  let cachedToken: string | undefined =
+    context.globalState.get("quack.githubToken");
   if (cachedToken) {
     return cachedToken;
   } else {
@@ -108,10 +106,7 @@ export async function getGithubToken(
       ["read:user"],
       { createIfNone: true },
     );
-    context.globalState.update(
-      "quack-companion.githubToken",
-      session.accessToken,
-    );
+    context.globalState.update("quack.githubToken", session.accessToken);
     return session.accessToken;
   }
 }
@@ -120,17 +115,13 @@ export async function getGithubUserId(
   context: vscode.ExtensionContext,
 ): Promise<string> {
   // Check if it's in cache
-  let cachedId: string | undefined = context.globalState.get(
-    "quack-companion.githubUserId",
-  );
+  let cachedId: string | undefined =
+    context.globalState.get("quack.githubUserId");
   if (cachedId) {
     return cachedId;
   } else {
     const user = await getUser(await getGithubToken(context));
-    await context.globalState.update(
-      "quack-companion.githubUserId",
-      user.id.toString(),
-    );
+    await context.globalState.update("quack.githubUserId", user.id.toString());
     return user.id.toString();
   }
 }
@@ -139,9 +130,8 @@ export async function getActiveGithubRepo(
   context: vscode.ExtensionContext,
 ): Promise<GitHubRepo> {
   // Check if it's in cache
-  let cachedRepo: GitHubRepo | undefined = context.workspaceState.get(
-    "quack-companion.githubRepo",
-  );
+  let cachedRepo: GitHubRepo | undefined =
+    context.workspaceState.get("quack.githubRepo");
   if (cachedRepo) {
     return cachedRepo;
   } else {
@@ -149,7 +139,7 @@ export async function getActiveGithubRepo(
       await getCurrentRepoName(),
       await getGithubToken(context),
     );
-    await context.workspaceState.update("quack-companion.githubRepo", repo);
+    await context.workspaceState.update("quack.githubRepo", repo);
     return repo;
   }
 }

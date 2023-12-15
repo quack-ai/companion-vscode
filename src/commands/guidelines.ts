@@ -20,7 +20,7 @@ export async function fetchGuidelines(
   collection: vscode.DiagnosticCollection,
 ) {
   const ghRepo = await getActiveGithubRepo(context);
-  if (!context.globalState.get("quack-companion.quackToken")) {
+  if (!context.globalState.get("quack.quackToken")) {
     vscode.window
       .showErrorMessage("Please authenticate", "Authenticate")
       .then((choice) => {
@@ -33,9 +33,9 @@ export async function fetchGuidelines(
   const guidelines = await fetchRepoGuidelines(
     ghRepo.id,
     config.get("endpoint") as string,
-    context.globalState.get("quack-companion.quackToken") as string,
+    context.globalState.get("quack.quackToken") as string,
   );
-  context.workspaceState.update("quack-companion.guidelines", guidelines);
+  context.workspaceState.update("quack.guidelines", guidelines);
 
   // UI update
   provider.refresh(
@@ -58,7 +58,7 @@ export async function fetchGuidelines(
           addRepoToQueue(
             ghRepo.id,
             config.get("endpoint") as string,
-            context.globalState.get("quack-companion.quackToken") as string,
+            context.globalState.get("quack.quackToken") as string,
           );
           vscode.window.showInformationMessage(
             "Request sent (automatic guideline extraction has been queued).",

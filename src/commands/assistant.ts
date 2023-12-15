@@ -38,7 +38,7 @@ export async function checkCodeAgainstGuideline(
 ) {
   if (item) {
     // API prep
-    if (!context.globalState.get("quack-companion.quackToken")) {
+    if (!context.globalState.get("quack.quackToken")) {
       vscode.window
         .showErrorMessage("Please authenticate", "Authenticate")
         .then((choice) => {
@@ -62,7 +62,7 @@ export async function checkCodeAgainstGuideline(
       item.guideline.id,
       codeSnippet,
       config.get("endpoint") as string,
-      context.globalState.get("quack-companion.quackToken") as string,
+      context.globalState.get("quack.quackToken") as string,
     );
 
     // Notify the webview to update its content
@@ -101,7 +101,7 @@ export async function checkCodeAgainstRepo(
   collection: vscode.DiagnosticCollection,
 ) {
   // API prep
-  if (!context.globalState.get("quack-companion.quackToken")) {
+  if (!context.globalState.get("quack.quackToken")) {
     vscode.window
       .showErrorMessage("Please authenticate", "Authenticate")
       .then((choice) => {
@@ -140,7 +140,7 @@ export async function checkCodeAgainstRepo(
     ghRepo.id,
     codeSnippet,
     config.get("endpoint") as string,
-    context.globalState.get("quack-companion.quackToken") as string,
+    context.globalState.get("quack.quackToken") as string,
   );
   const statusIndexMap: { [key: number]: number } = {};
   complianceStatus.forEach((item: ComplianceResult, index: number) => {
