@@ -82,8 +82,9 @@ export async function logout(context: vscode.ExtensionContext) {
       extensionVersion: getExtensionVersion(),
     },
   });
-  context.workspaceState.update("quack-companion.quackToken", undefined);
-  context.workspaceState.update("quack-companion.githubToken", undefined);
+  context.globalState.update("quack.quackToken", undefined);
+  context.globalState.update("quack.githubToken", undefined);
+  context.workspaceState.update("quack.guidelines", undefined);
   vscode.commands.executeCommand("setContext", "quack.isAuthenticated", false);
   vscode.window.showInformationMessage("Logout successful");
 }
