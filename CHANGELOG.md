@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.6] - 2023-12-15
+
+### Added
+
+- Cleans project structure (#25, #28)
+- Improves diagnostic display (#27)
+
+### Fixed
+
+- Fixes state variable management (#28)
+
 ## [0.0.5] - 2023-12-14
 
 ### Added
