@@ -1,4 +1,4 @@
-# Contributing to companion
+# Contributing to Quack Companion 🦆
 
 Everything you need to know to contribute efficiently to the project!
 
