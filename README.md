@@ -59,11 +59,15 @@
 
 This extension guides you through your code contributions with Quack as a companion. The extension provides curated contribution guidelines from maintainers and assists you in meeting them.
 
+
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fquack-ai%2Fquack-companion-vscode.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fquack-ai%2Fquack-companion-vscode?ref=badge_large)
+
 ## Quick Tour
 
 ### Contribution guidance
 
 ![Guideline view](media/guideline_list.png)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fquack-ai%2Fquack-companion-vscode.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fquack-ai%2Fquack-companion-vscode?ref=badge_shield)
 
 Once installed, when you open a public GitHub project, the extension will give you a new tab wher you'll find:
 
