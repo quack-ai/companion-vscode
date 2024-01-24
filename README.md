@@ -124,10 +124,12 @@ This data collection is done using [Posthog](https://posthog.com/) and can be:
 
 ## Copying & distribution
 
-Copyright (C) 2023, Quack AI.
+Copyright (C) 2023-2024, Quack AI.
 
 This program is licensed under the Apache License 2.0.
 See LICENSE or go to <https://www.apache.org/licenses/LICENSE-2.0> for full license details.
+
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fquack-ai%2Fquack-companion-vscode.svg?type=large&issueType=license)](https://app.fossa.com/projects/git%2Bgithub.com%2Fquack-ai%2Fquack-companion-vscode?ref=badge_large&issueType=license)
 
 ## Contributing
 
