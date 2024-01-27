@@ -1,12 +1,6 @@
 "ext: media":
   - assets/*
 
-"ext: styles":
-  - styles/*
-
-"ext: svelte":
-  - svelte/*
-
 "module: commands":
   - src/commands/*
 
@@ -54,3 +48,4 @@
 
 "type: code quality":
   - .eslintrc.json
+  - .husky/*
