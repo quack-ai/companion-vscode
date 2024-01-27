@@ -65,7 +65,7 @@ This extension guides you through your code contributions with Quack as a compan
 
 ![Guideline view](assets/guideline_list.png)
 
-Once installed, when you open a public GitHub project, the extension will give you a new tab wher you'll find:
+Once installed, when you open a public GitHub project, the extension will give you a new tab where you'll find:
 
 - **Guidelines**: automatic compliance of contribution guidelines, so that you can avoid the back-and-forth between the PR reviews and your IDE!
 - **Code chat** (coming soon)
