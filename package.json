@@ -370,6 +370,7 @@
     ]
   },
   "scripts": {
+    "prepare": "husky",
     "vscode:prepublish": "yarn run compile",
     "compile": "webpack --mode production",
     "watch": "webpack --mode development --watch",
@@ -377,6 +378,9 @@
     "lint:fix": "eslint --fix src --ext ts",
     "format:check": "npx prettier . --check",
     "format:fix": "npx prettier . --write"
+  },
+  "lint-staged": {
+    "*.{ts,js,css,md}": "yarn lint:fix && yarn format:fix"
   },
   "dependencies": {
     "axios": "^1.6.0",
@@ -395,6 +399,8 @@
     "@typescript-eslint/parser": "^5.59.8",
     "eslint": "^8.41.0",
     "glob": "^8.1.0",
+    "husky": "^9.0.6",
+    "lint-staged": "^15.2.0",
     "prettier": "^3.0.1",
     "ts-loader": "^9.4.3",
     "webpack": "^5.85.0",
