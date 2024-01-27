@@ -7,7 +7,7 @@ Whatever the way you wish to contribute to the project, please respect the [code
 ## Codebase structure
 
 - [`src/`](https://github.com/quack-ai/companion/blob/main/src/) - The actual platform codebase
-- [`media/`](https://github.com/quack-ai/companion/blob/main/media/) - Binary assets
+- [`assets/`](https://github.com/quack-ai/companion/blob/main/assets/) - Binary assets
 - [`styles/`](https://github.com/quack-ai/companion/blob/main/styles/) - Style sheet files
 - [`.vscode/`](https://github.com/quack-ai/companion/blob/main/.vscode/) - VSCode specific config
 - [`.github/`](https://github.com/quack-ai/companion/blob/main/.github/) - Configuration for GitHub workflow

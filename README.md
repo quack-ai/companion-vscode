@@ -55,7 +55,7 @@
   </a>
 </p>
 
-![Compliance hint](media/compliance_hint.png)
+![Compliance hint](assets/compliance_hint.png)
 
 This extension guides you through your code contributions with Quack as a companion. The extension provides curated contribution guidelines from maintainers and assists you in meeting them.
 
@@ -63,7 +63,7 @@ This extension guides you through your code contributions with Quack as a compan
 
 ### Contribution guidance
 
-![Guideline view](media/guideline_list.png)
+![Guideline view](assets/guideline_list.png)
 
 Once installed, when you open a public GitHub project, the extension will give you a new tab wher you'll find:
 
@@ -72,7 +72,7 @@ Once installed, when you open a public GitHub project, the extension will give y
 
 ### Walthrough tutorial
 
-![Developer walkthrough](media/dev_walkthrough.png)
+![Developer walkthrough](assets/dev_walkthrough.png)
 
 With our walkthrough tutorial, you're only a few clicks away from having your own coding companion.
 
