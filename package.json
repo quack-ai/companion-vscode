@@ -76,16 +76,16 @@
     "swift",
     "keybindings"
   ],
-  "icon": "media/quack-logo.png",
+  "icon": "assets/quack-logo.png",
   "repository": {
     "type": "git",
     "url": "https://github.com/quack-ai/companion"
   },
   "bugs": {
     "url": "https://github.com/quack-ai/companion/issues",
-    "email": "support@quack-ai.com"
+    "email": "support@quackai.com"
   },
-  "homepage": "https://quack-ai.com",
+  "homepage": "https://quackai.com",
   "type": "commonjs",
   "engines": {
     "vscode": "^1.74.0"
@@ -124,7 +124,7 @@
         {
           "id": "quack-companion",
           "title": "Quack Companion",
-          "icon": "media/dark/quack.svg"
+          "icon": "assets/dark/quack.svg"
         }
       ]
     },
@@ -134,7 +134,7 @@
           "type": "tree",
           "id": "quack.authView",
           "name": "Authentication",
-          "icon": "media/dark/quack.svg",
+          "icon": "assets/dark/quack.svg",
           "contextualTitle": "Authentication",
           "when": "!quack.isAuthenticated"
         },
@@ -142,7 +142,7 @@
           "type": "tree",
           "id": "quack.guidelineTreeView",
           "name": "Guidelines",
-          "icon": "media/dark/quack.svg",
+          "icon": "assets/dark/quack.svg",
           "contextualTitle": "Guidelines",
           "when": "quack.isAuthenticated"
         }
@@ -174,8 +174,8 @@
         "category": "Quack Companion",
         "title": "Fetch contribution guidelines",
         "icon": {
-          "light": "media/light/refresh.svg",
-          "dark": "media/dark/refresh.svg"
+          "light": "assets/light/refresh.svg",
+          "dark": "assets/dark/refresh.svg"
         }
       },
       {
@@ -183,8 +183,8 @@
         "category": "Quack Companion",
         "title": "Check code against guideline",
         "icon": {
-          "light": "media/light/debug-rerun.svg",
-          "dark": "media/dark/debug-rerun.svg"
+          "light": "assets/light/debug-rerun.svg",
+          "dark": "assets/dark/debug-rerun.svg"
         }
       },
       {
@@ -192,8 +192,8 @@
         "category": "Quack Companion",
         "title": "Check code against all repo guidelines",
         "icon": {
-          "light": "media/light/debug-rerun.svg",
-          "dark": "media/dark/debug-rerun.svg"
+          "light": "assets/light/debug-rerun.svg",
+          "dark": "assets/dark/debug-rerun.svg"
         }
       }
     ],
@@ -259,7 +259,7 @@
             "title": "Sign-up using GitHub",
             "description": "Go to Quack platform, click on **Login with GitHub** and follow the instructions.\n[Visit Quack platform](https://app.quackai.com/)",
             "media": {
-              "image": "media/github_auth.png",
+              "image": "assets/github_auth.png",
               "altText": "GitHub authentication"
             },
             "completionEvents": [
@@ -271,7 +271,7 @@
             "title": "Parse contribution guidelines from your repo",
             "description": "Now select your repo, click on **Connect repo**, then on **Parse guidelines**.",
             "media": {
-              "image": "media/guideline_dashboard.png",
+              "image": "assets/guideline_dashboard.png",
               "altText": "Guideline management dashboard"
             },
             "completionEvents": []
@@ -281,7 +281,7 @@
             "title": "Edit your guidelines",
             "description": "Create guidelines or edit them by clicking on them.",
             "media": {
-              "image": "media/editor_view.png",
+              "image": "assets/editor_view.png",
               "altText": "Guideline edition view"
             },
             "completionEvents": []
@@ -291,7 +291,7 @@
             "title": "Install the VSCode extension",
             "description": "Go to VSCode marketplace and install Quack Companion.",
             "media": {
-              "image": "media/marketplace_page.png",
+              "image": "assets/marketplace_page.png",
               "altText": "Quack logo"
             },
             "completionEvents": [
@@ -303,7 +303,7 @@
             "title": "Check the access for your contributors in VSCode",
             "description": "Click on the Quack view, and authenticate. Your guidelines should be fetched automatically.\n[Authenticate](command:quack.login)",
             "media": {
-              "image": "media/guideline_list.png",
+              "image": "assets/guideline_list.png",
               "altText": "Quack logo"
             },
             "completionEvents": [
@@ -323,7 +323,7 @@
             "title": "Specify your custom Quack API endpoint",
             "description": "If you're running on a custom API endpoint, specify it first.\n[Set custom endpoint](command:quack.setEndpoint)",
             "media": {
-              "image": "media/quack-logo.png",
+              "image": "assets/quack-logo.png",
               "altText": "Quack logo"
             },
             "completionEvents": [
@@ -335,7 +335,7 @@
             "title": "Authenticate using GitHub",
             "description": "Click on **Authenticate** and follow the instructions.\n[Authenticate](command:quack.login)",
             "media": {
-              "image": "media/github_auth.png",
+              "image": "assets/github_auth.png",
               "altText": "GitHub authentication"
             },
             "completionEvents": [
@@ -347,7 +347,7 @@
             "title": "Request guidelines for a repo",
             "description": "If the selected repo doesn't have any guidelines yet, you will be ask whether you'd like to request some.",
             "media": {
-              "image": "media/quack-logo.png",
+              "image": "assets/quack-logo.png",
               "altText": "Quack logo"
             },
             "completionEvents": []
@@ -357,7 +357,7 @@
             "title": "Analyze code with Quack",
             "description": "Select a code section and click on **Analyze code with Quack** (arrow symbol in your Quack tab)",
             "media": {
-              "image": "media/compliance_hint.png",
+              "image": "assets/compliance_hint.png",
               "altText": "Code compliance hint"
             },
             "completionEvents": [
