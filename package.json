@@ -391,8 +391,6 @@
     "uuid": "^9.0.0"
   },
   "devDependencies": {
-    "@commitlint/cli": "^18.6.0",
-    "@commitlint/config-conventional": "^18.6.0",
     "@types/glob": "^8.1.0",
     "@types/node": "20.2.5",
     "@types/uuid": "^9.0.2",
