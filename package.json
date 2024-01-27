@@ -1,30 +1,80 @@
 {
   "name": "quack-companion",
   "displayName": "Quack Companion",
-  "version": "0.0.6",
+  "version": "0.0.7.dev0",
   "license": "Apache-2.0",
   "publisher": "quackai",
-  "description": "Your companion for code contributions",
+  "description": "AI coding assistant for collaborative software development 💻 Turn your team development practices into a portable plug-and-play context for code generation. Alternative to GitHub Copilot powered by GPT 3.5 / 4 turbo and Ollama.",
   "pricing": "Free",
   "author": {
     "name": "F-G Fernandez",
     "url": "https://github.com/frgfm"
   },
+  "galleryBanner": {
+    "color": "#100f11",
+    "theme": "dark"
+  },
+  "badges": [
+    {
+      "url": "https://img.shields.io/github/stars/quack-ai/companion?style=social",
+      "description": "Star Quack Companion on Github",
+      "href": "https://github.com/quack-ai/companion"
+    },
+    {
+      "url": "https://img.shields.io/twitter/follow/quack_ai?style=social",
+      "description": "Follow Quack AI on Twitter",
+      "href": "https://twitter.com/quack_ai"
+    },
+    {
+      "url": "https://img.shields.io/visual-studio-marketplace/r/quackai.quack-companion?logo=visual-studio-code&style=social",
+      "description": "Rate us in VSCode Marketplace",
+      "href": "https://marketplace.visualstudio.com/items?itemName=quackai.quack-companion"
+    }
+  ],
   "categories": [
     "Programming Languages",
+    "Snippets",
     "Machine Learning",
     "Education"
   ],
   "keywords": [
     "ai",
+    "autocomplete",
+    "coding",
     "assistant",
+    "code completion",
+    "code generation",
     "contribution",
-    "quackai",
     "deep learning",
+    "documentation",
     "llm",
     "copilot",
     "chatgpt",
-    "openai"
+    "openai",
+    "ollama",
+    "quackai",
+    "refactor",
+    "snippets",
+    "test",
+    "open source",
+    "llama",
+    "mistral",
+    "python",
+    "typescript",
+    "javascript",
+    "node",
+    "nodejs",
+    "node.js",
+    "c",
+    "cpp",
+    "c++",
+    "css",
+    "go",
+    "golang",
+    "react",
+    "rust",
+    "swift",
+    "keybindings"
   ],
   "icon": "media/quack-logo.png",
   "repository": {
