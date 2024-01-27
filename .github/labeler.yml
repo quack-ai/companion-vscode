@@ -1,5 +1,5 @@
 "ext: media":
-  - media/*
+  - assets/*
 
 "ext: styles":
   - styles/*
