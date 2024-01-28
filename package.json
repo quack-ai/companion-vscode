@@ -383,7 +383,7 @@
     "*.{ts,js,css,md}": "yarn lint:fix && yarn format:fix"
   },
   "dependencies": {
-    "axios": "^1.6.0",
+    "axios": "^1.6.7",
     "clipboardy": "^4.0.0",
     "node-machine-id": "^1.1.12",
     "posthog-node": "3.1.3",
