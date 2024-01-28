@@ -5,7 +5,29 @@
 
 version: 2
 updates:
-  - package-ecosystem: "npm" # See documentation for possible values
-    directory: "/" # Location of package manifests
+  - package-ecosystem: "github-actions"
+    directory: "/"
     schedule:
-      interval: "monthly"
+      interval: "daily"
+      time: "06:00"
+      timezone: "Europe/Paris"
+    groups:
+      gh-actions:
+        patterns:
+          - "*"
+    reviewers:
+      - "frgfm"
+    assignees:
+      - "frgfm"
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "06:00"
+      timezone: "Europe/Paris"
+    reviewers:
+      - "frgfm"
+    assignees:
+      - "frgfm"
+    open-pull-requests-limit: 10
