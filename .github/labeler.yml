@@ -1,51 +1,66 @@
 "ext: media":
-  - assets/*
+  - changed-files:
+      - any-glob-to-any-file: assets/*
 
 "module: commands":
-  - src/commands/*
+  - changed-files:
+      - any-glob-to-any-file: src/commands/*
 
 "module: quack":
-  - src/util/quack.ts
+  - changed-files:
+      - any-glob-to-any-file: src/util/quack.ts
 
 "module: telemetry":
-  - src/util/analytics.ts
+  - changed-files:
+      - any-glob-to-any-file: src/util/analytics.ts
 
 "module: github":
-  - src/util/github.ts
+  - changed-files:
+      - any-glob-to-any-file: src/util/github.ts
 
 "module: session":
-  - src/util/session.ts
-  - src/util/vscode.ts
+  - changed-files:
+      - any-glob-to-any-file: ["src/util/session.ts", "src/util/vscode.ts"]
 
 "module: webviews":
-  - src/webviews/*
+  - changed-files:
+      - any-glob-to-any-file: src/webviews/*
 
 "module: extension":
-  - src/extension.ts
+  - changed-files:
+      - any-glob-to-any-file: src/extension.ts
 
 "topic: build":
-  - package.json
-  - yarn.lock
-  - tsconfig.json
-  - rollup.config.js
-  - webpack.config.js
-  - .vscode/*
+  - changed-files:
+      - any-glob-to-any-file:
+          [
+            "package.json",
+            "yarn.lock",
+            "tsconfig.json",
+            "rollup.config.js",
+            "webpack.config.js",
+            ".vscode/*",
+          ]
 
 "topic: ci":
-  - .github/*
+  - changed-files:
+      - any-glob-to-any-file: .github/*
 
 "topic: docker":
-  - docker-compose.yml
-  - docker-compose.test.yml
-  - Dockerfile
-  - traefik.yml
+  - changed-files:
+      - any-glob-to-any-file:
+          [
+            "docker-compose.yml",
+            "docker-compose.test.yml",
+            "Dockerfile",
+            "traefik.yml",
+          ]
 
 "topic: documentation":
-  - README.md
-  - CONTRIBUTING.md
-  - CHANGELOG.md
-  - CODE_OF_CONDUCT.md
+  - changed-files:
+      - any-glob-to-any-file:
+          ["README.md", "CONTRIBUTING.md", "CHANGELOG.md", "CODE_OF_CONDUCT.md"]
 
 "type: code quality":
-  - .eslintrc.json
-  - .husky/*
+  - changed-files:
+      - any-glob-to-any-file: [".eslintrc.json", ".husky/*"]
