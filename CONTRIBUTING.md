@@ -84,7 +84,7 @@ git checkout -b a-short-description
 #### Commits
 
 - **Code**: make sure you provide docstrings & comments to your code.
-- **Commit message**: please follow [Udacity guide](http://udacity.github.io/git-styleguide/)
+- **Commit message**: please follow [Angular commit format](https://github.com/angular/angular/blob/main/CONTRIBUTING.md#-commit-message-format)
 
 #### Code quality
 
