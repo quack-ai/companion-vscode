@@ -4,21 +4,16 @@ changelog:
       - ignore-for-release
   categories:
     - title: Breaking Changes 🛠
-      labels:
-        - "type: breaking change"
-    # NEW FEATURES
-    - title: New Features 🚀
-      labels:
-        - "type: new feature"
-    # BUG FIXES
+      labels: ["type: breaking change"]
+    - title: New Features ✨
+      labels: ["type: feat"]
     - title: Bug Fixes 🐛
-      labels:
-        - "type: bug"
-    # IMPROVEMENTS
+      labels: ["type: fix"]
+    - title: Dependencies
+      labels: ["dependencies"]
+    - title: Documentation 📖
+      labels: ["topic: docs"]
     - title: Improvements
-      labels:
-        - "type: enhancement"
-    # MISC
-    - title: Miscellaneous
-      labels:
-        - "type: misc"
+      labels: ["type: improvement"]
+    - title: Other changes
+      labels: ["*"]
