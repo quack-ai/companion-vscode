@@ -1,26 +1,18 @@
-"ext: media":
+"ext: assets":
   - changed-files:
       - any-glob-to-any-file: assets/*
+
+"module: activation":
+  - changed-files:
+      - any-glob-to-any-file: src/activation/*
 
 "module: commands":
   - changed-files:
       - any-glob-to-any-file: src/commands/*
 
-"module: quack":
+"module: util":
   - changed-files:
-      - any-glob-to-any-file: src/util/quack.ts
-
-"module: telemetry":
-  - changed-files:
-      - any-glob-to-any-file: src/util/analytics.ts
-
-"module: github":
-  - changed-files:
-      - any-glob-to-any-file: src/util/github.ts
-
-"module: session":
-  - changed-files:
-      - any-glob-to-any-file: ["src/util/session.ts", "src/util/vscode.ts"]
+      - any-glob-to-any-file: src/util/*
 
 "module: webviews":
   - changed-files:
@@ -46,21 +38,11 @@
   - changed-files:
       - any-glob-to-any-file: .github/*
 
-"topic: docker":
-  - changed-files:
-      - any-glob-to-any-file:
-          [
-            "docker-compose.yml",
-            "docker-compose.test.yml",
-            "Dockerfile",
-            "traefik.yml",
-          ]
-
-"topic: documentation":
+"topic: docs":
   - changed-files:
       - any-glob-to-any-file:
           ["README.md", "CONTRIBUTING.md", "CHANGELOG.md", "CODE_OF_CONDUCT.md"]
 
-"type: code quality":
+"topic: style":
   - changed-files:
       - any-glob-to-any-file: [".eslintrc.json", ".husky/*"]
