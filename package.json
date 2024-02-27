@@ -1,7 +1,7 @@
 {
   "name": "quack-companion",
   "displayName": "Quack Companion",
-  "version": "0.0.7.dev0",
+  "version": "0.0.7-alpha",
   "license": "Apache-2.0",
   "publisher": "quackai",
   "description": "AI coding assistant for collaborative software development 💻 Turn your team development practices into a portable plug-and-play context for code generation. Alternative to GitHub Copilot powered by GPT 3.5 / 4 turbo and Ollama.",
@@ -94,7 +94,7 @@
     "ui",
     "workspace"
   ],
-  "activationEvents": [],
+  "activationEvents": ["quack-companion.getEnvInfo"],
   "main": "./dist/extension.js",
   "contributes": {
     "configuration": [
@@ -150,7 +150,7 @@
     },
     "commands": [
       {
-        "command": "quack.getEnvInfo",
+        "command": "quack-companion.getEnvInfo",
         "category": "Quack Companion",
         "title": "Get environment information for debugging purposes"
       },
