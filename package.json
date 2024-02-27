@@ -94,7 +94,7 @@
     "ui",
     "workspace"
   ],
-  "activationEvents": ["quack-companion.getEnvInfo"],
+  "activationEvents": [],
   "main": "./dist/extension.js",
   "contributes": {
     "configuration": [
@@ -150,7 +150,7 @@
     },
     "commands": [
       {
-        "command": "quack-companion.getEnvInfo",
+        "command": "quack.getEnvInfo",
         "category": "Quack Companion",
         "title": "Get environment information for debugging purposes"
       },
