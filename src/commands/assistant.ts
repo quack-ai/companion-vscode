@@ -15,6 +15,7 @@ import {
   ComplianceResult,
   fetchRepoGuidelines,
   getToken,
+  postChatMessage,
 } from "../util/quack";
 import { getActiveGithubRepo, getGithubToken } from "../util/github";
 import {
@@ -146,8 +147,6 @@ export async function checkCodeAgainstRepo(
   complianceStatus.forEach((item: ComplianceResult, index: number) => {
     statusIndexMap[item.guideline_id] = index;
   });
-  console.log(complianceStatus);
-  console.log(guidelines);
 
   // UI Update
   collection.clear();
@@ -190,6 +189,62 @@ export async function checkCodeAgainstRepo(
   analyticsClient?.capture({
     distinctId: await getUniqueId(context),
     event: "vscode:check-vs-repo",
+    properties: {
+      extensionVersion: getExtensionVersion(),
+      repo_name: ghRepo.full_name,
+      repo_id: ghRepo.id,
+    },
+  });
+}
+
+export async function sendChatMessage(
+  context: vscode.ExtensionContext,
+  input: string | undefined,
+) {
+  // Input check
+  let message: string | undefined;
+  if (!input) {
+    message = await vscode.window.showInputBox({
+      prompt: "Enter a message",
+    });
+  } else {
+    message = input;
+  }
+
+  if (!message) {
+    vscode.window.showErrorMessage("Message cannot be empty");
+    return;
+  }
+  // API prep
+  if (!context.globalState.get("quack.quackToken")) {
+    vscode.window
+      .showErrorMessage("Please authenticate", "Authenticate")
+      .then((choice) => {
+        if (choice === "Authenticate") {
+          vscode.commands.executeCommand("quack.login");
+        }
+      });
+    return;
+  }
+  const ghRepo = await getActiveGithubRepo(context);
+  // Status bar
+  const statusBarItem = vscode.window.createStatusBarItem(
+    vscode.StatusBarAlignment.Left,
+  );
+  statusBarItem.text = `$(sync~spin) Processing...`;
+  statusBarItem.show();
+
+  await postChatMessage(
+    message,
+    config.get("endpoint") as string,
+    context.globalState.get("quack.quackToken") as string,
+  );
+  statusBarItem.dispose();
+
+  // Telemetry
+  analyticsClient?.capture({
+    distinctId: await getUniqueId(context),
+    event: "vscode:chat",
     properties: {
       extensionVersion: getExtensionVersion(),
       repo_name: ghRepo.full_name,

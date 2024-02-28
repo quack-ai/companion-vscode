@@ -7,18 +7,11 @@ import * as vscode from "vscode";
 import { v4 } from "uuid";
 
 import { getExtensionVersion } from "./environmentSetup";
-import {
-  GuidelineTreeProvider,
-  GuidelineTreeItem,
-} from "../webviews/guidelineView";
+import { ChatViewProvider } from "../webviews/chatView";
 import { verifyQuackEndpoint } from "../util/quack";
 import { setEndpoint, login, logout } from "../commands/authentication";
 import { getEnvInfo } from "../commands/diagnostics";
-import {
-  checkCodeAgainstGuideline,
-  checkCodeAgainstRepo,
-} from "../commands/assistant";
-import { fetchGuidelines } from "../commands/guidelines";
+import { sendChatMessage } from "../commands/assistant";
 
 export let extensionContext: vscode.ExtensionContext | undefined = undefined;
 export let sessionId: string = v4();
@@ -38,13 +31,10 @@ export async function activateExtension(context: vscode.ExtensionContext) {
   }
   console.log("Session ID: ", sessionId);
 
-  // Diagnostic/warning collection
-  const diagnosticCollection =
-    vscode.languages.createDiagnosticCollection("quack");
   // Sidebar
-  const provider = new GuidelineTreeProvider(context.extensionUri);
+  const provider = new ChatViewProvider(context.extensionUri);
   context.subscriptions.push(
-    vscode.window.registerTreeDataProvider("quack.guidelineTreeView", provider),
+    vscode.window.registerWebviewViewProvider("quack.chatView", provider),
   );
   // Register commands and providers
   // Diagnostics
@@ -67,32 +57,15 @@ export async function activateExtension(context: vscode.ExtensionContext) {
       await logout(context);
     }),
   );
-  // Guidelines
-  context.subscriptions.push(
-    vscode.commands.registerCommand("quack.fetchGuidelines", async () => {
-      await fetchGuidelines(context, provider, diagnosticCollection);
-    }),
-  );
-  // Assistant
+  // Chat
   context.subscriptions.push(
     vscode.commands.registerCommand(
-      "quack.checkCodeAgainstGuideline",
-      async (item: GuidelineTreeItem) => {
-        await checkCodeAgainstGuideline(
-          context,
-          provider,
-          diagnosticCollection,
-          item,
-        );
+      "quack.sendChatMessage",
+      async (input?: string) => {
+        await sendChatMessage(context, input);
       },
     ),
   );
-  context.subscriptions.push(
-    vscode.commands.registerCommand("quack.checkCodeAgainstRepo", async () => {
-      await checkCodeAgainstRepo(context, provider, diagnosticCollection);
-    }),
-  );
-
   // Safety checks
   let config = vscode.workspace.getConfiguration("api");
   // Validate endpoint
@@ -111,7 +84,7 @@ export async function activateExtension(context: vscode.ExtensionContext) {
 
   // // Commands to be run when activating
   if (context.globalState.get("quack.quackToken")) {
-    vscode.commands.executeCommand("quack.fetchGuidelines");
+    //
   }
   // Refresh state
   vscode.commands.executeCommand(

@@ -139,11 +139,11 @@
           "when": "!quack.isAuthenticated"
         },
         {
-          "type": "tree",
-          "id": "quack.guidelineTreeView",
-          "name": "Guidelines",
+          "type": "webview",
+          "id": "quack.chatView",
+          "name": "Quack Chat",
           "icon": "assets/dark/quack.svg",
-          "contextualTitle": "Guidelines",
+          "contextualTitle": "Chat",
           "when": "quack.isAuthenticated"
         }
       ]
@@ -170,31 +170,9 @@
         "title": "Log out"
       },
       {
-        "command": "quack.fetchGuidelines",
+        "command": "quack.sendChatMessage",
         "category": "Quack Companion",
-        "title": "Fetch contribution guidelines",
-        "icon": {
-          "light": "assets/light/refresh.svg",
-          "dark": "assets/dark/refresh.svg"
-        }
-      },
-      {
-        "command": "quack.checkCodeAgainstGuideline",
-        "category": "Quack Companion",
-        "title": "Check code against guideline",
-        "icon": {
-          "light": "assets/light/debug-rerun.svg",
-          "dark": "assets/dark/debug-rerun.svg"
-        }
-      },
-      {
-        "command": "quack.checkCodeAgainstRepo",
-        "category": "Quack Companion",
-        "title": "Check code against all repo guidelines",
-        "icon": {
-          "light": "assets/light/debug-rerun.svg",
-          "dark": "assets/dark/debug-rerun.svg"
-        }
+        "title": "Chat with our code model"
       }
     ],
     "viewsWelcome": [
@@ -206,48 +184,11 @@
     ],
     "keybindings": [
       {
-        "command": "quack.fetchGuidelines",
-        "mac": "cmd+shift+g",
-        "key": "ctrl+shift+g"
-      },
-      {
-        "command": "quack.checkCodeAgainstRepo",
-        "mac": "cmd+shift+q",
-        "key": "ctrl+shift+q"
-      },
-      {
         "command": "quack.getEnvInfo",
         "mac": "cmd+shift+e",
         "key": "ctrl+shift+e"
       }
     ],
-    "menus": {
-      "editor/context": [
-        {
-          "command": "quack.checkCodeAgainstRepo",
-          "when": "editorHasSelection && resourceLangId == 'python'"
-        }
-      ],
-      "view/title": [
-        {
-          "command": "quack.fetchGuidelines",
-          "when": "view == quack.guidelineTreeView",
-          "group": "navigation"
-        },
-        {
-          "command": "quack.checkCodeAgainstRepo",
-          "when": "view == quack.guidelineTreeView",
-          "group": "navigation"
-        }
-      ],
-      "view/item/context": [
-        {
-          "command": "quack.checkCodeAgainstGuideline",
-          "when": "view == quack.guidelineTreeView && viewItem == guidelineTreeItem",
-          "group": "inline"
-        }
-      ]
-    },
     "walkthroughs": [
       {
         "id": "quack-companion.maintainer-tutorial",
@@ -380,11 +321,11 @@
     "format:fix": "npx prettier . --write"
   },
   "lint-staged": {
-    "*.{ts,js,css}": [
+    "*.{ts,js}": [
       "yarn lint:fix",
       "yarn format:fix"
     ],
-    "*.{md}": [
+    "*.{css,md}": [
       "yarn format:fix"
     ]
   },

@@ -27,6 +27,18 @@ export interface GuidelineCompliance {
   // suggestion: string;
 }
 
+export interface ChatMessage {
+  role: string;
+  content: string;
+}
+
+export interface StreamingMessage {
+  model: string;
+  created_at: string;
+  message: ChatMessage;
+  done: boolean;
+}
+
 export async function verifyQuackEndpoint(
   endpointURL: string,
 ): Promise<boolean> {
@@ -220,5 +232,36 @@ export async function addRepoToQueue(
     console.error("Error sending Quack API request:", error);
     vscode.window.showErrorMessage("Invalid API request.");
     throw new Error("Unable to add repo to waitlist");
+  }
+}
+
+export async function postChatMessage(
+  message: string,
+  endpointURL: string,
+  token: string,
+): Promise<any> {
+  const quackURL = new URL("/api/v1/code/chat", endpointURL).toString();
+  const outputChannel = vscode.window.createOutputChannel("HTTP Response");
+  outputChannel.show();
+  try {
+    const response: AxiosResponse<any> = await axios.post(
+      quackURL,
+      { messages: [{ role: "user", content: message }] },
+      { headers: { Authorization: `Bearer ${token}` }, responseType: "stream" },
+    );
+    response.data.on("data", (chunk: any) => {
+      // Handle the chunk of data
+      outputChannel.append(JSON.parse(chunk).message.content);
+    });
+
+    response.data.on("error", (error: Error) => {
+      // Handle the error
+      console.error(error);
+    });
+  } catch (error) {
+    // Handle other errors that may occur during the request
+    console.error("Error sending Quack API request:", error);
+    vscode.window.showErrorMessage("Invalid API request.");
+    throw new Error("Unable to send chat message");
   }
 }

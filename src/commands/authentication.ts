@@ -66,7 +66,6 @@ export async function login(context: vscode.ExtensionContext) {
         extensionVersion: getExtensionVersion(),
       },
     });
-    vscode.commands.executeCommand("quack.fetchGuidelines");
     return quackToken;
   }
 }
