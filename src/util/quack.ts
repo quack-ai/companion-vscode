@@ -5,10 +5,6 @@
 
 import * as vscode from "vscode";
 import axios, { AxiosResponse } from "axios";
-import analyticsClient from "./analytics";
-import { getExtensionVersion } from "../activation/environmentSetup";
-import { getUniqueId } from "./vscode";
-import { getGithubToken } from "./github";
 
 let config = vscode.workspace.getConfiguration("api");
 
