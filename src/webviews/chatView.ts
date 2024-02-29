@@ -97,7 +97,6 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
         switch (message.command) {
           case "sendMessage":
             // Handle the message sending
-            console.log(message.text);
             vscode.commands.executeCommand(
               "quack.sendChatMessage",
               message.text,
