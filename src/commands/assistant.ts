@@ -226,7 +226,6 @@ export async function sendChatMessage(
       });
     return;
   }
-  const ghRepo = await getActiveGithubRepo(context);
   // Status bar
   const statusBarItem = vscode.window.createStatusBarItem(
     vscode.StatusBarAlignment.Left,
@@ -242,13 +241,16 @@ export async function sendChatMessage(
   statusBarItem.dispose();
 
   // Telemetry
-  analyticsClient?.capture({
-    distinctId: await getUniqueId(context),
-    event: "vscode:chat",
-    properties: {
-      extensionVersion: getExtensionVersion(),
-      repo_name: ghRepo.full_name,
-      repo_id: ghRepo.id,
-    },
-  });
+  if (analyticsClient) {
+    const ghRepo = await getActiveGithubRepo(context);
+    analyticsClient?.capture({
+      distinctId: await getUniqueId(context),
+      event: "vscode:chat",
+      properties: {
+        extensionVersion: getExtensionVersion(),
+        repo_name: ghRepo.full_name,
+        repo_id: ghRepo.id,
+      },
+    });
+  }
 }
