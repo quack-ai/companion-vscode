@@ -241,16 +241,14 @@ export async function sendChatMessage(
   statusBarItem.dispose();
 
   // Telemetry
-  if (analyticsClient) {
-    const ghRepo = await getActiveGithubRepo(context);
-    analyticsClient?.capture({
-      distinctId: await getUniqueId(context),
-      event: "vscode:chat",
-      properties: {
-        extensionVersion: getExtensionVersion(),
-        repo_name: ghRepo.full_name,
-        repo_id: ghRepo.id,
-      },
-    });
-  }
+  const ghRepo = await getActiveGithubRepo(context);
+  analyticsClient?.capture({
+    distinctId: await getUniqueId(context),
+    event: "vscode:chat",
+    properties: {
+      extensionVersion: getExtensionVersion(),
+      repo_name: ghRepo.full_name,
+      repo_id: ghRepo.id,
+    },
+  });
 }
