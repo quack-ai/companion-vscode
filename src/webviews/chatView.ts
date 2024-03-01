@@ -122,7 +122,9 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
 
             function addMessage(author, content) {
                 const messageElement = document.createElement('div');
-                messageElement.textContent = \`\${author}: \${content}\`;
+                messageElement.className = 'message';
+                let formattedContent = content;
+                messageElement.innerHTML = \`<strong>\${author}:</strong> \${formattedContent}\`;
                 messagesDiv.appendChild(messageElement);
                 messageElement.scrollIntoView();
             }

@@ -89,3 +89,10 @@ input::placeholder,
 textarea::placeholder {
   color: var(--vscode-input-placeholderForeground);
 }
+
+.message {
+  margin-bottom: 16px;
+  border-left: 3px solid var(--vscode-editor-selectionBackground);
+  padding-left: 8px;
+  word-wrap: break-word;
+}
