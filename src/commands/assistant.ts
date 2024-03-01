@@ -16,6 +16,7 @@ import {
   fetchRepoGuidelines,
   getToken,
   postChatMessage,
+  ChatMessage,
 } from "../util/quack";
 import { getActiveGithubRepo, getGithubToken } from "../util/github";
 import {
@@ -198,8 +199,8 @@ export async function checkCodeAgainstRepo(
 }
 
 export async function sendChatMessage(
-  context: vscode.ExtensionContext,
   input: string | undefined,
+  context: vscode.ExtensionContext,
 ) {
   // Input check
   let message: string | undefined;
@@ -226,6 +227,11 @@ export async function sendChatMessage(
       });
     return;
   }
+  const messages: ChatMessage[] =
+    context.workspaceState.get<ChatMessage[]>("messages") || [];
+  messages.push({ role: "You", content: message });
+  context.workspaceState.update("messages", messages);
+  vscode.commands.executeCommand("quack.refreshChatUI");
   // Status bar
   const statusBarItem = vscode.window.createStatusBarItem(
     vscode.StatusBarAlignment.Left,
@@ -233,12 +239,15 @@ export async function sendChatMessage(
   statusBarItem.text = `$(sync~spin) Processing...`;
   statusBarItem.show();
 
-  const response = await postChatMessage(
+  const chatResponse = await postChatMessage(
     message,
     config.get("endpoint") as string,
     context.globalState.get("quack.quackToken") as string,
   );
   statusBarItem.dispose();
+  messages.push({ role: "Quack", content: chatResponse });
+  context.workspaceState.update("messages", messages);
+  vscode.commands.executeCommand("quack.refreshChatUI");
 
   // Telemetry
   const ghRepo = await getActiveGithubRepo(context);
@@ -251,5 +260,5 @@ export async function sendChatMessage(
       repo_id: ghRepo.id,
     },
   });
-  return response;
+  return chatResponse;
 }

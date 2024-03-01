@@ -65,21 +65,19 @@ export async function activateExtension(context: vscode.ExtensionContext) {
     vscode.commands.registerCommand(
       "quack.sendChatMessage",
       async (input?: string) => {
-        return await sendChatMessage(context, input);
+        return await sendChatMessage(input, context);
       },
     ),
   );
   context.subscriptions.push(
-    vscode.commands.registerCommand("quack.refreshChatHistory", () => {
+    vscode.commands.registerCommand("quack.refreshChatUI", () => {
       chatViewProvider.refresh();
     }),
   );
   context.subscriptions.push(
     vscode.commands.registerCommand("quack.clearChatHistory", () => {
       context.workspaceState.update("messages", []);
-      if (chatViewProvider) {
-        chatViewProvider.refresh();
-      }
+      vscode.commands.executeCommand("quack.refreshChatUI");
     }),
   );
   // Safety checks
@@ -103,7 +101,7 @@ export async function activateExtension(context: vscode.ExtensionContext) {
       });
   }
 
-  // // Commands to be run when activating
+  // Commands to be run when activating
   if (context.globalState.get("quack.quackToken")) {
     //
   }

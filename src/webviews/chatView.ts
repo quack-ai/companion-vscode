@@ -4,11 +4,7 @@
 // See LICENSE or go to <https://www.apache.org/licenses/LICENSE-2.0> for full license details.
 
 import * as vscode from "vscode";
-
-type Message = {
-  author: string;
-  content: string;
-};
+import { ChatMessage } from "../util/quack";
 
 export class ChatViewProvider implements vscode.WebviewViewProvider {
   public static readonly viewType = "chatView";
@@ -53,13 +49,14 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
 
     // Load and display previous messages
     this._view.webview.postMessage({ command: "clearMessages" });
-    const messages: Message[] =
-      this._context.workspaceState.get<Message[]>("messages") || [];
+    const messages: ChatMessage[] =
+      this._context.workspaceState.get<ChatMessage[]>("messages") || [];
+    console.log(messages);
     messages.forEach((message) => {
       // @ts-ignore
       this._view.webview.postMessage({
         command: "addMessage",
-        author: message.author,
+        role: message.role,
         text: message.content,
       });
     });
@@ -120,19 +117,19 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
                 }
             };
 
-            function addMessage(author, content) {
+            function addMessage(role, content) {
                 const messageElement = document.createElement('div');
                 messageElement.className = 'message';
                 let formattedContent = content;
-                messageElement.innerHTML = \`<strong>\${author}:</strong> \${formattedContent}\`;
+                messageElement.innerHTML = \`<strong>\${role}:</strong> \${formattedContent}\`;
                 messagesDiv.appendChild(messageElement);
                 messageElement.scrollIntoView();
             }
             window.addEventListener('message', event => {
-              const { command, author, text } = event.data; // Destructure the message data
+              const { command, role, text } = event.data; // Destructure the message data
               switch (command) {
                 case 'addMessage':
-                  addMessage(author, text);
+                  addMessage(role, text);
                   break;
                 case 'clearMessages':
                   document.getElementById('messages').innerHTML = '';
@@ -149,27 +146,16 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
       async (message) => {
         switch (message.command) {
           case "sendMessage":
-            this._storeMessage({ author: "You", content: message.text });
-            // Handle the message sending
-            const responseMessage: string =
-              await vscode.commands.executeCommand(
-                "quack.sendChatMessage",
-                message.text,
-              );
-            this._storeMessage({ author: "Quack", content: responseMessage });
-            this.refresh();
+            await vscode.commands.executeCommand(
+              "quack.sendChatMessage",
+              message.text,
+            );
             break;
         }
       },
       undefined,
       [],
     );
-  }
-  private _storeMessage(message: Message) {
-    const messages: Message[] =
-      this._context.workspaceState.get<Message[]>("messages") || [];
-    messages.push(message);
-    this._context.workspaceState.update("messages", messages);
   }
 }
 
