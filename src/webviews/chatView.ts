@@ -87,6 +87,8 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
 
     // Use a nonce to whitelist which scripts can be run
     const nonce = getNonce();
+    // const regex = /```(.*?)```/gs;
+    const regex = /```(?:\w*\n)?([\s\S]*?)```/gs;
 
     return `<!DOCTYPE html>
       <html lang="en">
@@ -122,10 +124,20 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
                 }
             };
 
+            function escapeHTML(str) {
+              return str
+                  .replace(/&/g, '&amp;')
+                  .replace(/</g, '&lt;')
+                  .replace(/>/g, '&gt;')
+                  .replace(/"/g, '&quot;')
+                  .replace(/'/g, '&#039;');
+          }
+
             function addMessage(content, user) {
               const messageElement = document.createElement('div');
               messageElement.className = 'message';
-              messageElement.innerHTML = \`<strong>\${user}:</strong> \${content}\`;
+              const formattedContent = content.replace(${regex}, '<pre><code>$1</code></pre>');
+              messageElement.innerHTML = \`<strong>\${user}:</strong> \${formattedContent}\`;
               messagesDiv.appendChild(messageElement);
               messageElement.scrollIntoView();
             }

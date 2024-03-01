@@ -96,3 +96,14 @@ textarea::placeholder {
   padding-left: 8px;
   word-wrap: break-word;
 }
+
+code {
+  background-color: #333; /* Dark background */
+  color: #ffffff; /* Light text color for readability */
+  padding: 2px 4px; /* Padding around the code */
+  border-radius: 3px; /* Optional: rounded corners for the code blocks */
+  font-family: monospace; /* Monospaced font for code */
+  display: block; /* Treat code blocks as inline elements */
+  width: 100%;
+  white-space: pre-wrap; /* Preserve whitespace and line breaks */
+}
