@@ -65,7 +65,7 @@ export async function activateExtension(context: vscode.ExtensionContext) {
     vscode.commands.registerCommand(
       "quack.sendChatMessage",
       async (input?: string) => {
-        return await sendChatMessage(input, context);
+        await sendChatMessage(input, context);
       },
     ),
   );

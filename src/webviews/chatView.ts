@@ -51,7 +51,6 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
     this._view.webview.postMessage({ command: "clearMessages" });
     const messages: ChatMessage[] =
       this._context.workspaceState.get<ChatMessage[]>("messages") || [];
-    console.log(messages);
     messages.forEach((message) => {
       // @ts-ignore
       this._view.webview.postMessage({
@@ -109,11 +108,6 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
                         text: content
                     });
                     input.value = ''; // Clear the input field
-
-                    // // Simulate a reply from "Quack"
-                    // setTimeout(() => {
-                    //     addMessage('Quack', '...');
-                    // }, 500);
                 }
             };
 
