@@ -62,7 +62,7 @@ export async function activateExtension(context: vscode.ExtensionContext) {
     vscode.commands.registerCommand(
       "quack.sendChatMessage",
       async (input?: string) => {
-        await sendChatMessage(context, input);
+        return await sendChatMessage(context, input);
       },
     ),
   );
@@ -73,6 +73,11 @@ export async function activateExtension(context: vscode.ExtensionContext) {
     config.get("endpoint") as string,
   );
   if (!isValidEndpoint) {
+    vscode.commands.executeCommand(
+      "setContext",
+      "quack.isAuthenticated",
+      false,
+    );
     vscode.window
       .showErrorMessage("Invalid API endpoint", "Configure endpoint")
       .then((choice) => {

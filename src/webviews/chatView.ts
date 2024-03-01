@@ -56,51 +56,73 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
           <title>Chat View</title>
       </head>
       <body>
-          <input type="text" id="message" placeholder="Type your message here...">
-          <button id="send">Send</button>
-          <ul id="messages"></ul>
+          <div id="messages"></div>
+          <div id="inputArea">
+              <input type="text" id="messageInput" placeholder="Type your message here...">
+              <button id="sendButton">Send</button>
+          </div>        
 
           <script nonce="${nonce}">
-              const vscode = acquireVsCodeApi();
+            const vscode = acquireVsCodeApi();
+            const messagesDiv = document.getElementById('messages');
+            const input = document.getElementById('messageInput');
+            const sendButton = document.getElementById('sendButton');
 
-              const messageInput = document.getElementById("message");
-              const sendButton = document.getElementById("send");
-              const messagesList = document.getElementById("messages");
+            sendButton.onclick = () => {
+                const content = input.value.trim();
+                if (content) {
+                    addMessage('You', content);
+                    vscode.postMessage({
+                        command: 'sendMessage',
+                        text: content
+                    });
+                    input.value = ''; // Clear the input field
 
-              sendButton.addEventListener("click", () => {
-                const messageText = messageInput.value;
-                if (!messageText) {
-                  return;
+                    // // Simulate a reply from "Quack"
+                    // setTimeout(() => {
+                    //     addMessage('Quack', '...');
+                    // }, 500);
                 }
+            };
 
-                // Send the message to the extension
-                vscode.postMessage({ command: "sendMessage", text: messageText });
-
-                // Clear the input field
-                messageInput.value = "";
-              });
-
-              // Handle incoming messages from the extension
-              vscode.onDidReceiveMessage((message) => {
-                const messageListItem = document.createElement("li");
-                messageListItem.textContent = message.text;
-                messagesList.appendChild(messageListItem);
-              });
-          </script>
+            function addMessage(author, content) {
+                const messageElement = document.createElement('div');
+                messageElement.textContent = \`\${author}: \${content}\`;
+                messagesDiv.appendChild(messageElement);
+                messageElement.scrollIntoView();
+            }
+            window.addEventListener('message', event => {
+              const { command, author, text } = event.data; // Destructure the message data
+              switch (command) {
+                case 'addMessage':
+                  addMessage(author, text);
+                  break;
+                // Handle other commands as needed
+              }
+            });
+        </script>
       </body>
       </html>`;
   }
 
   private _setWebviewMessageListeners(webview: vscode.Webview) {
     webview.onDidReceiveMessage(
-      (message) => {
+      async (message) => {
         switch (message.command) {
           case "sendMessage":
             // Handle the message sending
-            vscode.commands.executeCommand(
+            const responseMessage = await vscode.commands.executeCommand(
               "quack.sendChatMessage",
               message.text,
             );
+            console.log(responseMessage);
+            if (this._view) {
+              this._view.webview.postMessage({
+                command: "addMessage",
+                author: "Quack",
+                text: responseMessage,
+              });
+            }
             break;
         }
       },

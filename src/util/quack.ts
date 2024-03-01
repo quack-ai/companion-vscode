@@ -239,24 +239,36 @@ export async function postChatMessage(
   message: string,
   endpointURL: string,
   token: string,
-): Promise<any> {
+): Promise<string> {
   const quackURL = new URL("/api/v1/code/chat", endpointURL).toString();
-  const outputChannel = vscode.window.createOutputChannel("HTTP Response");
-  outputChannel.show();
+  let responseData = "";
+  var chunkText: string = "";
+  // const outputChannel = vscode.window.createOutputChannel("HTTP Response");
+  // outputChannel.show();
   try {
     const response: AxiosResponse<any> = await axios.post(
       quackURL,
       { messages: [{ role: "user", content: message }] },
       { headers: { Authorization: `Bearer ${token}` }, responseType: "stream" },
     );
-    response.data.on("data", (chunk: any) => {
-      // Handle the chunk of data
-      outputChannel.append(JSON.parse(chunk).message.content);
-    });
 
-    response.data.on("error", (error: Error) => {
-      // Handle the error
-      console.error(error);
+    return new Promise((resolve, reject) => {
+      response.data.on("data", (chunk: any) => {
+        // Handle the chunk of data
+        chunkText = JSON.parse(chunk).message.content;
+        // outputChannel.append(chunkText);
+        responseData += chunkText;
+      });
+
+      response.data.on("end", () => {
+        resolve(responseData);
+      });
+
+      response.data.on("error", (error: Error) => {
+        // Handle the error
+        console.error(error);
+        reject(error);
+      });
     });
   } catch (error) {
     // Handle other errors that may occur during the request

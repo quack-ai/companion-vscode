@@ -233,7 +233,7 @@ export async function sendChatMessage(
   statusBarItem.text = `$(sync~spin) Processing...`;
   statusBarItem.show();
 
-  await postChatMessage(
+  const response = await postChatMessage(
     message,
     config.get("endpoint") as string,
     context.globalState.get("quack.quackToken") as string,
@@ -251,4 +251,5 @@ export async function sendChatMessage(
       repo_id: ghRepo.id,
     },
   });
+  return response;
 }
