@@ -231,9 +231,9 @@ export async function sendChatMessage(
   }
   const messages: ChatMessage[] =
     context.workspaceState.get<ChatMessage[]>("messages") || [];
-  messages.push({ role: "You", content: message });
-  messages.push({ role: "Quack", content: "" });
+  messages.push({ role: "user", content: message });
   context.workspaceState.update("messages", messages);
+  messages.push({ role: "assistant", content: "" });
   chatViewProvider.refresh();
   // Status bar
   const statusBarItem = vscode.window.createStatusBarItem(
@@ -243,7 +243,7 @@ export async function sendChatMessage(
   statusBarItem.show();
 
   await postChatMessage(
-    message,
+    messages.slice(0, messages.length - 1),
     config.get("endpoint") as string,
     context.globalState.get("quack.quackToken") as string,
     (chunkText: string) => {

@@ -6,6 +6,8 @@
 import * as vscode from "vscode";
 import { ChatMessage } from "../util/quack";
 
+const roleMap = { user: "You", assistant: "Quack" };
+
 export class ChatViewProvider implements vscode.WebviewViewProvider {
   public static readonly viewType = "chatView";
 
@@ -54,7 +56,8 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
       // @ts-ignore
       this._view.webview.postMessage({
         command: "addMessage",
-        role: message.role,
+        // @ts-ignore
+        user: roleMap[message.role],
         text: message.content,
       });
     });
@@ -69,7 +72,6 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
     }
     this._view.webview.postMessage({
       command: "addChunk",
-      role: "Quack",
       text: content,
     });
   }
@@ -120,10 +122,10 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
                 }
             };
 
-            function addMessage(content, role) {
+            function addMessage(content, user) {
               const messageElement = document.createElement('div');
               messageElement.className = 'message';
-              messageElement.innerHTML = \`<strong>\${role}:</strong> \${content}\`;
+              messageElement.innerHTML = \`<strong>\${user}:</strong> \${content}\`;
               messagesDiv.appendChild(messageElement);
               messageElement.scrollIntoView();
             }
@@ -135,16 +137,16 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
               }
             }
             window.addEventListener('message', event => {
-              const { command, role, text } = event.data; // Destructure the message data
-              switch (command) {
+              const msg = event.data; // Destructure the message data
+              switch (msg.command) {
                 case 'clearMessages':
                   document.getElementById('messages').innerHTML = '';
                   break;
                 case 'addMessage':
-                  addMessage(text, role);
+                  addMessage(msg.text, msg.user);
                   break;
                 case 'addChunk':
-                  addChunk(text);
+                  addChunk(msg.text);
                   break;
               }
             });

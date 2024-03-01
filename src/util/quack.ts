@@ -236,7 +236,7 @@ export async function addRepoToQueue(
 }
 
 export async function postChatMessage(
-  message: string,
+  messages: ChatMessage[],
   endpointURL: string,
   token: string,
   onChunkReceived: (chunk: string) => void,
@@ -245,7 +245,7 @@ export async function postChatMessage(
   try {
     const response: AxiosResponse<any> = await axios.post(
       quackURL,
-      { messages: [{ role: "user", content: message }] },
+      { messages: messages },
       { headers: { Authorization: `Bearer ${token}` }, responseType: "stream" },
     );
     response.data.on("data", (chunk: any) => {
