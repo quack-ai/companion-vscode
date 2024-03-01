@@ -173,6 +173,11 @@
         "command": "quack.sendChatMessage",
         "category": "Quack Companion",
         "title": "Chat with our code model"
+      },
+      {
+        "command": "quack.clearChatHistory",
+        "category": "Quack Companion",
+        "title": "Clear chat history"
       }
     ],
     "viewsWelcome": [

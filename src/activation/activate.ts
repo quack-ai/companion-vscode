@@ -32,9 +32,12 @@ export async function activateExtension(context: vscode.ExtensionContext) {
   console.log("Session ID: ", sessionId);
 
   // Sidebar
-  const provider = new ChatViewProvider(context.extensionUri);
+  const chatViewProvider = new ChatViewProvider(context.extensionUri, context);
   context.subscriptions.push(
-    vscode.window.registerWebviewViewProvider("quack.chatView", provider),
+    vscode.window.registerWebviewViewProvider(
+      "quack.chatView",
+      chatViewProvider,
+    ),
   );
   // Register commands and providers
   // Diagnostics
@@ -65,6 +68,12 @@ export async function activateExtension(context: vscode.ExtensionContext) {
         return await sendChatMessage(context, input);
       },
     ),
+  );
+  context.subscriptions.push(
+    vscode.commands.registerCommand("quack.clearChatHistory", () => {
+      context.workspaceState.update("messages", []);
+      chatViewProvider.refresh();
+    }),
   );
   // Safety checks
   let config = vscode.workspace.getConfiguration("api");

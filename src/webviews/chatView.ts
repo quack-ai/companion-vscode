@@ -5,12 +5,20 @@
 
 import * as vscode from "vscode";
 
+type Message = {
+  author: string;
+  content: string;
+};
+
 export class ChatViewProvider implements vscode.WebviewViewProvider {
   public static readonly viewType = "chatView";
 
   private _view?: vscode.WebviewView;
 
-  constructor(private readonly _extensionUri: vscode.Uri) {}
+  constructor(
+    private readonly _extensionUri: vscode.Uri,
+    private readonly _context: vscode.ExtensionContext,
+  ) {}
 
   public resolveWebviewView(
     webviewView: vscode.WebviewView,
@@ -22,7 +30,6 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
     webviewView.webview.options = {
       // Enable javascript in the webview
       enableScripts: true,
-
       // Restrict the webview to only loading content from our extension's `media` directory.
       localResourceRoots: [this._extensionUri],
     };
@@ -32,6 +39,28 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
 
     // Listen for events from the webview
     this._setWebviewMessageListeners(webviewView.webview);
+
+    // Load and display previous messages
+    const messages: Message[] =
+      this._context.workspaceState.get<Message[]>("messages") || [];
+    messages.forEach((message) => {
+      webviewView.webview.postMessage({
+        command: "addMessage",
+        author: message.author,
+        text: message.content,
+      });
+    });
+  }
+
+  public refresh() {
+    if (this._view) {
+      // Reapply the HTML content to the webview
+      this._view.webview.html = this._getHtmlForWebview(this._view.webview);
+
+      // Optionally, if you need to immediately show updated messages (or lack thereof)
+      // you might need to manually clear the messages or send an empty message array to the webview
+      this._view.webview.postMessage({ command: "clearMessages" });
+    }
   }
 
   private _getHtmlForWebview(webview: vscode.Webview) {
@@ -97,7 +126,10 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
                 case 'addMessage':
                   addMessage(author, text);
                   break;
-                // Handle other commands as needed
+                case 'clearMessages':
+                  const messagesDiv = document.getElementById('messages');
+                  messagesDiv.innerHTML = '';
+                  break;
               }
             });
         </script>
@@ -110,25 +142,26 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
       async (message) => {
         switch (message.command) {
           case "sendMessage":
+            this._storeMessage({ author: "You", content: message.text });
             // Handle the message sending
-            const responseMessage = await vscode.commands.executeCommand(
-              "quack.sendChatMessage",
-              message.text,
-            );
-            console.log(responseMessage);
-            if (this._view) {
-              this._view.webview.postMessage({
-                command: "addMessage",
-                author: "Quack",
-                text: responseMessage,
-              });
-            }
+            const responseMessage: string =
+              await vscode.commands.executeCommand(
+                "quack.sendChatMessage",
+                message.text,
+              );
+            this._storeMessage({ author: "Quack", content: responseMessage });
             break;
         }
       },
       undefined,
       [],
     );
+  }
+  private _storeMessage(message: Message) {
+    const messages: Message[] =
+      this._context.workspaceState.get<Message[]>("messages") || [];
+    messages.push(message);
+    this._context.workspaceState.update("messages", messages);
   }
 }
 
