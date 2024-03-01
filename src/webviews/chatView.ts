@@ -34,17 +34,30 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
       localResourceRoots: [this._extensionUri],
     };
 
-    // Set the webview's html content
-    webviewView.webview.html = this._getHtmlForWebview(webviewView.webview);
-
+    this.initializeWebViewContent();
     // Listen for events from the webview
     this._setWebviewMessageListeners(webviewView.webview);
+    // Refresh when the user comes back to this webview
+    this._view.onDidChangeVisibility(() => {
+      if (this._view?.visible) {
+        this.refresh();
+      }
+    });
+  }
+  private initializeWebViewContent() {
+    if (!this._view) {
+      return;
+    }
+    // Set the webview's html content
+    this._view.webview.html = this._getHtmlForWebview(this._view.webview);
 
     // Load and display previous messages
+    this._view.webview.postMessage({ command: "clearMessages" });
     const messages: Message[] =
       this._context.workspaceState.get<Message[]>("messages") || [];
     messages.forEach((message) => {
-      webviewView.webview.postMessage({
+      // @ts-ignore
+      this._view.webview.postMessage({
         command: "addMessage",
         author: message.author,
         text: message.content,
@@ -53,14 +66,7 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
   }
 
   public refresh() {
-    if (this._view) {
-      // Reapply the HTML content to the webview
-      this._view.webview.html = this._getHtmlForWebview(this._view.webview);
-
-      // Optionally, if you need to immediately show updated messages (or lack thereof)
-      // you might need to manually clear the messages or send an empty message array to the webview
-      this._view.webview.postMessage({ command: "clearMessages" });
-    }
+    this.initializeWebViewContent();
   }
 
   private _getHtmlForWebview(webview: vscode.Webview) {
@@ -127,8 +133,7 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
                   addMessage(author, text);
                   break;
                 case 'clearMessages':
-                  const messagesDiv = document.getElementById('messages');
-                  messagesDiv.innerHTML = '';
+                  document.getElementById('messages').innerHTML = '';
                   break;
               }
             });
@@ -150,6 +155,7 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
                 message.text,
               );
             this._storeMessage({ author: "Quack", content: responseMessage });
+            this.refresh();
             break;
         }
       },

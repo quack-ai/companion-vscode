@@ -177,7 +177,11 @@
       {
         "command": "quack.clearChatHistory",
         "category": "Quack Companion",
-        "title": "Clear chat history"
+        "title": "Clear chat history",
+        "icon": {
+          "light": "assets/light/trash.svg",
+          "dark": "assets/dark/trash.svg"
+        }
       }
     ],
     "viewsWelcome": [
@@ -194,6 +198,15 @@
         "key": "ctrl+shift+e"
       }
     ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "quack.clearChatHistory",
+          "when": "view == quack.chatView",
+          "group": "navigation"
+        }
+      ]
+    },
     "walkthroughs": [
       {
         "id": "quack-companion.maintainer-tutorial",

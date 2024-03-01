@@ -70,9 +70,16 @@ export async function activateExtension(context: vscode.ExtensionContext) {
     ),
   );
   context.subscriptions.push(
+    vscode.commands.registerCommand("quack.refreshChatHistory", () => {
+      chatViewProvider.refresh();
+    }),
+  );
+  context.subscriptions.push(
     vscode.commands.registerCommand("quack.clearChatHistory", () => {
       context.workspaceState.update("messages", []);
-      chatViewProvider.refresh();
+      if (chatViewProvider) {
+        chatViewProvider.refresh();
+      }
     }),
   );
   // Safety checks
