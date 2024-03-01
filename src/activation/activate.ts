@@ -65,7 +65,7 @@ export async function activateExtension(context: vscode.ExtensionContext) {
     vscode.commands.registerCommand(
       "quack.sendChatMessage",
       async (input?: string) => {
-        await sendChatMessage(input, context);
+        await sendChatMessage(input, context, chatViewProvider);
       },
     ),
   );
@@ -103,7 +103,7 @@ export async function activateExtension(context: vscode.ExtensionContext) {
 
   // Commands to be run when activating
   if (context.globalState.get("quack.quackToken")) {
-    //
+    chatViewProvider.refresh();
   }
   // Refresh state
   vscode.commands.executeCommand(

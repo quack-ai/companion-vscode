@@ -46,11 +46,10 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
     }
     // Set the webview's html content
     this._view.webview.html = this._getHtmlForWebview(this._view.webview);
-
     // Load and display previous messages
-    this._view.webview.postMessage({ command: "clearMessages" });
     const messages: ChatMessage[] =
       this._context.workspaceState.get<ChatMessage[]>("messages") || [];
+    this._view.webview.postMessage({ command: "clearMessages" });
     messages.forEach((message) => {
       // @ts-ignore
       this._view.webview.postMessage({
@@ -63,6 +62,16 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
 
   public refresh() {
     this.initializeWebViewContent();
+  }
+  public addChunkToLastMessage(content: string) {
+    if (!this._view) {
+      return;
+    }
+    this._view.webview.postMessage({
+      command: "addChunk",
+      role: "Quack",
+      text: content,
+    });
   }
 
   private _getHtmlForWebview(webview: vscode.Webview) {
@@ -111,22 +120,31 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
                 }
             };
 
-            function addMessage(role, content) {
-                const messageElement = document.createElement('div');
-                messageElement.className = 'message';
-                let formattedContent = content;
-                messageElement.innerHTML = \`<strong>\${role}:</strong> \${formattedContent}\`;
-                messagesDiv.appendChild(messageElement);
+            function addMessage(content, role) {
+              const messageElement = document.createElement('div');
+              messageElement.className = 'message';
+              messageElement.innerHTML = \`<strong>\${role}:</strong> \${content}\`;
+              messagesDiv.appendChild(messageElement);
+              messageElement.scrollIntoView();
+            }
+            function addChunk(content) {
+              const messageElement = messagesDiv.lastChild;
+              if (messageElement){
+                messageElement.innerHTML += content;
                 messageElement.scrollIntoView();
+              }
             }
             window.addEventListener('message', event => {
               const { command, role, text } = event.data; // Destructure the message data
               switch (command) {
-                case 'addMessage':
-                  addMessage(role, text);
-                  break;
                 case 'clearMessages':
                   document.getElementById('messages').innerHTML = '';
+                  break;
+                case 'addMessage':
+                  addMessage(text, role);
+                  break;
+                case 'addChunk':
+                  addChunk(text);
                   break;
               }
             });

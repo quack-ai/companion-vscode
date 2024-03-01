@@ -29,6 +29,7 @@ import {
   GuidelineTreeProvider,
   GuidelineTreeItem,
 } from "../webviews/guidelineView";
+import { ChatViewProvider } from "../webviews/chatView";
 
 let config = vscode.workspace.getConfiguration("api");
 
@@ -201,6 +202,7 @@ export async function checkCodeAgainstRepo(
 export async function sendChatMessage(
   input: string | undefined,
   context: vscode.ExtensionContext,
+  chatViewProvider: ChatViewProvider,
 ) {
   // Input check
   let message: string | undefined;
@@ -230,8 +232,9 @@ export async function sendChatMessage(
   const messages: ChatMessage[] =
     context.workspaceState.get<ChatMessage[]>("messages") || [];
   messages.push({ role: "You", content: message });
+  messages.push({ role: "Quack", content: "" });
   context.workspaceState.update("messages", messages);
-  vscode.commands.executeCommand("quack.refreshChatUI");
+  chatViewProvider.refresh();
   // Status bar
   const statusBarItem = vscode.window.createStatusBarItem(
     vscode.StatusBarAlignment.Left,
@@ -239,15 +242,21 @@ export async function sendChatMessage(
   statusBarItem.text = `$(sync~spin) Processing...`;
   statusBarItem.show();
 
-  const chatResponse = await postChatMessage(
+  await postChatMessage(
     message,
     config.get("endpoint") as string,
     context.globalState.get("quack.quackToken") as string,
+    (chunkText: string) => {
+      if (chunkText.length > 0) {
+        // Cache
+        messages[messages.length - 1].content += chunkText;
+        context.workspaceState.update("messages", messages);
+        // UI
+        chatViewProvider.addChunkToLastMessage(chunkText);
+      }
+    },
   );
   statusBarItem.dispose();
-  messages.push({ role: "Quack", content: chatResponse });
-  context.workspaceState.update("messages", messages);
-  vscode.commands.executeCommand("quack.refreshChatUI");
 
   // Telemetry
   const ghRepo = await getActiveGithubRepo(context);
@@ -260,5 +269,4 @@ export async function sendChatMessage(
       repo_id: ghRepo.id,
     },
   });
-  return chatResponse;
 }
