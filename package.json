@@ -335,8 +335,8 @@
     "watch": "webpack --mode development --watch",
     "lint:check": "eslint src --ext ts",
     "lint:fix": "eslint --fix src --ext ts",
-    "format:check": "npx prettier . --check",
-    "format:fix": "npx prettier . --write"
+    "format:check": "npx prettier . '!.github/labeler.yml' --check",
+    "format:fix": "npx prettier . '!.github/labeler.yml' --write"
   },
   "lint-staged": {
     "*.{ts,js}": [
