@@ -259,14 +259,24 @@ export async function sendChatMessage(
   statusBarItem.dispose();
 
   // Telemetry
-  const ghRepo = await getActiveGithubRepo(context);
+  let repoName: string | undefined = undefined;
+  let repoId: number | undefined = undefined;
+  // Make sure users can use it outside of git repos
+  try {
+    const ghRepo = await getActiveGithubRepo(context);
+    repoName = ghRepo.full_name;
+    repoId = ghRepo.id;
+  } catch (error) {
+    console.log(error);
+  }
+
   analyticsClient?.capture({
     distinctId: await getUniqueId(context),
     event: "vscode:chat",
     properties: {
       extensionVersion: getExtensionVersion(),
-      repo_name: ghRepo.full_name,
-      repo_id: ghRepo.id,
+      repo_name: repoName,
+      repo_id: repoId,
     },
   });
 }
