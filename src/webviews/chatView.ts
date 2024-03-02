@@ -5,6 +5,7 @@
 
 import * as vscode from "vscode";
 import { ChatMessage } from "../util/quack";
+import { marked } from "marked";
 
 const roleMap = { user: "You", assistant: "Quack" };
 
@@ -58,7 +59,7 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
         command: "addMessage",
         // @ts-ignore
         user: roleMap[message.role],
-        text: message.content,
+        text: marked.parse(message.content),
       });
     });
   }
@@ -124,20 +125,10 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
                 }
             };
 
-            function escapeHTML(str) {
-              return str
-                  .replace(/&/g, '&amp;')
-                  .replace(/</g, '&lt;')
-                  .replace(/>/g, '&gt;')
-                  .replace(/"/g, '&quot;')
-                  .replace(/'/g, '&#039;');
-          }
-
             function addMessage(content, user) {
               const messageElement = document.createElement('div');
               messageElement.className = 'message';
-              const formattedContent = content.replace(${regex}, '<pre><code>$1</code></pre>');
-              messageElement.innerHTML = \`<strong>\${user}:</strong> \${formattedContent}\`;
+              messageElement.innerHTML = \`<strong>\${user}:</strong> \${content}\`;
               messagesDiv.appendChild(messageElement);
               messageElement.scrollIntoView();
             }
