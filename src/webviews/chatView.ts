@@ -33,7 +33,6 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
       // Restrict the webview to only loading content from our extension's `media` directory.
       localResourceRoots: [this._extensionUri],
     };
-
     this.initializeWebViewContent();
     // Listen for events from the webview
     this._setWebviewMessageListeners(webviewView.webview);
@@ -119,7 +118,7 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
             sendButton.onclick = () => {
                 const content = input.value.trim();
                 if (content) {
-                    addMessage('You', content);
+                    addMessage(content, 'You');
                     vscode.postMessage({
                         command: 'sendMessage',
                         text: content
@@ -131,9 +130,12 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
             function addMessage(content, user) {
               const messageElement = document.createElement('div');
               messageElement.className = 'message';
-              messageElement.innerHTML = \`<strong>\${user}:</strong> \${content}\`;
+              messageElement.innerHTML = \`<strong>\${user}</strong> \${content}\`;
               messagesDiv.appendChild(messageElement);
-              hljs.highlightBlock(messageElement.querySelector('code'));
+              const codeElement = messageElement.querySelector('code');
+              if (codeElement){
+                hljs.highlightElement(codeElement);
+              }
               messageElement.scrollIntoView();
             }
             function addChunk(content) {
