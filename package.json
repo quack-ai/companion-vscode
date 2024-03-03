@@ -115,6 +115,11 @@
             "type": "string",
             "default": "phc_mU5797H4W1GELY5wmpxxSK9EWZyW4Eev5WZOtuqXMPE",
             "description": "The project key for PostHog"
+          },
+          "ui.highlighttheme": {
+            "type": "string",
+            "default": "github-dark-dimmed",
+            "description": "The highlight theme using for codeblocks (https://highlightjs.org/demo)"
           }
         }
       }
@@ -131,20 +136,25 @@
     "views": {
       "quack-companion": [
         {
-          "type": "tree",
+          "id": "quack.endpointView",
+          "name": "Endpoint",
+          "icon": "assets/dark/quack.svg",
+          "contextualTitle": "Endpoint",
+          "when": "!quack.isValidEndpoint"
+        },
+        {
           "id": "quack.authView",
           "name": "Authentication",
           "icon": "assets/dark/quack.svg",
           "contextualTitle": "Authentication",
-          "when": "!quack.isAuthenticated"
+          "when": "quack.isValidEndpoint && !quack.isValidToken"
         },
         {
-          "type": "tree",
-          "id": "quack.guidelineTreeView",
-          "name": "Guidelines",
+          "type": "webview",
+          "id": "quack.chatView",
+          "name": "Quack Chat",
           "icon": "assets/dark/quack.svg",
-          "contextualTitle": "Guidelines",
-          "when": "quack.isAuthenticated"
+          "contextualTitle": "Chat"
         }
       ]
     },
@@ -170,51 +180,33 @@
         "title": "Log out"
       },
       {
-        "command": "quack.fetchGuidelines",
+        "command": "quack.sendChatMessage",
         "category": "Quack Companion",
-        "title": "Fetch contribution guidelines",
-        "icon": {
-          "light": "assets/light/refresh.svg",
-          "dark": "assets/dark/refresh.svg"
-        }
+        "title": "Chat with our code model"
       },
       {
-        "command": "quack.checkCodeAgainstGuideline",
+        "command": "quack.clearChatHistory",
         "category": "Quack Companion",
-        "title": "Check code against guideline",
+        "title": "Clear chat history",
         "icon": {
-          "light": "assets/light/debug-rerun.svg",
-          "dark": "assets/dark/debug-rerun.svg"
-        }
-      },
-      {
-        "command": "quack.checkCodeAgainstRepo",
-        "category": "Quack Companion",
-        "title": "Check code against all repo guidelines",
-        "icon": {
-          "light": "assets/light/debug-rerun.svg",
-          "dark": "assets/dark/debug-rerun.svg"
+          "light": "assets/light/trash.svg",
+          "dark": "assets/dark/trash.svg"
         }
       }
     ],
     "viewsWelcome": [
       {
+        "view": "quack.endpointView",
+        "contents": "Set the URL for your Quack API instance\n[Configure endpoint](command:quack.setEndpoint)",
+        "when": "!quack.isValidEndpoint"
+      },
+      {
         "view": "quack.authView",
-        "contents": "Welcome to Quack extension! Let's get you started\n[Authenticate](command:quack.login)",
-        "when": "!quack.hasQuackToken"
+        "contents": "Get the authentication token from your API instance\n[Authenticate](command:quack.login)",
+        "when": "quack.isValidEndpoint && !quack.isValidToken"
       }
     ],
     "keybindings": [
-      {
-        "command": "quack.fetchGuidelines",
-        "mac": "cmd+shift+g",
-        "key": "ctrl+shift+g"
-      },
-      {
-        "command": "quack.checkCodeAgainstRepo",
-        "mac": "cmd+shift+q",
-        "key": "ctrl+shift+q"
-      },
       {
         "command": "quack.getEnvInfo",
         "mac": "cmd+shift+e",
@@ -222,29 +214,11 @@
       }
     ],
     "menus": {
-      "editor/context": [
-        {
-          "command": "quack.checkCodeAgainstRepo",
-          "when": "editorHasSelection && resourceLangId == 'python'"
-        }
-      ],
       "view/title": [
         {
-          "command": "quack.fetchGuidelines",
-          "when": "view == quack.guidelineTreeView",
+          "command": "quack.clearChatHistory",
+          "when": "view == quack.chatView",
           "group": "navigation"
-        },
-        {
-          "command": "quack.checkCodeAgainstRepo",
-          "when": "view == quack.guidelineTreeView",
-          "group": "navigation"
-        }
-      ],
-      "view/item/context": [
-        {
-          "command": "quack.checkCodeAgainstGuideline",
-          "when": "view == quack.guidelineTreeView && viewItem == guidelineTreeItem",
-          "group": "inline"
         }
       ]
     },
@@ -376,21 +350,22 @@
     "watch": "webpack --mode development --watch",
     "lint:check": "eslint src --ext ts",
     "lint:fix": "eslint --fix src --ext ts",
-    "format:check": "npx prettier . --check",
-    "format:fix": "npx prettier . --write"
+    "format:check": "npx prettier . '!.github/labeler.yml' --check",
+    "format:fix": "npx prettier . '!.github/labeler.yml' --write"
   },
   "lint-staged": {
-    "*.{ts,js,css}": [
+    "*.{ts,js}": [
       "yarn lint:fix",
       "yarn format:fix"
     ],
-    "*.{md}": [
+    "*.{css,md}": [
       "yarn format:fix"
     ]
   },
   "dependencies": {
     "axios": "^1.6.7",
     "clipboardy": "^4.0.0",
+    "marked": "^12.0.0",
     "node-machine-id": "^1.1.12",
     "posthog-node": "3.6.1",
     "typescript": "^5.1.6",

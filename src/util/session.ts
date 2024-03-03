@@ -51,7 +51,7 @@ export async function getCurrentRepoName(): Promise<string> {
       reject("Failed to get remote URLs.");
     });
 
-    gitProcess.on("close", (code) => {
+    gitProcess.on("close", (_code) => {
       const repoName: string | null = getGitHubURLFromOutput(output);
       if (repoName) {
         resolve(repoName);

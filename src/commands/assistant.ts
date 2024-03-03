@@ -15,6 +15,8 @@ import {
   ComplianceResult,
   fetchRepoGuidelines,
   getToken,
+  postChatMessage,
+  ChatMessage,
 } from "../util/quack";
 import { getActiveGithubRepo, getGithubToken } from "../util/github";
 import {
@@ -27,6 +29,7 @@ import {
   GuidelineTreeProvider,
   GuidelineTreeItem,
 } from "../webviews/guidelineView";
+import { ChatViewProvider } from "../webviews/chatView";
 
 let config = vscode.workspace.getConfiguration("api");
 
@@ -146,8 +149,6 @@ export async function checkCodeAgainstRepo(
   complianceStatus.forEach((item: ComplianceResult, index: number) => {
     statusIndexMap[item.guideline_id] = index;
   });
-  console.log(complianceStatus);
-  console.log(guidelines);
 
   // UI Update
   collection.clear();
@@ -194,6 +195,100 @@ export async function checkCodeAgainstRepo(
       extensionVersion: getExtensionVersion(),
       repo_name: ghRepo.full_name,
       repo_id: ghRepo.id,
+    },
+  });
+}
+
+export async function sendChatMessage(
+  input: string | undefined,
+  context: vscode.ExtensionContext,
+  chatViewProvider: ChatViewProvider,
+) {
+  // Input check
+  let message: string | undefined;
+  if (!input) {
+    message = await vscode.window.showInputBox({
+      prompt: "Enter a message",
+    });
+  } else {
+    message = input;
+  }
+  if (!message) {
+    vscode.window.showErrorMessage("Message cannot be empty");
+    return;
+  }
+  // API prep
+  if (!context.globalState.get("quack.isValidEndpoint")) {
+    vscode.window
+      .showErrorMessage("Unreachable API endpoint", "Configure endpoint")
+      .then((choice) => {
+        if (choice === "Configure endpoint") {
+          vscode.commands.executeCommand("quack.setEndpoint");
+        }
+      });
+    return;
+  }
+  if (!context.globalState.get("quack.isValidToken")) {
+    vscode.window
+      .showErrorMessage("Unauthenticated", "Authenticate")
+      .then((choice) => {
+        if (choice === "Authenticate") {
+          vscode.commands.executeCommand("quack.login");
+        }
+      });
+    return;
+  }
+  const messages: ChatMessage[] =
+    context.workspaceState.get<ChatMessage[]>("messages") || [];
+  messages.push({ role: "user", content: message });
+  context.workspaceState.update("messages", messages);
+  messages.push({ role: "assistant", content: "" });
+  chatViewProvider.refresh();
+  // Status bar
+  const statusBarItem = vscode.window.createStatusBarItem(
+    vscode.StatusBarAlignment.Left,
+  );
+  statusBarItem.text = `$(sync~spin) Processing...`;
+  statusBarItem.show();
+
+  await postChatMessage(
+    messages.slice(0, messages.length - 1),
+    config.get("endpoint") as string,
+    context.globalState.get("quack.quackToken") as string,
+    (chunkText: string) => {
+      if (chunkText.length > 0) {
+        // Cache
+        messages[messages.length - 1].content += chunkText;
+        context.workspaceState.update("messages", messages);
+        // UI
+        chatViewProvider.addChunkToLastMessage(chunkText);
+      }
+    },
+    () => {
+      chatViewProvider.refresh();
+    },
+  );
+  statusBarItem.dispose();
+
+  // Telemetry
+  let repoName: string | undefined = undefined;
+  let repoId: number | undefined = undefined;
+  // Make sure users can use it outside of git repos
+  try {
+    const ghRepo = await getActiveGithubRepo(context);
+    repoName = ghRepo.full_name;
+    repoId = ghRepo.id;
+  } catch (error) {
+    console.log(error);
+  }
+
+  analyticsClient?.capture({
+    distinctId: await getUniqueId(context),
+    event: "vscode:chat",
+    properties: {
+      extensionVersion: getExtensionVersion(),
+      repo_name: repoName,
+      repo_id: repoId,
     },
   });
 }

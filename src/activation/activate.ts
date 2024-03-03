@@ -7,18 +7,11 @@ import * as vscode from "vscode";
 import { v4 } from "uuid";
 
 import { getExtensionVersion } from "./environmentSetup";
-import {
-  GuidelineTreeProvider,
-  GuidelineTreeItem,
-} from "../webviews/guidelineView";
-import { verifyQuackEndpoint } from "../util/quack";
+import { ChatViewProvider } from "../webviews/chatView";
+import { verifyQuackEndpoint, verifyQuackToken } from "../util/quack";
 import { setEndpoint, login, logout } from "../commands/authentication";
 import { getEnvInfo } from "../commands/diagnostics";
-import {
-  checkCodeAgainstGuideline,
-  checkCodeAgainstRepo,
-} from "../commands/assistant";
-import { fetchGuidelines } from "../commands/guidelines";
+import { sendChatMessage } from "../commands/assistant";
 
 export let extensionContext: vscode.ExtensionContext | undefined = undefined;
 export let sessionId: string = v4();
@@ -38,13 +31,13 @@ export async function activateExtension(context: vscode.ExtensionContext) {
   }
   console.log("Session ID: ", sessionId);
 
-  // Diagnostic/warning collection
-  const diagnosticCollection =
-    vscode.languages.createDiagnosticCollection("quack");
   // Sidebar
-  const provider = new GuidelineTreeProvider(context.extensionUri);
+  const chatViewProvider = new ChatViewProvider(context.extensionUri, context);
   context.subscriptions.push(
-    vscode.window.registerTreeDataProvider("quack.guidelineTreeView", provider),
+    vscode.window.registerWebviewViewProvider(
+      "quack.chatView",
+      chatViewProvider,
+    ),
   );
   // Register commands and providers
   // Diagnostics
@@ -67,56 +60,74 @@ export async function activateExtension(context: vscode.ExtensionContext) {
       await logout(context);
     }),
   );
-  // Guidelines
-  context.subscriptions.push(
-    vscode.commands.registerCommand("quack.fetchGuidelines", async () => {
-      await fetchGuidelines(context, provider, diagnosticCollection);
-    }),
-  );
-  // Assistant
+  // Chat
   context.subscriptions.push(
     vscode.commands.registerCommand(
-      "quack.checkCodeAgainstGuideline",
-      async (item: GuidelineTreeItem) => {
-        await checkCodeAgainstGuideline(
-          context,
-          provider,
-          diagnosticCollection,
-          item,
-        );
+      "quack.sendChatMessage",
+      async (input?: string) => {
+        await sendChatMessage(input, context, chatViewProvider);
+        chatViewProvider.refresh();
       },
     ),
   );
   context.subscriptions.push(
-    vscode.commands.registerCommand("quack.checkCodeAgainstRepo", async () => {
-      await checkCodeAgainstRepo(context, provider, diagnosticCollection);
+    vscode.commands.registerCommand("quack.clearChatHistory", () => {
+      context.workspaceState.update("messages", []);
+      chatViewProvider.refresh();
     }),
   );
-
+  // Refresh UI
+  chatViewProvider.refresh();
   // Safety checks
   let config = vscode.workspace.getConfiguration("api");
-  // Validate endpoint
+  // Endpoint
   const isValidEndpoint: boolean = await verifyQuackEndpoint(
     config.get("endpoint") as string,
   );
+  context.globalState.update("quack.isValidEndpoint", isValidEndpoint);
+  vscode.commands.executeCommand(
+    "setContext",
+    "quack.isValidEndpoint",
+    isValidEndpoint,
+  );
+  // Suggest user interventions
   if (!isValidEndpoint) {
     vscode.window
-      .showErrorMessage("Invalid API endpoint", "Configure endpoint")
+      .showErrorMessage("Unreachable API endpoint", "Configure endpoint")
       .then((choice) => {
         if (choice === "Configure endpoint") {
           vscode.commands.executeCommand("quack.setEndpoint");
         }
       });
   }
-
-  // // Commands to be run when activating
-  if (context.globalState.get("quack.quackToken")) {
-    vscode.commands.executeCommand("quack.fetchGuidelines");
+  // Token
+  if (context.globalState.get("quack.isValidEndpoint")) {
+    // Nothing set or invalid
+    var isValidToken: boolean = false;
+    if (!!context.globalState.get("quack.quackToken")) {
+      isValidToken = await verifyQuackToken(
+        context.globalState.get("quack.quackToken") as string,
+        config.get("endpoint") as string,
+      );
+    }
+    context.globalState.update("quack.isValidToken", isValidToken);
+    vscode.commands.executeCommand(
+      "setContext",
+      "quack.isValidToken",
+      isValidToken,
+    );
+    if (
+      context.globalState.get("quack.quackToken") === undefined ||
+      context.globalState.get("quack.quackToken") === null ||
+      !isValidToken
+    ) {
+      vscode.window
+        .showErrorMessage("Unauthenticated", "Authenticate")
+        .then((choice) => {
+          if (choice === "Authenticate") {
+            vscode.commands.executeCommand("quack.login");
+          }
+        });
+    }
   }
-  // Refresh state
-  vscode.commands.executeCommand(
-    "setContext",
-    "quack.isAuthenticated",
-    !!context.globalState.get("quack.quackToken"),
-  );
 }

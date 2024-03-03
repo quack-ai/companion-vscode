@@ -7,11 +7,6 @@ import * as vscode from "vscode";
 import axios, { AxiosResponse } from "axios";
 import { getCurrentRepoName } from "./session";
 
-interface Label {
-  id: number;
-  name: string;
-}
-
 export interface GitHubRepo {
   id: number;
   full_name: string;
