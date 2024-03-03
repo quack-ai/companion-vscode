@@ -85,27 +85,11 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
     const resetStyle = webview.asWebviewUri(
       vscode.Uri.joinPath(this._extensionUri, "assets", "reset.css"),
     );
-    const highlightStyle = webview.asWebviewUri(
-      vscode.Uri.joinPath(
-        this._extensionUri,
-        "assets",
-        "highlight",
-        "github-dark-dimmed.min.css",
-      ),
-    );
-    const highlightScript = webview.asWebviewUri(
-      vscode.Uri.joinPath(
-        this._extensionUri,
-        "assets",
-        "highlight",
-        "highlight.min.js",
-      ),
-    );
+    // Highlight theme selection (cf. https://highlightjs.org/demo)
+    const highlightThemeName = "github-dark-dimmed";
 
     // Use a nonce to whitelist which scripts can be run
     const nonce = getNonce();
-    // const regex = /```(.*?)```/gs;
-    const regex = /```(?:\w*\n)?([\s\S]*?)```/gs;
 
     return `<!DOCTYPE html>
       <html lang="en">
@@ -114,8 +98,8 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
           <link href="${vscodeStyle}" rel="stylesheet">
           <link href="${resetStyle}" rel="stylesheet">
-          <link href="${highlightStyle}" rel="stylesheet">
-          <script src="${highlightScript}"></script>
+          <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/${highlightThemeName}.min.css" rel="stylesheet">
+          <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
           <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${webview.cspSource}; script-src 'nonce-${nonce}';">
           <title>Chat View</title>
       </head>
