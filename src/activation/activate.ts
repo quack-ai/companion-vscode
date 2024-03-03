@@ -76,6 +76,8 @@ export async function activateExtension(context: vscode.ExtensionContext) {
       chatViewProvider.refresh();
     }),
   );
+  // Refresh UI
+  chatViewProvider.refresh();
   // Safety checks
   let config = vscode.workspace.getConfiguration("api");
   // Endpoint
@@ -128,6 +130,4 @@ export async function activateExtension(context: vscode.ExtensionContext) {
         });
     }
   }
-  // Refresh UI
-  chatViewProvider.refresh();
 }
