@@ -136,20 +136,25 @@
     "views": {
       "quack-companion": [
         {
-          "type": "tree",
+          "id": "quack.endpointView",
+          "name": "Endpoint",
+          "icon": "assets/dark/quack.svg",
+          "contextualTitle": "Endpoint",
+          "when": "!quack.isValidEndpoint"
+        },
+        {
           "id": "quack.authView",
           "name": "Authentication",
           "icon": "assets/dark/quack.svg",
           "contextualTitle": "Authentication",
-          "when": "!quack.isAuthenticated"
+          "when": "quack.isValidEndpoint && !quack.isValidToken"
         },
         {
           "type": "webview",
           "id": "quack.chatView",
           "name": "Quack Chat",
           "icon": "assets/dark/quack.svg",
-          "contextualTitle": "Chat",
-          "when": "quack.isAuthenticated"
+          "contextualTitle": "Chat"
         }
       ]
     },
@@ -191,9 +196,14 @@
     ],
     "viewsWelcome": [
       {
+        "view": "quack.endpointView",
+        "contents": "Set the URL for your Quack API instance\n[Configure endpoint](command:quack.setEndpoint)",
+        "when": "!quack.isValidEndpoint"
+      },
+      {
         "view": "quack.authView",
-        "contents": "Welcome to Quack extension! Let's get you started\n[Authenticate](command:quack.login)",
-        "when": "!quack.hasQuackToken"
+        "contents": "Get the authentication token from your API instance\n[Authenticate](command:quack.login)",
+        "when": "quack.isValidEndpoint && !quack.isValidToken"
       }
     ],
     "keybindings": [

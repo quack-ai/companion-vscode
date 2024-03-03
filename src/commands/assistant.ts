@@ -213,15 +213,24 @@ export async function sendChatMessage(
   } else {
     message = input;
   }
-
   if (!message) {
     vscode.window.showErrorMessage("Message cannot be empty");
     return;
   }
   // API prep
-  if (!context.globalState.get("quack.quackToken")) {
+  if (!context.globalState.get("quack.isValidEndpoint")) {
     vscode.window
-      .showErrorMessage("Please authenticate", "Authenticate")
+      .showErrorMessage("Unreachable API endpoint", "Configure endpoint")
+      .then((choice) => {
+        if (choice === "Configure endpoint") {
+          vscode.commands.executeCommand("quack.setEndpoint");
+        }
+      });
+    return;
+  }
+  if (!context.globalState.get("quack.isValidToken")) {
+    vscode.window
+      .showErrorMessage("Unauthenticated", "Authenticate")
       .then((choice) => {
         if (choice === "Authenticate") {
           vscode.commands.executeCommand("quack.login");
@@ -254,6 +263,9 @@ export async function sendChatMessage(
         // UI
         chatViewProvider.addChunkToLastMessage(chunkText);
       }
+    },
+    () => {
+      chatViewProvider.refresh();
     },
   );
   statusBarItem.dispose();

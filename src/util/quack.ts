@@ -4,9 +4,7 @@
 // See LICENSE or go to <https://www.apache.org/licenses/LICENSE-2.0> for full license details.
 
 import * as vscode from "vscode";
-import axios, { AxiosResponse } from "axios";
-
-let config = vscode.workspace.getConfiguration("api");
+import axios, { AxiosResponse, AxiosError } from "axios";
 
 export interface QuackGuideline {
   id: number;
@@ -42,17 +40,36 @@ export interface StreamingMessage {
 export async function verifyQuackEndpoint(
   endpointURL: string,
 ): Promise<boolean> {
+  const routeURL: string = new URL("/api/v1/repos", endpointURL).toString();
   try {
-    // Check the swagger
-    const swaggerURL: string = new URL("/docs", endpointURL).toString();
-    const response: AxiosResponse<any> = await axios.get(swaggerURL);
-    // Handle the response
-    if (response.status === 200) {
-      return true;
-    } else {
-      return false;
-    }
+    await axios.get(routeURL);
+    return false;
   } catch (error) {
+    if (error instanceof AxiosError) {
+      if (error.response && error.response.status === 401) {
+        return true;
+      }
+    }
+    return false;
+  }
+}
+
+export async function verifyQuackToken(
+  quackToken: string,
+  endpointURL: string,
+): Promise<boolean> {
+  const routeURL: string = new URL("/api/v1/repos", endpointURL).toString();
+  try {
+    await axios.get(routeURL, {
+      headers: { Authorization: `Bearer ${quackToken}` },
+    });
+    return true;
+  } catch (error) {
+    if (error instanceof AxiosError) {
+      if (error.response && error.response.status === 403) {
+        return true;
+      }
+    }
     return false;
   }
 }
@@ -240,6 +257,7 @@ export async function postChatMessage(
   endpointURL: string,
   token: string,
   onChunkReceived: (chunk: string) => void,
+  onEnd: () => void,
 ): Promise<void> {
   const quackURL = new URL("/api/v1/code/chat", endpointURL).toString();
   try {
@@ -255,6 +273,7 @@ export async function postChatMessage(
 
     response.data.on("end", () => {
       // console.log("Stream ended");
+      onEnd();
     });
 
     response.data.on("error", (error: Error) => {

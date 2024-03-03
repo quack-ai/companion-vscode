@@ -25,8 +25,14 @@ export async function setEndpoint(context: vscode.ExtensionContext) {
     if (isValid) {
       // Update the workspace config entry
       config.update("endpoint", quackEndpoint, false);
+      context.globalState.update("quack.isValidEndpoint", true);
+      vscode.commands.executeCommand(
+        "setContext",
+        "quack.isValidEndpoint",
+        true,
+      );
       // Reset the token
-      await context.globalState.update("quack.quackToken", undefined);
+      // await context.globalState.update("quack.quackToken", undefined);
       vscode.window.showInformationMessage("Quack endpoint set successfully");
     } else {
       vscode.window.showErrorMessage(
@@ -57,7 +63,8 @@ export async function login(context: vscode.ExtensionContext) {
       config.get("endpoint") as string,
     );
     context.globalState.update("quack.quackToken", quackToken);
-    vscode.commands.executeCommand("setContext", "quack.isAuthenticated", true);
+    context.globalState.update("quack.isValidToken", true);
+    vscode.commands.executeCommand("setContext", "quack.isValidToken", true);
     vscode.window.showInformationMessage("Authentication successful");
     analyticsClient?.capture({
       distinctId: await getUniqueId(context),
@@ -79,8 +86,9 @@ export async function logout(context: vscode.ExtensionContext) {
     },
   });
   context.globalState.update("quack.quackToken", undefined);
+  context.globalState.update("quack.isValidToken", false);
   context.globalState.update("quack.githubToken", undefined);
   context.workspaceState.update("quack.guidelines", undefined);
-  vscode.commands.executeCommand("setContext", "quack.isAuthenticated", false);
+  vscode.commands.executeCommand("setContext", "quack.isValidToken", false);
   vscode.window.showInformationMessage("Logout successful");
 }

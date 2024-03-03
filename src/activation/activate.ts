@@ -8,7 +8,7 @@ import { v4 } from "uuid";
 
 import { getExtensionVersion } from "./environmentSetup";
 import { ChatViewProvider } from "../webviews/chatView";
-import { verifyQuackEndpoint } from "../util/quack";
+import { verifyQuackEndpoint, verifyQuackToken } from "../util/quack";
 import { setEndpoint, login, logout } from "../commands/authentication";
 import { getEnvInfo } from "../commands/diagnostics";
 import { sendChatMessage } from "../commands/assistant";
@@ -66,49 +66,68 @@ export async function activateExtension(context: vscode.ExtensionContext) {
       "quack.sendChatMessage",
       async (input?: string) => {
         await sendChatMessage(input, context, chatViewProvider);
+        chatViewProvider.refresh();
       },
     ),
   );
   context.subscriptions.push(
-    vscode.commands.registerCommand("quack.refreshChatUI", () => {
-      chatViewProvider.refresh();
-    }),
-  );
-  context.subscriptions.push(
     vscode.commands.registerCommand("quack.clearChatHistory", () => {
       context.workspaceState.update("messages", []);
-      vscode.commands.executeCommand("quack.refreshChatUI");
+      chatViewProvider.refresh();
     }),
   );
   // Safety checks
   let config = vscode.workspace.getConfiguration("api");
-  // Validate endpoint
+  // Endpoint
   const isValidEndpoint: boolean = await verifyQuackEndpoint(
     config.get("endpoint") as string,
   );
+  context.globalState.update("quack.isValidEndpoint", isValidEndpoint);
+  vscode.commands.executeCommand(
+    "setContext",
+    "quack.isValidEndpoint",
+    isValidEndpoint,
+  );
+  // Suggest user interventions
   if (!isValidEndpoint) {
-    vscode.commands.executeCommand(
-      "setContext",
-      "quack.isAuthenticated",
-      false,
-    );
     vscode.window
-      .showErrorMessage("Invalid API endpoint", "Configure endpoint")
+      .showErrorMessage("Unreachable API endpoint", "Configure endpoint")
       .then((choice) => {
         if (choice === "Configure endpoint") {
           vscode.commands.executeCommand("quack.setEndpoint");
         }
       });
   }
-
-  // Commands to be run when activating
-  if (context.globalState.get("quack.quackToken")) {
-    chatViewProvider.refresh();
+  // Token
+  if (context.globalState.get("quack.isValidEndpoint")) {
+    // Nothing set or invalid
+    var isValidToken: boolean = false;
+    if (!!context.globalState.get("quack.quackToken")) {
+      isValidToken = await verifyQuackToken(
+        context.globalState.get("quack.quackToken") as string,
+        config.get("endpoint") as string,
+      );
+    }
+    context.globalState.update("quack.isValidToken", isValidToken);
+    vscode.commands.executeCommand(
+      "setContext",
+      "quack.isValidToken",
+      isValidToken,
+    );
+    if (
+      context.globalState.get("quack.quackToken") === undefined ||
+      context.globalState.get("quack.quackToken") === null ||
+      !isValidToken
+    ) {
+      vscode.window
+        .showErrorMessage("Unauthenticated", "Authenticate")
+        .then((choice) => {
+          if (choice === "Authenticate") {
+            vscode.commands.executeCommand("quack.login");
+          }
+        });
+    }
   }
-  // Refresh state
-  vscode.commands.executeCommand(
-    "setContext",
-    "quack.isAuthenticated",
-    !!context.globalState.get("quack.quackToken"),
-  );
+  // Refresh UI
+  chatViewProvider.refresh();
 }
