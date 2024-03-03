@@ -1548,10 +1548,10 @@ pkg-dir@^4.2.0:
   dependencies:
     find-up "^4.0.0"
 
-posthog-node@3.6.1:
-  version "3.6.1"
-  resolved "https://registry.yarnpkg.com/posthog-node/-/posthog-node-3.6.1.tgz#2cced5a1009fef2b099ccce29356d4ac4f890505"
-  integrity sha512-nvuZngDjzbQ2L2NqaBRWONuQeA3Dv+A8qXGMlOnM3/x07tGUrNYItgrLQH8wCntx75/PUlKq3ftxyQqNprGZjA==
+posthog-node@3.6.3:
+  version "3.6.3"
+  resolved "https://registry.yarnpkg.com/posthog-node/-/posthog-node-3.6.3.tgz#4d3a2a4385e01c4d9e91d01dbde104e60285853d"
+  integrity sha512-JB+ei0LkwE+rKHyW5z79Nd1jUaGxU6TvkfjFqY9vQaHxU5aU8dRl0UUaEmZdZbHwjp3WmXCBQQRNyimwbNQfCw==
   dependencies:
     axios "^1.6.2"
     rusha "^0.8.14"
