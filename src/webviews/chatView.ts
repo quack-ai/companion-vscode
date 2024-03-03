@@ -8,6 +8,7 @@ import { ChatMessage } from "../util/quack";
 import { marked } from "marked";
 
 const roleMap = { user: "You", assistant: "Quack" };
+let config = vscode.workspace.getConfiguration("ui");
 
 export class ChatViewProvider implements vscode.WebviewViewProvider {
   public static readonly viewType = "chatView";
@@ -86,7 +87,7 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
       vscode.Uri.joinPath(this._extensionUri, "assets", "reset.css"),
     );
     // Highlight theme selection (cf. https://highlightjs.org/demo)
-    const highlightThemeName = "github-dark-dimmed";
+    const highlightThemeName = config.get("highlighttheme") as string;
 
     // Use a nonce to whitelist which scripts can be run
     const nonce = getNonce();

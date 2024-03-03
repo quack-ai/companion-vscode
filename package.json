@@ -115,6 +115,11 @@
             "type": "string",
             "default": "phc_mU5797H4W1GELY5wmpxxSK9EWZyW4Eev5WZOtuqXMPE",
             "description": "The project key for PostHog"
+          },
+          "ui.highlighttheme": {
+            "type": "string",
+            "default": "github-dark-dimmed",
+            "description": "The highlight theme using for codeblocks (https://highlightjs.org/demo)"
           }
         }
       }
