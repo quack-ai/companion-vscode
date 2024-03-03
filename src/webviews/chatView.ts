@@ -85,6 +85,22 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
     const resetStyle = webview.asWebviewUri(
       vscode.Uri.joinPath(this._extensionUri, "assets", "reset.css"),
     );
+    const highlightStyle = webview.asWebviewUri(
+      vscode.Uri.joinPath(
+        this._extensionUri,
+        "assets",
+        "highlight",
+        "github-dark-dimmed.min.css",
+      ),
+    );
+    const highlightScript = webview.asWebviewUri(
+      vscode.Uri.joinPath(
+        this._extensionUri,
+        "assets",
+        "highlight",
+        "highlight.min.js",
+      ),
+    );
 
     // Use a nonce to whitelist which scripts can be run
     const nonce = getNonce();
@@ -98,6 +114,9 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
           <link href="${vscodeStyle}" rel="stylesheet">
           <link href="${resetStyle}" rel="stylesheet">
+          <link href="${highlightStyle}" rel="stylesheet">
+          <script src="${highlightScript}"></script>
+          <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${webview.cspSource}; script-src 'nonce-${nonce}';">
           <title>Chat View</title>
       </head>
       <body>
@@ -106,7 +125,6 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
               <input type="text" id="messageInput" placeholder="Type your message here...">
               <button id="sendButton">Send</button>
           </div>        
-
           <script nonce="${nonce}">
             const vscode = acquireVsCodeApi();
             const messagesDiv = document.getElementById('messages');
@@ -130,6 +148,7 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
               messageElement.className = 'message';
               messageElement.innerHTML = \`<strong>\${user}:</strong> \${content}\`;
               messagesDiv.appendChild(messageElement);
+              hljs.highlightBlock(messageElement.querySelector('code'));
               messageElement.scrollIntoView();
             }
             function addChunk(content) {
@@ -152,6 +171,11 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
                   addChunk(msg.text);
                   break;
               }
+            });
+            document.addEventListener('DOMContentLoaded', (event) => {
+              document.querySelectorAll('pre code').forEach((block) => {
+                  hljs.highlightBlock(block);
+              });
             });
         </script>
       </body>
