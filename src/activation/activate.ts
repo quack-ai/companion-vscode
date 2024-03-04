@@ -12,6 +12,12 @@ import { verifyQuackEndpoint, verifyQuackToken } from "../util/quack";
 import { setEndpoint, login, logout } from "../commands/authentication";
 import { getEnvInfo } from "../commands/diagnostics";
 import { sendChatMessage } from "../commands/assistant";
+import {
+  createGuideline,
+  listGuidelines,
+  editGuideline,
+  deleteGuideline,
+} from "../commands/guidelines";
 
 export let extensionContext: vscode.ExtensionContext | undefined = undefined;
 export let sessionId: string = v4();
@@ -75,6 +81,36 @@ export async function activateExtension(context: vscode.ExtensionContext) {
       context.workspaceState.update("messages", []);
       chatViewProvider.refresh();
     }),
+  );
+  // Guideline
+  context.subscriptions.push(
+    vscode.commands.registerCommand(
+      "quack.createGuideline",
+      async (input?: string) => {
+        await createGuideline(input, context);
+      },
+    ),
+  );
+  context.subscriptions.push(
+    vscode.commands.registerCommand("quack.listGuidelines", async () => {
+      await listGuidelines(context);
+    }),
+  );
+  context.subscriptions.push(
+    vscode.commands.registerCommand(
+      "quack.editGuideline",
+      async (index?: number, content?: string) => {
+        await editGuideline(index, content, context);
+      },
+    ),
+  );
+  context.subscriptions.push(
+    vscode.commands.registerCommand(
+      "quack.deleteGuideline",
+      async (index?: number) => {
+        await deleteGuideline(index, context);
+      },
+    ),
   );
   // Refresh UI
   chatViewProvider.refresh();

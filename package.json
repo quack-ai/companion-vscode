@@ -187,11 +187,27 @@
       {
         "command": "quack.clearChatHistory",
         "category": "Quack Companion",
-        "title": "Clear chat history",
-        "icon": {
-          "light": "assets/light/trash.svg",
-          "dark": "assets/dark/trash.svg"
-        }
+        "title": "Clear chat history"
+      },
+      {
+        "command": "quack.createGuideline",
+        "category": "Quack Companion",
+        "title": "Create a coding guideline"
+      },
+      {
+        "command": "quack.listGuidelines",
+        "category": "Quack Companion",
+        "title": "List your guidelines"
+      },
+      {
+        "command": "quack.editGuideline",
+        "category": "Quack Companion",
+        "title": "Update your guideline content"
+      },
+      {
+        "command": "quack.deleteGuideline",
+        "category": "Quack Companion",
+        "title": "Delete a guideline"
       }
     ],
     "viewsWelcome": [
