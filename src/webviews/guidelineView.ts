@@ -6,10 +6,8 @@
 import * as vscode from "vscode";
 
 export interface GuidelineState {
-  id: number;
-  title: string;
-  details: string;
-  completed: boolean;
+  enabled: boolean;
+  content: string;
 }
 
 export class GuidelineTreeItem extends vscode.TreeItem {
@@ -19,27 +17,8 @@ export class GuidelineTreeItem extends vscode.TreeItem {
     public readonly collapsibleState: vscode.TreeItemCollapsibleState,
     private readonly _extensionUri: vscode.Uri,
   ) {
-    super(guideline.title, collapsibleState);
-    this.tooltip = guideline.details;
-    this.updateIconPath();
-  }
-
-  updateIconPath(): void {
-    const iconFileName = this.guideline.completed ? "pass.svg" : "error.svg";
-    this.iconPath = {
-      light: vscode.Uri.joinPath(
-        this._extensionUri,
-        "media",
-        "light",
-        iconFileName,
-      ),
-      dark: vscode.Uri.joinPath(
-        this._extensionUri,
-        "media",
-        "dark",
-        iconFileName,
-      ),
-    };
+    super(guideline.content, collapsibleState);
+    this.tooltip = guideline.content;
   }
 }
 
@@ -54,16 +33,23 @@ export class GuidelineTreeProvider
   > = this._onDidChangeTreeData.event;
 
   private _guidelines: GuidelineState[];
-  private readonly _extensionUri: vscode.Uri;
   private _guidelineItems: GuidelineTreeItem[] = [];
+  private readonly _extensionUri: vscode.Uri;
 
-  constructor(extensionUri: vscode.Uri) {
+  constructor(
+    _extensionUri: vscode.Uri,
+    private readonly _context: vscode.ExtensionContext,
+  ) {
     this._guidelines = [];
-    this._extensionUri = extensionUri;
+    this._extensionUri = _extensionUri;
   }
 
-  refresh(guidelines: GuidelineState[]): void {
-    this._guidelines = guidelines;
+  getIndexOf(item: GuidelineTreeItem) {
+    return this._guidelineItems.indexOf(item);
+  }
+
+  refresh(): void {
+    this._guidelines = this._context.globalState.get("quack.guidelines") || [];
     this._guidelineItems = this._guidelines.map(
       (guideline) =>
         new GuidelineTreeItem(
@@ -72,17 +58,7 @@ export class GuidelineTreeProvider
           this._extensionUri,
         ),
     );
-    this._guidelineItems.forEach((item) => item.updateIconPath());
     this._onDidChangeTreeData.fire();
-  }
-
-  refreshItem(guidelineId: number, completed: boolean): void {
-    let item = this._guidelineItems.find((g) => g.guideline.id === guidelineId);
-    if (item) {
-      item.guideline.completed = completed;
-      this._guidelineItems.forEach((item) => item.updateIconPath());
-      this._onDidChangeTreeData.fire();
-    }
   }
 
   getTreeItem(element: GuidelineTreeItem): vscode.TreeItem {

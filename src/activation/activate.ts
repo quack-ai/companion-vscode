@@ -8,6 +8,7 @@ import { v4 } from "uuid";
 
 import { getExtensionVersion } from "./environmentSetup";
 import { ChatViewProvider } from "../webviews/chatView";
+import { GuidelineTreeProvider } from "../webviews/guidelineView";
 import { verifyQuackEndpoint, verifyQuackToken } from "../util/quack";
 import { setEndpoint, login, logout } from "../commands/authentication";
 import { getEnvInfo } from "../commands/diagnostics";
@@ -43,6 +44,16 @@ export async function activateExtension(context: vscode.ExtensionContext) {
     vscode.window.registerWebviewViewProvider(
       "quack.chatView",
       chatViewProvider,
+    ),
+  );
+  const guidelineTreeProvider = new GuidelineTreeProvider(
+    context.extensionUri,
+    context,
+  );
+  context.subscriptions.push(
+    vscode.window.registerTreeDataProvider(
+      "quack.guidelineTreeView",
+      guidelineTreeProvider,
     ),
   );
   // Register commands and providers
@@ -88,6 +99,7 @@ export async function activateExtension(context: vscode.ExtensionContext) {
       "quack.createGuideline",
       async (input?: string) => {
         await createGuideline(input, context);
+        guidelineTreeProvider.refresh();
       },
     ),
   );
@@ -101,19 +113,39 @@ export async function activateExtension(context: vscode.ExtensionContext) {
       "quack.editGuideline",
       async (index?: number, content?: string) => {
         await editGuideline(index, content, context);
+        guidelineTreeProvider.refresh();
       },
     ),
+  );
+  context.subscriptions.push(
+    vscode.commands.registerCommand("quack.editGuidelineItem", async (item) => {
+      const index = guidelineTreeProvider.getIndexOf(item);
+      await editGuideline(index, undefined, context);
+      guidelineTreeProvider.refresh();
+    }),
   );
   context.subscriptions.push(
     vscode.commands.registerCommand(
       "quack.deleteGuideline",
       async (index?: number) => {
         await deleteGuideline(index, context);
+        guidelineTreeProvider.refresh();
+      },
+    ),
+  );
+  context.subscriptions.push(
+    vscode.commands.registerCommand(
+      "quack.deleteGuidelineItem",
+      async (item) => {
+        const index = guidelineTreeProvider.getIndexOf(item);
+        await deleteGuideline(index, context);
+        guidelineTreeProvider.refresh();
       },
     ),
   );
   // Refresh UI
   chatViewProvider.refresh();
+  guidelineTreeProvider.refresh();
   // Safety checks
   let config = vscode.workspace.getConfiguration("api");
   // Endpoint
