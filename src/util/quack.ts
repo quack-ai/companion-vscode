@@ -6,11 +6,14 @@
 import * as vscode from "vscode";
 import axios, { AxiosResponse, AxiosError } from "axios";
 
+let config = vscode.workspace.getConfiguration("api");
+
 export interface QuackGuideline {
   id: number;
-  order: number;
-  title: string;
-  details: string;
+  content: string;
+  creator_id: number;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface ComplianceResult {
@@ -74,6 +77,27 @@ export async function verifyQuackToken(
   }
 }
 
+export function checkAPIAccess(context: vscode.ExtensionContext): boolean {
+  // API Checks
+  if (!config.get("endpoint")) {
+    vscode.window.showErrorMessage("Configure your endpoint first");
+    context.globalState.update("quack.isValidEndpoint", false);
+    vscode.commands.executeCommand(
+      "setContext",
+      "quack.isValidEndpoint",
+      false,
+    );
+    return false;
+  }
+  if (!context.globalState.get("quack.quackToken")) {
+    vscode.window.showErrorMessage("Authenticate first");
+    context.globalState.update("quack.isValidToken", false);
+    vscode.commands.executeCommand("setContext", "quack.isValidToken", false);
+    return false;
+  }
+  return true;
+}
+
 export async function getToken(
   githubToken: string,
   endpointURL: string,
@@ -108,15 +132,11 @@ export async function getToken(
   }
 }
 
-export async function fetchRepoGuidelines(
-  repoId: number,
+export async function fetchGuidelines(
   endpointURL: string,
   token: string,
 ): Promise<QuackGuideline[]> {
-  const quackURL = new URL(
-    `/api/v1/repos/${repoId}/guidelines`,
-    endpointURL,
-  ).toString();
+  const quackURL = new URL(`/api/v1/guidelines`, endpointURL).toString();
   try {
     // Retrieve the guidelines
     const response: AxiosResponse<any> = await axios.get(quackURL, {
@@ -125,9 +145,7 @@ export async function fetchRepoGuidelines(
 
     // Handle the response
     if (response.status === 200) {
-      return response.data.sort(
-        (a: QuackGuideline, b: QuackGuideline) => a.order - b.order,
-      );
+      return response.data;
     } else {
       // The request returned a non-200 status code (e.g., 404)
       // Show an error message or handle the error accordingly
@@ -284,5 +302,107 @@ export async function postChatMessage(
     console.error("Error sending Quack API request:", error);
     vscode.window.showErrorMessage("Invalid API request.");
     throw new Error("Unable to send chat message");
+  }
+}
+
+export async function postGuideline(
+  content: string,
+  endpointURL: string,
+  token: string,
+): Promise<QuackGuideline> {
+  const quackURL = new URL(`/api/v1/guidelines`, endpointURL).toString();
+  try {
+    // Retrieve the guidelines
+    const response: AxiosResponse<any> = await axios.post(
+      quackURL,
+      { content: content },
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      },
+    );
+
+    // Handle the response
+    if (response.status === 201) {
+      return response.data;
+    } else {
+      vscode.window.showErrorMessage(
+        `Quack API returned status code ${response.status}`,
+      );
+      throw new Error("Unable to create guideline");
+    }
+  } catch (error) {
+    // Handle other errors that may occur during the request
+    console.error("Error creating guideline:", error);
+
+    // Show an error message or handle the error accordingly
+    vscode.window.showErrorMessage("Failed to create guideline.");
+    throw new Error("Unable to create guideline");
+  }
+}
+
+export async function patchGuideline(
+  id: number,
+  content: string,
+  endpointURL: string,
+  token: string,
+): Promise<QuackGuideline> {
+  const quackURL = new URL(`/api/v1/guidelines/${id}`, endpointURL).toString();
+  try {
+    // Retrieve the guidelines
+    const response: AxiosResponse<any> = await axios.patch(
+      quackURL,
+      { content: content },
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      },
+    );
+
+    // Handle the response
+    if (response.status === 200) {
+      return response.data;
+    } else {
+      vscode.window.showErrorMessage(
+        `Quack API returned status code ${response.status}`,
+      );
+      throw new Error("Unable to patch guideline");
+    }
+  } catch (error) {
+    // Handle other errors that may occur during the request
+    console.error("Error patching guideline:", error);
+
+    // Show an error message or handle the error accordingly
+    vscode.window.showErrorMessage("Failed to patch guideline.");
+    throw new Error("Unable to patch guideline");
+  }
+}
+
+export async function deleteGuideline(
+  id: number,
+  endpointURL: string,
+  token: string,
+): Promise<QuackGuideline> {
+  const quackURL = new URL(`/api/v1/guidelines/${id}`, endpointURL).toString();
+  try {
+    // Retrieve the guidelines
+    const response: AxiosResponse<any> = await axios.delete(quackURL, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    // Handle the response
+    if (response.status === 200) {
+      return response.data;
+    } else {
+      vscode.window.showErrorMessage(
+        `Quack API returned status code ${response.status}`,
+      );
+      throw new Error("Unable to patch guideline");
+    }
+  } catch (error) {
+    // Handle other errors that may occur during the request
+    console.error("Error patching guideline:", error);
+
+    // Show an error message or handle the error accordingly
+    vscode.window.showErrorMessage("Failed to patch guideline.");
+    throw new Error("Unable to patch guideline");
   }
 }

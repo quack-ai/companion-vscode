@@ -17,7 +17,8 @@ import {
   createGuideline,
   listGuidelines,
   editGuideline,
-  deleteGuideline,
+  removeGuideline,
+  pullGuidelines,
 } from "../commands/guidelines";
 
 export let extensionContext: vscode.ExtensionContext | undefined = undefined;
@@ -95,6 +96,12 @@ export async function activateExtension(context: vscode.ExtensionContext) {
   );
   // Guideline
   context.subscriptions.push(
+    vscode.commands.registerCommand("quack.pullGuidelines", async () => {
+      await pullGuidelines(context);
+      guidelineTreeProvider.refresh();
+    }),
+  );
+  context.subscriptions.push(
     vscode.commands.registerCommand(
       "quack.createGuideline",
       async (input?: string) => {
@@ -109,15 +116,6 @@ export async function activateExtension(context: vscode.ExtensionContext) {
     }),
   );
   context.subscriptions.push(
-    vscode.commands.registerCommand(
-      "quack.editGuideline",
-      async (index?: number, content?: string) => {
-        await editGuideline(index, content, context);
-        guidelineTreeProvider.refresh();
-      },
-    ),
-  );
-  context.subscriptions.push(
     vscode.commands.registerCommand("quack.editGuidelineItem", async (item) => {
       const index = guidelineTreeProvider.getIndexOf(item);
       await editGuideline(index, undefined, context);
@@ -126,19 +124,10 @@ export async function activateExtension(context: vscode.ExtensionContext) {
   );
   context.subscriptions.push(
     vscode.commands.registerCommand(
-      "quack.deleteGuideline",
-      async (index?: number) => {
-        await deleteGuideline(index, context);
-        guidelineTreeProvider.refresh();
-      },
-    ),
-  );
-  context.subscriptions.push(
-    vscode.commands.registerCommand(
       "quack.deleteGuidelineItem",
       async (item) => {
         const index = guidelineTreeProvider.getIndexOf(item);
-        await deleteGuideline(index, context);
+        await removeGuideline(index, context);
         guidelineTreeProvider.refresh();
       },
     ),
