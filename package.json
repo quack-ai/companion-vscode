@@ -139,7 +139,7 @@
           "id": "quack.endpointView",
           "name": "Endpoint",
           "icon": "assets/dark/quack.svg",
-          "contextualTitle": "Endpoint",
+          "contextualTitle": "Endpoint configuration",
           "when": "!quack.isValidEndpoint"
         },
         {
@@ -152,9 +152,17 @@
         {
           "type": "webview",
           "id": "quack.chatView",
-          "name": "Quack Chat",
+          "name": "Chat",
           "icon": "assets/dark/quack.svg",
           "contextualTitle": "Chat"
+        },
+        {
+          "id": "quack.guidelineTreeView",
+          "name": "Coding guidelines",
+          "type": "tree",
+          "icon": "assets/dark/quack.svg",
+          "contextualTitle": "Guidelines",
+          "when": "true"
         }
       ]
     },
@@ -192,6 +200,48 @@
           "light": "assets/light/trash.svg",
           "dark": "assets/dark/trash.svg"
         }
+      },
+      {
+        "command": "quack.createGuideline",
+        "category": "Quack Companion",
+        "title": "Create a coding guideline",
+        "icon": {
+          "light": "assets/light/add.svg",
+          "dark": "assets/dark/add.svg"
+        }
+      },
+      {
+        "command": "quack.listGuidelines",
+        "category": "Quack Companion",
+        "title": "List your guidelines"
+      },
+      {
+        "command": "quack.editGuideline",
+        "category": "Quack Companion",
+        "title": "Update your guideline content"
+      },
+      {
+        "command": "quack.editGuidelineItem",
+        "category": "Quack Companion",
+        "title": "Update this guideline",
+        "icon": {
+          "light": "assets/light/edit.svg",
+          "dark": "assets/dark/edit.svg"
+        }
+      },
+      {
+        "command": "quack.deleteGuideline",
+        "category": "Quack Companion",
+        "title": "Delete a guideline"
+      },
+      {
+        "command": "quack.deleteGuidelineItem",
+        "category": "Quack Companion",
+        "title": "Delete this guideline",
+        "icon": {
+          "light": "assets/light/trash.svg",
+          "dark": "assets/dark/trash.svg"
+        }
       }
     ],
     "viewsWelcome": [
@@ -219,6 +269,23 @@
           "command": "quack.clearChatHistory",
           "when": "view == quack.chatView",
           "group": "navigation"
+        },
+        {
+          "command": "quack.createGuideline",
+          "when": "view == quack.guidelineTreeView",
+          "group": "navigation"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "quack.editGuidelineItem",
+          "when": "view == quack.guidelineTreeView && viewItem == guidelineTreeItem",
+          "group": "inline"
+        },
+        {
+          "command": "quack.deleteGuidelineItem",
+          "when": "view == quack.guidelineTreeView && viewItem == guidelineTreeItem",
+          "group": "inline"
         }
       ]
     },

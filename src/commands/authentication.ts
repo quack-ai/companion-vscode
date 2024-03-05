@@ -17,7 +17,7 @@ export async function setEndpoint(context: vscode.ExtensionContext) {
   // Get user input
   const quackEndpoint = await vscode.window.showInputBox({
     prompt: "Enter the endpoint URL for Quack API",
-    placeHolder: config.get("endpoint"),
+    value: config.get("endpoint"),
     ignoreFocusOut: true, // This keeps the input box open when focus is lost, which can prevent some confusion
   });
   if (quackEndpoint) {
