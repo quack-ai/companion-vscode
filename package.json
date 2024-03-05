@@ -216,11 +216,6 @@
         "title": "List your guidelines"
       },
       {
-        "command": "quack.editGuideline",
-        "category": "Quack Companion",
-        "title": "Update your guideline content"
-      },
-      {
         "command": "quack.editGuidelineItem",
         "category": "Quack Companion",
         "title": "Update this guideline",
@@ -230,17 +225,21 @@
         }
       },
       {
-        "command": "quack.deleteGuideline",
-        "category": "Quack Companion",
-        "title": "Delete a guideline"
-      },
-      {
         "command": "quack.deleteGuidelineItem",
         "category": "Quack Companion",
         "title": "Delete this guideline",
         "icon": {
           "light": "assets/light/trash.svg",
           "dark": "assets/dark/trash.svg"
+        }
+      },
+      {
+        "command": "quack.pullGuidelines",
+        "category": "Quack Companion",
+        "title": "Pull your guidelines",
+        "icon": {
+          "light": "assets/light/refresh.svg",
+          "dark": "assets/dark/refresh.svg"
         }
       }
     ],
@@ -272,6 +271,11 @@
         },
         {
           "command": "quack.createGuideline",
+          "when": "view == quack.guidelineTreeView",
+          "group": "navigation"
+        },
+        {
+          "command": "quack.pullGuidelines",
           "when": "view == quack.guidelineTreeView",
           "group": "navigation"
         }
