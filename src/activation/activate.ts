@@ -9,8 +9,12 @@ import { v4 } from "uuid";
 import { getExtensionVersion } from "./environmentSetup";
 import { ChatViewProvider } from "../webviews/chatView";
 import { GuidelineTreeProvider } from "../webviews/guidelineView";
-import { verifyQuackEndpoint, verifyQuackToken } from "../util/quack";
-import { setEndpoint, login, logout } from "../commands/authentication";
+import {
+  setEndpoint,
+  login,
+  logout,
+  prepareAPIAccess,
+} from "../commands/authentication";
 import { getEnvInfo } from "../commands/diagnostics";
 import { sendChatMessage } from "../commands/assistant";
 import {
@@ -136,55 +140,5 @@ export async function activateExtension(context: vscode.ExtensionContext) {
   chatViewProvider.refresh();
   guidelineTreeProvider.refresh();
   // Safety checks
-  let config = vscode.workspace.getConfiguration("api");
-  // Endpoint
-  const isValidEndpoint: boolean = await verifyQuackEndpoint(
-    config.get("endpoint") as string,
-  );
-  context.globalState.update("quack.isValidEndpoint", isValidEndpoint);
-  vscode.commands.executeCommand(
-    "setContext",
-    "quack.isValidEndpoint",
-    isValidEndpoint,
-  );
-  // Suggest user interventions
-  if (!isValidEndpoint) {
-    vscode.window
-      .showErrorMessage("Unreachable API endpoint", "Configure endpoint")
-      .then((choice) => {
-        if (choice === "Configure endpoint") {
-          vscode.commands.executeCommand("quack.setEndpoint");
-        }
-      });
-  }
-  // Token
-  if (context.globalState.get("quack.isValidEndpoint")) {
-    // Nothing set or invalid
-    var isValidToken: boolean = false;
-    if (!!context.globalState.get("quack.quackToken")) {
-      isValidToken = await verifyQuackToken(
-        context.globalState.get("quack.quackToken") as string,
-        config.get("endpoint") as string,
-      );
-    }
-    context.globalState.update("quack.isValidToken", isValidToken);
-    vscode.commands.executeCommand(
-      "setContext",
-      "quack.isValidToken",
-      isValidToken,
-    );
-    if (
-      context.globalState.get("quack.quackToken") === undefined ||
-      context.globalState.get("quack.quackToken") === null ||
-      !isValidToken
-    ) {
-      vscode.window
-        .showErrorMessage("Unauthenticated", "Authenticate")
-        .then((choice) => {
-          if (choice === "Authenticate") {
-            vscode.commands.executeCommand("quack.login");
-          }
-        });
-    }
-  }
+  prepareAPIAccess(context);
 }
