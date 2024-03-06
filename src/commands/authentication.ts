@@ -5,7 +5,11 @@
 
 import * as vscode from "vscode";
 
-import { verifyQuackEndpoint, getToken } from "../util/quack";
+import {
+  verifyQuackEndpoint,
+  getToken,
+  getAPIAccessStatus,
+} from "../util/quack";
 import analyticsClient from "../util/analytics";
 import { getExtensionVersion } from "../activation/environmentSetup";
 import { getUniqueId } from "../util/vscode";
@@ -31,8 +35,6 @@ export async function setEndpoint(context: vscode.ExtensionContext) {
         "quack.isValidEndpoint",
         true,
       );
-      // Reset the token
-      // await context.globalState.update("quack.quackToken", undefined);
       vscode.window.showInformationMessage("Quack endpoint set successfully");
     } else {
       vscode.window.showErrorMessage(
@@ -91,4 +93,89 @@ export async function logout(context: vscode.ExtensionContext) {
   context.workspaceState.update("quack.guidelines", undefined);
   vscode.commands.executeCommand("setContext", "quack.isValidToken", false);
   vscode.window.showInformationMessage("Logout successful");
+}
+
+export async function prepareAPIAccess(context: vscode.ExtensionContext) {
+  // if endpoint not set, set it & verify it
+  if (!config.get("endpoint")) {
+    await vscode.window
+      .showErrorMessage("No API endpoint set", "Configure endpoint")
+      .then((choice) => {
+        if (choice === "Configure endpoint") {
+          // Request endpoint from user
+          vscode.commands.executeCommand("quack.setEndpoint");
+        }
+      });
+    // if it's set, make sure it works
+  } else {
+    if (await verifyQuackEndpoint(config.get("endpoint") as string)) {
+      context.globalState.update("quack.isValidEndpoint", true);
+      vscode.commands.executeCommand(
+        "setContext",
+        "quack.isValidEndpoint",
+        true,
+      );
+    } else {
+      await vscode.window
+        .showErrorMessage("Unreachable API endpoint", "Configure endpoint")
+        .then((choice) => {
+          if (choice === "Configure endpoint") {
+            // Request endpoint from user
+            vscode.commands.executeCommand("quack.setEndpoint");
+          }
+        });
+    }
+  }
+  // if endpoint set but not token --> retrieve token
+  if (
+    !!config.get("endpoint") &&
+    !context.globalState.get("quack.quackToken")
+  ) {
+    await vscode.window
+      .showErrorMessage("Unauthenticated", "Authenticate")
+      .then((choice) => {
+        if (choice === "Authenticate") {
+          vscode.commands.executeCommand("quack.login");
+        }
+      });
+    return;
+  }
+  // If both endpoint & token are set, check the access
+  if (
+    !!config.get("endpoint") &&
+    !!context.globalState.get("quack.quackToken")
+  ) {
+    const status = await getAPIAccessStatus(
+      context.globalState.get("quack.quackToken") as string,
+      config.get("endpoint") as string,
+    );
+    if (status === "ok") {
+      context.globalState.update("quack.isValidEndpoint", true);
+      context.globalState.update("quack.isValidToken", true);
+      vscode.commands.executeCommand(
+        "setContext",
+        "quack.isValidEndpoint",
+        true,
+      );
+      vscode.commands.executeCommand("setContext", "quack.isValidToken", true);
+      return;
+    } else if (status === "expired-token") {
+      context.globalState.update("quack.quackToken", undefined);
+      context.globalState.update("quack.isValidToken", false);
+      context.globalState.update("quack.isValidEndpoint", true);
+      vscode.commands.executeCommand("setContext", "quack.isValidToken", false);
+      await vscode.window
+        .showErrorMessage("Your token has expired", "Authenticate")
+        .then((choice) => {
+          if (choice === "Authenticate") {
+            vscode.commands.executeCommand("quack.login");
+          }
+        });
+      return;
+    } else {
+      // Unknown problem
+      console.log(`Unabled to verify API access: ${status}`);
+      vscode.window.showErrorMessage("Unable to verify access");
+    }
+  }
 }
