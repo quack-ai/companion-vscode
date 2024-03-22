@@ -4,7 +4,6 @@
 // See LICENSE or go to <https://www.apache.org/licenses/LICENSE-2.0> for full license details.
 
 import * as vscode from "vscode";
-import axios, { AxiosResponse } from "axios";
 import { getCurrentRepoName } from "./session";
 
 export interface GitHubRepo {
@@ -25,19 +24,16 @@ interface GithubUser {
   login: string;
 }
 
-export async function getUser(githubtoken: string): Promise<GithubUser> {
+export async function getUser(githubToken: string): Promise<GithubUser> {
   try {
     // Check that it's a public repo
-    const response: AxiosResponse<any> = await axios.get(
-      `https://api.github.com/user`,
-      {
-        headers: { Authorization: `Bearer ${githubtoken}` },
-      },
-    );
+    const response = await fetch(`https://api.github.com/user`, {
+      headers: { Authorization: `Bearer ${githubToken}` },
+    });
 
     // Handle the response
-    if (response.status === 200) {
-      return response.data;
+    if (response.ok) {
+      return (await response.json()) as GithubUser;
     } else {
       // The request returned a non-200 status code (e.g., 404)
       // Show an error message or handle the error accordingly
@@ -64,14 +60,13 @@ export async function getRepoDetails(
 ): Promise<GitHubRepo> {
   try {
     // Check that it's a public repo
-    const response: AxiosResponse<any> = await axios.get(
-      `https://api.github.com/repos/${repoName}`,
-      { headers: { Authorization: `Bearer ${githubToken}` } },
-    );
+    const response = await fetch(`https://api.github.com/repos/${repoName}`, {
+      headers: { Authorization: `Bearer ${githubToken}` },
+    });
 
     // Handle the response
-    if (response.status === 200) {
-      return response.data;
+    if (response.ok) {
+      return (await response.json()) as GitHubRepo;
     } else {
       throw new Error(`GitHub API returned status code ${response.status}`);
     }

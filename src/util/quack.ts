@@ -4,7 +4,6 @@
 // See LICENSE or go to <https://www.apache.org/licenses/LICENSE-2.0> for full license details.
 
 import * as vscode from "vscode";
-import axios, { AxiosResponse, AxiosError } from "axios";
 
 let config = vscode.workspace.getConfiguration("api");
 
@@ -40,6 +39,10 @@ export interface StreamingMessage {
   done: boolean;
 }
 
+interface QuackToken {
+  access_token: string;
+}
+
 export async function verifyQuackEndpoint(
   endpointURL: string,
 ): Promise<boolean> {
@@ -48,14 +51,15 @@ export async function verifyQuackEndpoint(
     endpointURL,
   ).toString();
   try {
-    await axios.get(routeURL);
-    return true;
-  } catch (error) {
-    if (error instanceof AxiosError) {
-      if (error.response && error.response.status === 401) {
-        return true;
-      }
+    const response = await fetch(routeURL);
+    if (response.ok) {
+      return true;
+    } else if (response.status === 401) {
+      return true;
+    } else {
+      return false;
     }
+  } catch (error) {
     return false;
   }
 }
@@ -69,19 +73,21 @@ export async function getAPIAccessStatus(
     endpointURL,
   ).toString();
   try {
-    await axios.get(routeURL, {
+    const response = await fetch(routeURL, {
       headers: { Authorization: `Bearer ${quackToken}` },
     });
-    return "ok"; // Token & endpoint good
+    if (response.ok) {
+      return "ok"; // Token & endpoint good
+    } else if (response.status === 404) {
+      return "unknown-route"; // Unknown route
+    } else if (response.status === 401) {
+      return "expired-token"; // Expired token
+    } else {
+      return "other"; // Other HTTP status codes
+    }
   } catch (error) {
-    if (error instanceof AxiosError) {
-      if (error.code === "ECONNREFUSED") {
-        return "unreachable-endpoint"; // Wrong endpoint
-      } else if (error.response && error.response.status === 404) {
-        return "unknown-route"; // Unknown route
-      } else if (error.response && error.response.status === 401) {
-        return "expired-token"; // expired
-      }
+    if (error instanceof Error && error.name === "TypeError") {
+      return "unreachable-endpoint"; // Wrong endpoint
     }
     return "other"; // Token or server issues
   }
@@ -115,13 +121,20 @@ export async function getToken(
   const quackURL = new URL("/api/v1/login/token", endpointURL).toString();
   try {
     // Retrieve the guidelines
-    const response: AxiosResponse<any> = await axios.post(quackURL, {
-      github_token: githubToken,
+    const response = await fetch(quackURL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        github_token: githubToken,
+      }),
     });
 
     // Handle the response
-    if (response.status === 200) {
-      return response.data.access_token;
+    if (response.ok) {
+      const data = (await response.json()) as QuackToken;
+      return data.access_token;
     } else {
       // The request returned a non-200 status code (e.g., 404)
       // Show an error message or handle the error accordingly
@@ -149,13 +162,13 @@ export async function fetchGuidelines(
   const quackURL = new URL(`/api/v1/guidelines`, endpointURL).toString();
   try {
     // Retrieve the guidelines
-    const response: AxiosResponse<any> = await axios.get(quackURL, {
+    const response = await fetch(quackURL, {
       headers: { Authorization: `Bearer ${token}` },
     });
 
     // Handle the response
-    if (response.status === 200) {
-      return response.data;
+    if (response.ok) {
+      return (await response.json()) as QuackGuideline[];
     } else {
       // The request returned a non-200 status code (e.g., 404)
       // Show an error message or handle the error accordingly
@@ -185,24 +198,36 @@ export async function postChatMessage(
 ): Promise<void> {
   const quackURL = new URL("/api/v1/code/chat", endpointURL).toString();
   try {
-    const response: AxiosResponse<any> = await axios.post(
-      quackURL,
-      { messages: messages },
-      { headers: { Authorization: `Bearer ${token}` }, responseType: "stream" },
-    );
-    response.data.on("data", (chunk: any) => {
-      // Handle the chunk of data
-      onChunkReceived(JSON.parse(chunk).message.content);
+    const response = await fetch(quackURL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ messages: messages }),
     });
 
-    response.data.on("end", () => {
-      // console.log("Stream ended");
-      onEnd();
-    });
-
-    response.data.on("error", (error: Error) => {
-      console.error(error);
-    });
+    if (response.body) {
+      const reader = response.body.getReader();
+      try {
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) {
+            break;
+          }
+          // Assume each chunk is a Uint8Array, convert to a string or otherwise process
+          const chunk = new TextDecoder().decode(value);
+          // Process the chunk, e.g., assuming JSON content
+          onChunkReceived(JSON.parse(chunk).message.content);
+        }
+        // Stream ended
+        onEnd();
+      } catch (error) {
+        console.error(error);
+      } finally {
+        reader.releaseLock();
+      }
+    }
   } catch (error) {
     // Handle other errors that may occur during the request
     console.error("Error sending Quack API request:", error);
@@ -219,17 +244,18 @@ export async function postGuideline(
   const quackURL = new URL(`/api/v1/guidelines`, endpointURL).toString();
   try {
     // Retrieve the guidelines
-    const response: AxiosResponse<any> = await axios.post(
-      quackURL,
-      { content: content },
-      {
-        headers: { Authorization: `Bearer ${token}` },
+    const response = await fetch(quackURL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
-    );
+      body: JSON.stringify({ content: content }),
+    });
 
     // Handle the response
-    if (response.status === 201) {
-      return response.data;
+    if (response.ok) {
+      return (await response.json()) as QuackGuideline;
     } else {
       vscode.window.showErrorMessage(
         `Quack API returned status code ${response.status}`,
@@ -254,18 +280,19 @@ export async function patchGuideline(
 ): Promise<QuackGuideline> {
   const quackURL = new URL(`/api/v1/guidelines/${id}`, endpointURL).toString();
   try {
-    // Retrieve the guidelines
-    const response: AxiosResponse<any> = await axios.patch(
-      quackURL,
-      { content: content },
-      {
-        headers: { Authorization: `Bearer ${token}` },
+    // Update the guideline
+    const response = await fetch(quackURL, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
-    );
+      body: JSON.stringify({ content: content }),
+    });
 
     // Handle the response
-    if (response.status === 200) {
-      return response.data;
+    if (response.ok) {
+      return (await response.json()) as QuackGuideline;
     } else {
       vscode.window.showErrorMessage(
         `Quack API returned status code ${response.status}`,
@@ -289,14 +316,18 @@ export async function deleteGuideline(
 ): Promise<QuackGuideline> {
   const quackURL = new URL(`/api/v1/guidelines/${id}`, endpointURL).toString();
   try {
-    // Retrieve the guidelines
-    const response: AxiosResponse<any> = await axios.delete(quackURL, {
-      headers: { Authorization: `Bearer ${token}` },
+    // Delete the guideline
+    const response = await fetch(quackURL, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
     });
 
     // Handle the response
-    if (response.status === 200) {
-      return response.data;
+    if (response.ok) {
+      return (await response.json()) as QuackGuideline;
     } else {
       vscode.window.showErrorMessage(
         `Quack API returned status code ${response.status}`,
