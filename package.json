@@ -76,7 +76,7 @@
     "swift",
     "keybindings"
   ],
-  "icon": "assets/quack-logo.png",
+  "icon": "media/quack-logo.png",
   "repository": {
     "type": "git",
     "url": "https://github.com/quack-ai/companion"
@@ -129,7 +129,7 @@
         {
           "id": "quack-companion",
           "title": "Quack Companion",
-          "icon": "assets/dark/quack.svg"
+          "icon": "media/dark/quack.svg"
         }
       ]
     },
@@ -138,14 +138,14 @@
         {
           "id": "quack.endpointView",
           "name": "Endpoint",
-          "icon": "assets/dark/quack.svg",
+          "icon": "media/dark/quack.svg",
           "contextualTitle": "Endpoint configuration",
           "when": "!quack.isValidEndpoint"
         },
         {
           "id": "quack.authView",
           "name": "Authentication",
-          "icon": "assets/dark/quack.svg",
+          "icon": "media/dark/quack.svg",
           "contextualTitle": "Authentication",
           "when": "quack.isValidEndpoint && !quack.isValidToken"
         },
@@ -153,14 +153,14 @@
           "type": "webview",
           "id": "quack.chatView",
           "name": "Chat",
-          "icon": "assets/dark/quack.svg",
+          "icon": "media/dark/quack.svg",
           "contextualTitle": "Chat"
         },
         {
           "id": "quack.guidelineTreeView",
           "name": "Coding guidelines",
           "type": "tree",
-          "icon": "assets/dark/quack.svg",
+          "icon": "media/dark/quack.svg",
           "contextualTitle": "Guidelines",
           "when": "true"
         }
@@ -197,8 +197,8 @@
         "category": "Quack Companion",
         "title": "Clear chat history",
         "icon": {
-          "light": "assets/light/trash.svg",
-          "dark": "assets/dark/trash.svg"
+          "light": "media/light/trash.svg",
+          "dark": "media/dark/trash.svg"
         }
       },
       {
@@ -206,8 +206,8 @@
         "category": "Quack Companion",
         "title": "Create a coding guideline",
         "icon": {
-          "light": "assets/light/add.svg",
-          "dark": "assets/dark/add.svg"
+          "light": "media/light/add.svg",
+          "dark": "media/dark/add.svg"
         }
       },
       {
@@ -220,8 +220,8 @@
         "category": "Quack Companion",
         "title": "Update this guideline",
         "icon": {
-          "light": "assets/light/edit.svg",
-          "dark": "assets/dark/edit.svg"
+          "light": "media/light/edit.svg",
+          "dark": "media/dark/edit.svg"
         }
       },
       {
@@ -229,8 +229,8 @@
         "category": "Quack Companion",
         "title": "Delete this guideline",
         "icon": {
-          "light": "assets/light/trash.svg",
-          "dark": "assets/dark/trash.svg"
+          "light": "media/light/trash.svg",
+          "dark": "media/dark/trash.svg"
         }
       },
       {
@@ -238,8 +238,8 @@
         "category": "Quack Companion",
         "title": "Pull your guidelines",
         "icon": {
-          "light": "assets/light/refresh.svg",
-          "dark": "assets/dark/refresh.svg"
+          "light": "media/light/refresh.svg",
+          "dark": "media/dark/refresh.svg"
         }
       }
     ],
@@ -304,7 +304,7 @@
             "title": "Sign-up using GitHub",
             "description": "Go to Quack platform, click on **Login with GitHub** and follow the instructions.\n[Visit Quack platform](https://app.quackai.com/)",
             "media": {
-              "image": "assets/github_auth.png",
+              "image": "media/github_auth.png",
               "altText": "GitHub authentication"
             },
             "completionEvents": [
@@ -316,7 +316,7 @@
             "title": "Parse contribution guidelines from your repo",
             "description": "Now select your repo, click on **Connect repo**, then on **Parse guidelines**.",
             "media": {
-              "image": "assets/guideline_dashboard.png",
+              "image": "media/guideline_dashboard.png",
               "altText": "Guideline management dashboard"
             },
             "completionEvents": []
@@ -326,7 +326,7 @@
             "title": "Edit your guidelines",
             "description": "Create guidelines or edit them by clicking on them.",
             "media": {
-              "image": "assets/editor_view.png",
+              "image": "media/editor_view.png",
               "altText": "Guideline edition view"
             },
             "completionEvents": []
@@ -336,7 +336,7 @@
             "title": "Install the VSCode extension",
             "description": "Go to VSCode marketplace and install Quack Companion.",
             "media": {
-              "image": "assets/marketplace_page.png",
+              "image": "media/marketplace_page.png",
               "altText": "Quack logo"
             },
             "completionEvents": [
@@ -348,7 +348,7 @@
             "title": "Check the access for your contributors in VSCode",
             "description": "Click on the Quack view, and authenticate. Your guidelines should be fetched automatically.\n[Authenticate](command:quack.login)",
             "media": {
-              "image": "assets/guideline_list.png",
+              "image": "media/guideline_list.png",
               "altText": "Quack logo"
             },
             "completionEvents": [
@@ -368,7 +368,7 @@
             "title": "Specify your custom Quack API endpoint",
             "description": "If you're running on a custom API endpoint, specify it first.\n[Set custom endpoint](command:quack.setEndpoint)",
             "media": {
-              "image": "assets/quack-logo.png",
+              "image": "media/quack-logo.png",
               "altText": "Quack logo"
             },
             "completionEvents": [
@@ -380,7 +380,7 @@
             "title": "Authenticate using GitHub",
             "description": "Click on **Authenticate** and follow the instructions.\n[Authenticate](command:quack.login)",
             "media": {
-              "image": "assets/github_auth.png",
+              "image": "media/github_auth.png",
               "altText": "GitHub authentication"
             },
             "completionEvents": [
@@ -392,7 +392,7 @@
             "title": "Request guidelines for a repo",
             "description": "If the selected repo doesn't have any guidelines yet, you will be ask whether you'd like to request some.",
             "media": {
-              "image": "assets/quack-logo.png",
+              "image": "media/quack-logo.png",
               "altText": "Quack logo"
             },
             "completionEvents": []
@@ -402,7 +402,7 @@
             "title": "Analyze code with Quack",
             "description": "Select a code section and click on **Analyze code with Quack** (arrow symbol in your Quack tab)",
             "media": {
-              "image": "assets/compliance_hint.png",
+              "image": "media/compliance_hint.png",
               "altText": "Code compliance hint"
             },
             "completionEvents": [
