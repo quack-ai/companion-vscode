@@ -53,24 +53,30 @@
   </a>
 </p>
 
-![Compliance hint](media/compliance_hint.png)
+Smart linting and code chat overcharged by your team insights in VSCode
 
-This extension guides you through your code contributions with Quack as a companion. The extension provides curated contribution guidelines from maintainers and assists you in meeting them.
+https://github.com/quack-ai/companion-vscode/assets/26927750/019a0610-2bca-48a4-ad35-e0a8241617d5
 
 ## Quick Tour
 
-### Contribution guidance
+### Code chat
 
-![Guideline view](media/guideline_list.png)
+![Code chat](https://github.com/quack-ai/companion-vscode/assets/26927750/0577baa8-e1b8-479a-b63e-939e8d5052be)
 
-Once installed, when you open a public GitHub project, the extension will give you a new tab where you'll find:
+### Coding guideline curation
 
-- **Guidelines**: automatic compliance of contribution guidelines, so that you can avoid the back-and-forth between the PR reviews and your IDE!
-- **Code chat** (coming soon)
+![Guideline view](https://github.com/quack-ai/companion-vscode/assets/26927750/118eea21-1ef5-42a9-af4c-cb8a1f2c5c3a)
+
+Once installed, when you open a project, the extension will give you a new tab where you'll find:
+
+- **Guideline curation**: curate your software insights with your team
+- **Code chat**: ChatGPT but for developers
+- **Smart linting** (temporarily disabled)
+- **Code completion** (coming soon)
 
 ### Walthrough tutorial
 
-![Developer walkthrough](media/dev_walkthrough.png)
+![Developer walkthrough](https://github.com/quack-ai/companion-vscode/assets/26927750/bd4fd595-991f-41d9-a125-f42cf2af6642)
 
 With our walkthrough tutorial, you're only a few clicks away from having your own coding companion.
 
@@ -126,8 +132,6 @@ Copyright (C) 2023-2024, Quack AI.
 
 This program is licensed under the Apache License 2.0.
 See LICENSE or go to <https://www.apache.org/licenses/LICENSE-2.0> for full license details.
-
-[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fquack-ai%2Fquack-companion-vscode.svg?type=large&issueType=license)](https://app.fossa.com/projects/git%2Bgithub.com%2Fquack-ai%2Fquack-companion-vscode?ref=badge_large&issueType=license)
 
 ## Contributing
 
