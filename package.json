@@ -1,10 +1,10 @@
 {
   "name": "quack-companion",
   "displayName": "Quack Companion",
-  "version": "0.0.7-alpha",
+  "version": "0.0.8-alpha",
   "license": "Apache-2.0",
   "publisher": "quackai",
-  "description": "AI coding assistant for collaborative software development 💻 Turn your team development practices into a portable plug-and-play context for code generation. Alternative to GitHub Copilot powered by GPT 3.5 / 4 turbo and Ollama.",
+  "description": "VSCode extension of Quack Companion 💻 Turn your team insights into a portable plug-and-play context for code generation. Alternative to GitHub Copilot powered by OSS LLMs (Mistral, Gemma, etc.) using Ollama.",
   "pricing": "Free",
   "author": {
     "name": "F-G Fernandez",
@@ -76,13 +76,13 @@
     "swift",
     "keybindings"
   ],
-  "icon": "assets/quack-logo.png",
+  "icon": "media/quack-logo.png",
   "repository": {
     "type": "git",
-    "url": "https://github.com/quack-ai/companion"
+    "url": "https://github.com/quack-ai/companion-vscode"
   },
   "bugs": {
-    "url": "https://github.com/quack-ai/companion/issues",
+    "url": "https://github.com/quack-ai/companion-vscode/issues",
     "email": "support@quackai.com"
   },
   "homepage": "https://quackai.com",
@@ -129,7 +129,7 @@
         {
           "id": "quack-companion",
           "title": "Quack Companion",
-          "icon": "assets/dark/quack.svg"
+          "icon": "media/dark/quack.svg"
         }
       ]
     },
@@ -138,14 +138,14 @@
         {
           "id": "quack.endpointView",
           "name": "Endpoint",
-          "icon": "assets/dark/quack.svg",
+          "icon": "media/dark/quack.svg",
           "contextualTitle": "Endpoint configuration",
           "when": "!quack.isValidEndpoint"
         },
         {
           "id": "quack.authView",
           "name": "Authentication",
-          "icon": "assets/dark/quack.svg",
+          "icon": "media/dark/quack.svg",
           "contextualTitle": "Authentication",
           "when": "quack.isValidEndpoint && !quack.isValidToken"
         },
@@ -153,14 +153,14 @@
           "type": "webview",
           "id": "quack.chatView",
           "name": "Chat",
-          "icon": "assets/dark/quack.svg",
+          "icon": "media/dark/quack.svg",
           "contextualTitle": "Chat"
         },
         {
           "id": "quack.guidelineTreeView",
           "name": "Coding guidelines",
           "type": "tree",
-          "icon": "assets/dark/quack.svg",
+          "icon": "media/dark/quack.svg",
           "contextualTitle": "Guidelines",
           "when": "true"
         }
@@ -197,8 +197,8 @@
         "category": "Quack Companion",
         "title": "Clear chat history",
         "icon": {
-          "light": "assets/light/trash.svg",
-          "dark": "assets/dark/trash.svg"
+          "light": "media/light/trash.svg",
+          "dark": "media/dark/trash.svg"
         }
       },
       {
@@ -206,8 +206,8 @@
         "category": "Quack Companion",
         "title": "Create a coding guideline",
         "icon": {
-          "light": "assets/light/add.svg",
-          "dark": "assets/dark/add.svg"
+          "light": "media/light/add.svg",
+          "dark": "media/dark/add.svg"
         }
       },
       {
@@ -220,8 +220,8 @@
         "category": "Quack Companion",
         "title": "Update this guideline",
         "icon": {
-          "light": "assets/light/edit.svg",
-          "dark": "assets/dark/edit.svg"
+          "light": "media/light/edit.svg",
+          "dark": "media/dark/edit.svg"
         }
       },
       {
@@ -229,8 +229,8 @@
         "category": "Quack Companion",
         "title": "Delete this guideline",
         "icon": {
-          "light": "assets/light/trash.svg",
-          "dark": "assets/dark/trash.svg"
+          "light": "media/light/trash.svg",
+          "dark": "media/dark/trash.svg"
         }
       },
       {
@@ -238,8 +238,8 @@
         "category": "Quack Companion",
         "title": "Pull your guidelines",
         "icon": {
-          "light": "assets/light/refresh.svg",
-          "dark": "assets/dark/refresh.svg"
+          "light": "media/light/refresh.svg",
+          "dark": "media/dark/refresh.svg"
         }
       }
     ],
@@ -295,80 +295,16 @@
     },
     "walkthroughs": [
       {
-        "id": "quack-companion.maintainer-tutorial",
-        "title": "Getting started as a Maintainer",
-        "description": "Quick setup to provide contribution assistance to your repository contributors.",
-        "steps": [
-          {
-            "id": "sign-up",
-            "title": "Sign-up using GitHub",
-            "description": "Go to Quack platform, click on **Login with GitHub** and follow the instructions.\n[Visit Quack platform](https://app.quackai.com/)",
-            "media": {
-              "image": "assets/github_auth.png",
-              "altText": "GitHub authentication"
-            },
-            "completionEvents": [
-              "onLink:https://app.quackai.com/"
-            ]
-          },
-          {
-            "id": "guideline-parsing",
-            "title": "Parse contribution guidelines from your repo",
-            "description": "Now select your repo, click on **Connect repo**, then on **Parse guidelines**.",
-            "media": {
-              "image": "assets/guideline_dashboard.png",
-              "altText": "Guideline management dashboard"
-            },
-            "completionEvents": []
-          },
-          {
-            "id": "guideline-editing",
-            "title": "Edit your guidelines",
-            "description": "Create guidelines or edit them by clicking on them.",
-            "media": {
-              "image": "assets/editor_view.png",
-              "altText": "Guideline edition view"
-            },
-            "completionEvents": []
-          },
-          {
-            "id": "extension-installation",
-            "title": "Install the VSCode extension",
-            "description": "Go to VSCode marketplace and install Quack Companion.",
-            "media": {
-              "image": "assets/marketplace_page.png",
-              "altText": "Quack logo"
-            },
-            "completionEvents": [
-              "onExtensionInstalled:quack-companion"
-            ]
-          },
-          {
-            "id": "vscode-fetch",
-            "title": "Check the access for your contributors in VSCode",
-            "description": "Click on the Quack view, and authenticate. Your guidelines should be fetched automatically.\n[Authenticate](command:quack.login)",
-            "media": {
-              "image": "assets/guideline_list.png",
-              "altText": "Quack logo"
-            },
-            "completionEvents": [
-              "onCommand:quack.login",
-              "onCommand:quack.fetchGuidelines"
-            ]
-          }
-        ]
-      },
-      {
-        "id": "quack-companion.contributor-tutorial",
-        "title": "Getting started as a Developer",
-        "description": "Quick setup to get contribution assistance",
+        "id": "quack-companion.developer-tutorial",
+        "title": "Getting started with Quack Companion",
+        "description": "Let's setup your coding LLM to augment your developer experience",
         "steps": [
           {
             "id": "vscode-endpoint",
             "title": "Specify your custom Quack API endpoint",
             "description": "If you're running on a custom API endpoint, specify it first.\n[Set custom endpoint](command:quack.setEndpoint)",
             "media": {
-              "image": "assets/quack-logo.png",
+              "image": "media/quack-logo.png",
               "altText": "Quack logo"
             },
             "completionEvents": [
@@ -380,7 +316,7 @@
             "title": "Authenticate using GitHub",
             "description": "Click on **Authenticate** and follow the instructions.\n[Authenticate](command:quack.login)",
             "media": {
-              "image": "assets/github_auth.png",
+              "image": "media/github_auth.png",
               "altText": "GitHub authentication"
             },
             "completionEvents": [
@@ -388,26 +324,27 @@
             ]
           },
           {
-            "id": "vscode-request",
-            "title": "Request guidelines for a repo",
-            "description": "If the selected repo doesn't have any guidelines yet, you will be ask whether you'd like to request some.",
+            "id": "vscode-guideline-curation",
+            "title": "Create guidelines",
+            "description": "Write a specific coding guideline as if it was a rule for your AI linter.",
             "media": {
-              "image": "assets/quack-logo.png",
-              "altText": "Quack logo"
-            },
-            "completionEvents": []
-          },
-          {
-            "id": "vscode-analyze",
-            "title": "Analyze code with Quack",
-            "description": "Select a code section and click on **Analyze code with Quack** (arrow symbol in your Quack tab)",
-            "media": {
-              "image": "assets/compliance_hint.png",
-              "altText": "Code compliance hint"
+              "image": "media/create_guideline.png",
+              "altText": "Guideline creation"
             },
             "completionEvents": [
-              "onCommand:quack.checkCodeAgainstGuideline",
-              "onCommand:quack.checkCodeAgainstRepo"
+              "onCommand:quack.createGuideline"
+            ]
+          },
+          {
+            "id": "vscode-chat",
+            "title": "Chat with Quack Companion",
+            "description": "You can now access a developer-specific chat LLM.",
+            "media": {
+              "image": "media/companion_chat.png",
+              "altText": "Companion chat"
+            },
+            "completionEvents": [
+              "onCommand:quack.sendChatMessage"
             ]
           }
         ]

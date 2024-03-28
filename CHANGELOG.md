@@ -7,6 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.7] - 2024-03-28
+
+### Added
+
+- Update readme and walkthroughs (#70)
+- Replaces axios with native fetch (#68)
+- Update API synchronization to preserve guidelines on remote (#64, #65)
+- Revamp guideline view (#63)
+- Add multi-turn chat view (#62)
+- Remove unused imports (#60)
+- Add PR label & title automatic check (#55)
+- Add precommit hooks to help contributors (#37)
+- Update marketplace metadata (#33)
+
+### Fixed
+
+- Fix the semver convention for package (#59)
+
 ## [0.0.6] - 2023-12-15
 
 ### Added

@@ -2,20 +2,21 @@
   <a href="https://quack-ai.com"><img src="https://quack-ai.com/quack.png" width="100" height="100"></a>
 </p>
 <h1 align="center">
- Quack Companion
+ Quack Companion - IDE extension
 </h1>
 
 <p align="center">
-  <a href="https://github.com/quack-ai/companion">VSCode extension</a> ・
-  <a href="https://github.com/quack-ai/contribution-api">Backend API</a> ・
-  <a href="https://github.com/quack-ai/platform">Frontend dashboard</a> ・
+<p align="center">
+  <a href="https://github.com/quack-ai/companion">API</a> ・
+  <a href="https://github.com/quack-ai/companion-vscode">VSCode extension</a> ・
   <a href="https://docs.quackai.com">Documentation</a>
+</p>
 </p>
 <h2 align="center"></h2>
 
 <p align="center">
-  <a href="https://github.com/quack-ai/companion/actions/workflows/builds.yml">
-    <img alt="CI Status" src="https://img.shields.io/github/actions/workflow/status/quack-ai/companion/builds.yml?branch=main&label=CI&logo=github&style=flat-square">
+  <a href="https://github.com/quack-ai/companion-vscode/actions/workflows/builds.yml">
+    <img alt="CI Status" src="https://img.shields.io/github/actions/workflow/status/quack-ai/companion-vscode/builds.yml?branch=main&label=CI&logo=github&style=flat-square">
   </a>
   <a href="https://github.com/eslint/eslint">
     <img src="https://img.shields.io/badge/Linter-ESLint-4B32C3?style=flat-square&logo=ESLint&logoColor=white" alt="eslint">
@@ -36,43 +37,46 @@
     <img src="https://img.shields.io/open-vsx/v/quackai/quack-companion?logo=opensourceinitiative&logoColor=fff&style=flat-square&label=Open%20VSX%20Registry" alt="Open VSX Registry">
   </a>
   <a href="https://github.com/nodejs/node">
-    <img src="https://img.shields.io/badge/Node-18-339933?style=flat-square&logo=nodedotjs&logoColor=white" alt="Node.js">
+    <img src="https://img.shields.io/badge/Node-20-339933?style=flat-square&logo=nodedotjs&logoColor=white" alt="Node.js">
   </a>
-  <a href="https://github.com/quack-ai/companion/blob/main/LICENSE">
+  <a href="https://github.com/quack-ai/companion-vscode/blob/main/LICENSE">
     <img src="https://img.shields.io/badge/License-Apache 2.0-blue?style=flat-square" alt="license">
   </a>
 </p>
 
 <p align="center">
-  <!-- <a href="https://discord.gg/E9rY3bVCWd">
-    <img src="https://dcbadge.vercel.app/api/server/E9rY3bVCWd?style=flat" alt="discord"/>
-  </a> -->
-  <a target="_blank" href="https://discord.gg/E9rY3bVCWd" style="background:none">
-    <img src="https://img.shields.io/badge/Discord-join-continue.svg?labelColor=191937&color=6F6FF7&logo=discord" />
+  <a href="https://discord.gg/E9rY3bVCWd">
+    <img src="https://img.shields.io/badge/Discord-Community-5865F2?style=flat-square&logo=discord&logoColor=white" />
   </a>
   <a href="https://twitter.com/quack_ai">
     <img src="https://img.shields.io/badge/-@quack_ai-1D9BF0?style=flat-square&logo=twitter&logoColor=white" alt="Twitter">
   </a>
 </p>
 
-![Compliance hint](assets/compliance_hint.png)
+Smart linting and code chat overcharged by your team insights in VSCode
 
-This extension guides you through your code contributions with Quack as a companion. The extension provides curated contribution guidelines from maintainers and assists you in meeting them.
+https://github.com/quack-ai/companion-vscode/assets/26927750/019a0610-2bca-48a4-ad35-e0a8241617d5
 
 ## Quick Tour
 
-### Contribution guidance
+### Code chat
 
-![Guideline view](assets/guideline_list.png)
+![Code chat](https://github.com/quack-ai/companion-vscode/assets/26927750/0577baa8-e1b8-479a-b63e-939e8d5052be)
 
-Once installed, when you open a public GitHub project, the extension will give you a new tab where you'll find:
+### Coding guideline curation
 
-- **Guidelines**: automatic compliance of contribution guidelines, so that you can avoid the back-and-forth between the PR reviews and your IDE!
-- **Code chat** (coming soon)
+![Guideline view](https://github.com/quack-ai/companion-vscode/assets/26927750/118eea21-1ef5-42a9-af4c-cb8a1f2c5c3a)
+
+Once installed, when you open a project, the extension will give you a new tab where you'll find:
+
+- **Guideline curation**: curate your software insights with your team
+- **Code chat**: ChatGPT but for developers
+- **Smart linting** (temporarily disabled)
+- **Code completion** (coming soon)
 
 ### Walthrough tutorial
 
-![Developer walkthrough](assets/dev_walkthrough.png)
+![Developer walkthrough](https://github.com/quack-ai/companion-vscode/assets/26927750/bd4fd595-991f-41d9-a125-f42cf2af6642)
 
 With our walkthrough tutorial, you're only a few clicks away from having your own coding companion.
 
@@ -128,8 +132,6 @@ Copyright (C) 2023-2024, Quack AI.
 
 This program is licensed under the Apache License 2.0.
 See LICENSE or go to <https://www.apache.org/licenses/LICENSE-2.0> for full license details.
-
-[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fquack-ai%2Fquack-companion-vscode.svg?type=large&issueType=license)](https://app.fossa.com/projects/git%2Bgithub.com%2Fquack-ai%2Fquack-companion-vscode?ref=badge_large&issueType=license)
 
 ## Contributing
 

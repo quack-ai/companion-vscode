@@ -159,7 +159,7 @@ export async function fetchGuidelines(
   endpointURL: string,
   token: string,
 ): Promise<QuackGuideline[]> {
-  const quackURL = new URL(`/api/v1/guidelines`, endpointURL).toString();
+  const quackURL = new URL(`/api/v1/guidelines/`, endpointURL).toString();
   try {
     // Retrieve the guidelines
     const response = await fetch(quackURL, {

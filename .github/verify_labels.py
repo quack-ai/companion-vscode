@@ -32,7 +32,7 @@ SECONDARY_LABELS = {
     "topic: build",
     "topic: ci",
     "topic: style",
-    "ext: assets",
+    "ext: media",
     "module: activation",
     "module: commands",
     "module: util",

@@ -1,6 +1,6 @@
-'ext: assets':
+'ext: media':
   - changed-files:
-      - any-glob-to-any-file: assets/*
+      - any-glob-to-any-file: media/*
 
 'module: activation':
   - changed-files:
