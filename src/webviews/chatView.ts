@@ -80,10 +80,10 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
   private _getHtmlForWebview(webview: vscode.Webview) {
     // Uri to load styles into webview
     const vscodeStyle = webview.asWebviewUri(
-      vscode.Uri.joinPath(this._extensionUri, "assets", "vscode.css"),
+      vscode.Uri.joinPath(this._extensionUri, "media", "vscode.css"),
     );
     const resetStyle = webview.asWebviewUri(
-      vscode.Uri.joinPath(this._extensionUri, "assets", "reset.css"),
+      vscode.Uri.joinPath(this._extensionUri, "media", "reset.css"),
     );
     // Highlight theme selection (cf. https://highlightjs.org/demo)
     const highlightThemeName = config.get("highlighttheme") as string;
