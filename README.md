@@ -2,20 +2,21 @@
   <a href="https://quack-ai.com"><img src="https://quack-ai.com/quack.png" width="100" height="100"></a>
 </p>
 <h1 align="center">
- Quack Companion
+ Quack Companion - IDE extension
 </h1>
 
 <p align="center">
-  <a href="https://github.com/quack-ai/companion">VSCode extension</a> ・
-  <a href="https://github.com/quack-ai/contribution-api">Backend API</a> ・
-  <a href="https://github.com/quack-ai/platform">Frontend dashboard</a> ・
+<p align="center">
+  <a href="https://github.com/quack-ai/companion">API</a> ・
+  <a href="https://github.com/quack-ai/companion-vscode">VSCode extension</a> ・
   <a href="https://docs.quackai.com">Documentation</a>
+</p>
 </p>
 <h2 align="center"></h2>
 
 <p align="center">
-  <a href="https://github.com/quack-ai/companion/actions/workflows/builds.yml">
-    <img alt="CI Status" src="https://img.shields.io/github/actions/workflow/status/quack-ai/companion/builds.yml?branch=main&label=CI&logo=github&style=flat-square">
+  <a href="https://github.com/quack-ai/companion-vscode/actions/workflows/builds.yml">
+    <img alt="CI Status" src="https://img.shields.io/github/actions/workflow/status/quack-ai/companion-vscode/builds.yml?branch=main&label=CI&logo=github&style=flat-square">
   </a>
   <a href="https://github.com/eslint/eslint">
     <img src="https://img.shields.io/badge/Linter-ESLint-4B32C3?style=flat-square&logo=ESLint&logoColor=white" alt="eslint">
@@ -36,26 +37,23 @@
     <img src="https://img.shields.io/open-vsx/v/quackai/quack-companion?logo=opensourceinitiative&logoColor=fff&style=flat-square&label=Open%20VSX%20Registry" alt="Open VSX Registry">
   </a>
   <a href="https://github.com/nodejs/node">
-    <img src="https://img.shields.io/badge/Node-18-339933?style=flat-square&logo=nodedotjs&logoColor=white" alt="Node.js">
+    <img src="https://img.shields.io/badge/Node-20-339933?style=flat-square&logo=nodedotjs&logoColor=white" alt="Node.js">
   </a>
-  <a href="https://github.com/quack-ai/companion/blob/main/LICENSE">
+  <a href="https://github.com/quack-ai/companion-vscode/blob/main/LICENSE">
     <img src="https://img.shields.io/badge/License-Apache 2.0-blue?style=flat-square" alt="license">
   </a>
 </p>
 
 <p align="center">
-  <!-- <a href="https://discord.gg/E9rY3bVCWd">
-    <img src="https://dcbadge.vercel.app/api/server/E9rY3bVCWd?style=flat" alt="discord"/>
-  </a> -->
-  <a target="_blank" href="https://discord.gg/E9rY3bVCWd" style="background:none">
-    <img src="https://img.shields.io/badge/Discord-join-continue.svg?labelColor=191937&color=6F6FF7&logo=discord" />
+  <a href="https://discord.gg/E9rY3bVCWd">
+    <img src="https://img.shields.io/badge/Discord-Community-5865F2?style=flat-square&logo=discord&logoColor=white" />
   </a>
   <a href="https://twitter.com/quack_ai">
     <img src="https://img.shields.io/badge/-@quack_ai-1D9BF0?style=flat-square&logo=twitter&logoColor=white" alt="Twitter">
   </a>
 </p>
 
-![Compliance hint](assets/compliance_hint.png)
+![Compliance hint](media/compliance_hint.png)
 
 This extension guides you through your code contributions with Quack as a companion. The extension provides curated contribution guidelines from maintainers and assists you in meeting them.
 
@@ -63,7 +61,7 @@ This extension guides you through your code contributions with Quack as a compan
 
 ### Contribution guidance
 
-![Guideline view](assets/guideline_list.png)
+![Guideline view](media/guideline_list.png)
 
 Once installed, when you open a public GitHub project, the extension will give you a new tab where you'll find:
 
@@ -72,7 +70,7 @@ Once installed, when you open a public GitHub project, the extension will give y
 
 ### Walthrough tutorial
 
-![Developer walkthrough](assets/dev_walkthrough.png)
+![Developer walkthrough](media/dev_walkthrough.png)
 
 With our walkthrough tutorial, you're only a few clicks away from having your own coding companion.
 
