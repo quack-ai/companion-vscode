@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Update readme and walkthroughs (#70)
 - Replaces axios with native fetch (#68)
 - Update API synchronization to preserve guidelines on remote (#64, #65)
 - Revamp guideline view (#63)
