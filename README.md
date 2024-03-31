@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://quack-ai.com"><img src="https://quack-ai.com/quack.png" width="100" height="100"></a>
+  <a href="https://quackai.com"><img src="https://quackai.com/quack.png" width="100" height="100"></a>
 </p>
 <h1 align="center">
  Quack Companion - IDE extension
