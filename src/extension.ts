@@ -5,14 +5,13 @@
 
 import * as vscode from "vscode";
 import { getExtensionVersion } from "./activation/environmentSetup";
-import analyticsClient from "./util/analytics";
+import analyticsClient, { getUniqueId } from "./util/analytics";
 import { getMachineId } from "./util/vscode";
-import { getGithubUserId } from "./util/github";
 
 let uniqueId: string = getMachineId();
 
 export async function activate(context: vscode.ExtensionContext) {
-  uniqueId = await getGithubUserId(context);
+  uniqueId = await getUniqueId(context);
   // Fresh installation
   if (!context.globalState.get("hasBeenInstalled")) {
     context.globalState.update("hasBeenInstalled", true);
