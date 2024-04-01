@@ -43,6 +43,16 @@ interface QuackToken {
   access_token: string;
 }
 
+interface TokenPayload {
+  user_id: string;
+  scopes: string;
+}
+
+interface StatusPayload {
+  status: string;
+  userId: string | undefined;
+}
+
 export async function verifyQuackEndpoint(
   endpointURL: string,
 ): Promise<boolean> {
@@ -67,7 +77,7 @@ export async function verifyQuackEndpoint(
 export async function getAPIAccessStatus(
   quackToken: string,
   endpointURL: string,
-): Promise<string> {
+): Promise<StatusPayload> {
   const routeURL: string = new URL(
     "/api/v1/login/validate",
     endpointURL,
@@ -77,19 +87,20 @@ export async function getAPIAccessStatus(
       headers: { Authorization: `Bearer ${quackToken}` },
     });
     if (response.ok) {
-      return "ok"; // Token & endpoint good
+      const data = (await response.json()) as TokenPayload;
+      return { status: "ok", userId: data.user_id.toString() }; // Token & endpoint good
     } else if (response.status === 404) {
-      return "unknown-route"; // Unknown route
+      return { status: "unknown-route", userId: undefined }; // Unknown route
     } else if (response.status === 401) {
-      return "expired-token"; // Expired token
+      return { status: "expired-token", userId: undefined }; // Expired token
     } else {
-      return "other"; // Other HTTP status codes
+      return { status: "other", userId: undefined }; // Other HTTP status codes
     }
   } catch (error) {
     if (error instanceof Error && error.name === "TypeError") {
-      return "unreachable-endpoint"; // Wrong endpoint
+      return { status: "unreachable-endpoint", userId: undefined }; // Wrong endpoint
     }
-    return "other"; // Token or server issues
+    return { status: "other", userId: undefined }; // Token or server issues
   }
 }
 

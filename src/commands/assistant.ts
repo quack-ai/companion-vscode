@@ -5,9 +5,8 @@
 
 import * as vscode from "vscode";
 
-import analyticsClient from "../util/analytics";
+import analyticsClient, { getUniqueId } from "../util/analytics";
 import { getExtensionVersion } from "../activation/environmentSetup";
-import { getUniqueId } from "../util/vscode";
 import { postChatMessage, ChatMessage } from "../util/quack";
 import { getActiveGithubRepo } from "../util/github";
 
