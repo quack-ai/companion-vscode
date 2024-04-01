@@ -374,7 +374,7 @@
     "clipboardy": "^4.0.0",
     "marked": "^12.0.0",
     "node-machine-id": "^1.1.12",
-    "posthog-node": "3.6.1",
+    "posthog-node": "4.0.0",
     "typescript": "^5.1.6",
     "uuid": "^9.0.0"
   },
