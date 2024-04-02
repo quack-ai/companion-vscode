@@ -57,5 +57,5 @@ export function deactivate() {
     },
   });
 
-  analyticsClient?.shutdownAsync();
+  analyticsClient?.shutdown();
 }
