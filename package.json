@@ -1,7 +1,7 @@
 {
   "name": "quack-companion",
   "displayName": "Quack Companion",
-  "version": "0.0.8-alpha",
+  "version": "0.0.9-alpha",
   "license": "Apache-2.0",
   "publisher": "quackai",
   "description": "VSCode extension of Quack Companion 💻 Turn your team insights into a portable plug-and-play context for code generation. Alternative to GitHub Copilot powered by OSS LLMs (Mistral, Gemma, etc.) using Ollama.",
