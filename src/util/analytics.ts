@@ -5,6 +5,8 @@
 
 import * as vscode from "vscode";
 import { PostHog } from "posthog-node";
+import { getGithubUserId } from "./github";
+import { getMachineId } from "./vscode";
 
 let analyticsClient: PostHog | null = null;
 const telemetryLevel: string = vscode.workspace
@@ -26,3 +28,18 @@ if (
 }
 
 export default analyticsClient;
+
+export async function getUniqueId(context: vscode.ExtensionContext) {
+  let cachedId: string | undefined =
+    context.globalState.get("quack.quackUserId");
+  if (cachedId) {
+    return cachedId;
+  }
+  // Fallback for analytics identifier
+  const userId: string = await getGithubUserId(context);
+  if (userId.length > 0) {
+    return `github|${userId}`;
+  } else {
+    return getMachineId();
+  }
+}

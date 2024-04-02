@@ -43,6 +43,16 @@ interface QuackToken {
   access_token: string;
 }
 
+interface TokenPayload {
+  user_id: string;
+  scopes: string;
+}
+
+interface StatusPayload {
+  status: string;
+  userId: string | undefined;
+}
+
 export async function verifyQuackEndpoint(
   endpointURL: string,
 ): Promise<boolean> {
@@ -67,7 +77,7 @@ export async function verifyQuackEndpoint(
 export async function getAPIAccessStatus(
   quackToken: string,
   endpointURL: string,
-): Promise<string> {
+): Promise<StatusPayload> {
   const routeURL: string = new URL(
     "/api/v1/login/validate",
     endpointURL,
@@ -77,19 +87,20 @@ export async function getAPIAccessStatus(
       headers: { Authorization: `Bearer ${quackToken}` },
     });
     if (response.ok) {
-      return "ok"; // Token & endpoint good
+      const data = (await response.json()) as TokenPayload;
+      return { status: "ok", userId: data.user_id.toString() }; // Token & endpoint good
     } else if (response.status === 404) {
-      return "unknown-route"; // Unknown route
+      return { status: "unknown-route", userId: undefined }; // Unknown route
     } else if (response.status === 401) {
-      return "expired-token"; // Expired token
+      return { status: "expired-token", userId: undefined }; // Expired token
     } else {
-      return "other"; // Other HTTP status codes
+      return { status: "other", userId: undefined }; // Other HTTP status codes
     }
   } catch (error) {
     if (error instanceof Error && error.name === "TypeError") {
-      return "unreachable-endpoint"; // Wrong endpoint
+      return { status: "unreachable-endpoint", userId: undefined }; // Wrong endpoint
     }
-    return "other"; // Token or server issues
+    return { status: "other", userId: undefined }; // Token or server issues
   }
 }
 
@@ -206,19 +217,28 @@ export async function postChatMessage(
       },
       body: JSON.stringify({ messages: messages }),
     });
+    if (!response.ok) {
+      // Handle HTTP errors
+      console.error(`HTTP error, status = ${response.status}`);
+      vscode.window.showErrorMessage("Invalid API request.");
+      return;
+    }
 
     if (response.body) {
       const reader = response.body.getReader();
       try {
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) {
-            break;
-          }
-          // Assume each chunk is a Uint8Array, convert to a string or otherwise process
+        let { done, value } = await reader.read();
+        while (!done) {
           const chunk = new TextDecoder().decode(value);
+          // Safeguard: consecutives chunks are sometimes glued together
+          const chunks = chunk
+            .split("\n")
+            .filter((str) => str.length > 0)
+            .map((str) => str + "\n");
           // Process the chunk, e.g., assuming JSON content
-          onChunkReceived(JSON.parse(chunk).message.content);
+          chunks.map((str) => onChunkReceived(JSON.parse(str).message.content));
+          // Read the next chunk
+          ({ done, value } = await reader.read());
         }
         // Stream ended
         onEnd();

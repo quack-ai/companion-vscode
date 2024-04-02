@@ -10,10 +10,10 @@ import {
   getToken,
   getAPIAccessStatus,
 } from "../util/quack";
-import analyticsClient from "../util/analytics";
+import analyticsClient, { getUniqueId } from "../util/analytics";
 import { getExtensionVersion } from "../activation/environmentSetup";
-import { getUniqueId } from "../util/vscode";
 import { getGithubToken } from "../util/github";
+import { getMachineId } from "../util/vscode";
 
 let config = vscode.workspace.getConfiguration("api");
 
@@ -149,17 +149,31 @@ export async function prepareAPIAccess(context: vscode.ExtensionContext) {
       context.globalState.get("quack.quackToken") as string,
       config.get("endpoint") as string,
     );
-    if (status === "ok") {
+    if (status.status === "ok") {
       context.globalState.update("quack.isValidEndpoint", true);
       context.globalState.update("quack.isValidToken", true);
+      context.globalState.update("quack.quackUserId", status.userId);
       vscode.commands.executeCommand(
         "setContext",
         "quack.isValidEndpoint",
         true,
       );
       vscode.commands.executeCommand("setContext", "quack.isValidToken", true);
+      // Dedup: tag it as an alias if the user gets disconnected
+      analyticsClient?.alias({
+        distinctId: status.userId as string,
+        alias: getMachineId(),
+      });
+      let cachedId: string | undefined =
+        context.globalState.get("quack.githubUserId");
+      if (cachedId) {
+        analyticsClient?.alias({
+          distinctId: status.userId as string,
+          alias: cachedId,
+        });
+      }
       return;
-    } else if (status === "expired-token") {
+    } else if (status.status === "expired-token") {
       context.globalState.update("quack.quackToken", undefined);
       context.globalState.update("quack.isValidToken", false);
       context.globalState.update("quack.isValidEndpoint", true);

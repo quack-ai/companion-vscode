@@ -111,6 +111,13 @@ Now by pressing F5, you'll open a new window with your local version of the exte
 
 ### Submit your modifications
 
+Commit your changes (for commit messages, use [Angular commit format](https://github.com/angular/angular/blob/main/CONTRIBUTING.md#-commit-message-format)):
+
+```shell
+git add <MODIFIED_FILE1> <MODIFIED_FILE2>
+git commit -m '<COMMIT_MSG>'
+```
+
 Push your last modifications to your remote branch
 
 ```shell

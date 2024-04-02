@@ -5,7 +5,6 @@
 
 import * as vscode from "vscode";
 import { machineIdSync } from "node-machine-id";
-import { getGithubUserId } from "./github";
 
 export function getMachineId() {
   const id = vscode.env.machineId;
@@ -13,9 +12,4 @@ export function getMachineId() {
     return machineIdSync();
   }
   return vscode.env.machineId;
-}
-
-export async function getUniqueId(context: vscode.ExtensionContext) {
-  // Fallback for analytics identifier
-  return (await getGithubUserId(context)) || getMachineId();
 }
