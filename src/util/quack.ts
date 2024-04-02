@@ -217,19 +217,28 @@ export async function postChatMessage(
       },
       body: JSON.stringify({ messages: messages }),
     });
+    if (!response.ok) {
+      // Handle HTTP errors
+      console.error(`HTTP error, status = ${response.status}`);
+      vscode.window.showErrorMessage("Invalid API request.");
+      return;
+    }
 
     if (response.body) {
       const reader = response.body.getReader();
       try {
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) {
-            break;
-          }
-          // Assume each chunk is a Uint8Array, convert to a string or otherwise process
+        let { done, value } = await reader.read();
+        while (!done) {
           const chunk = new TextDecoder().decode(value);
+          // Safeguard: consecutives chunks are sometimes glued together
+          const chunks = chunk
+            .split("\n")
+            .filter((str) => str.length > 0)
+            .map((str) => str + "\n");
           // Process the chunk, e.g., assuming JSON content
-          onChunkReceived(JSON.parse(chunk).message.content);
+          chunks.map((str) => onChunkReceived(JSON.parse(str).message.content));
+          // Read the next chunk
+          ({ done, value } = await reader.read());
         }
         // Stream ended
         onEnd();
