@@ -217,27 +217,38 @@ export async function postChatMessage(
       },
       body: JSON.stringify({ messages: messages }),
     });
+    if (!response.ok) {
+      // Handle HTTP errors
+      console.error(`HTTP error, status = ${response.status}`);
+      vscode.window.showErrorMessage("Invalid API request.");
+      return;
+    }
 
     if (response.body) {
       const reader = response.body.getReader();
-      try {
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) {
-            break;
-          }
-          // Assume each chunk is a Uint8Array, convert to a string or otherwise process
+
+      // @ts-ignore
+      async function processStream(reader) {
+        let { done, value } = await reader.read();
+        while (!done) {
+          // Assuming each chunk is a stringified JSON object
           const chunk = new TextDecoder().decode(value);
-          // Process the chunk, e.g., assuming JSON content
-          onChunkReceived(JSON.parse(chunk).message.content);
+          try {
+            const json = JSON.parse(JSON.stringify(chunk));
+            onChunkReceived(json.message.content); // Process your chunk here
+          } catch (e) {
+            console.error("Error parsing JSON from chunk", e);
+            // Handle JSON parsing error
+          }
+          // Read the next chunk
+          ({ done, value } = await reader.read());
         }
-        // Stream ended
-        onEnd();
-      } catch (error) {
-        console.error(error);
-      } finally {
-        reader.releaseLock();
+        onEnd(); // Stream ended
       }
+      processStream(reader).catch((error) => {
+        console.error("Stream processing error:", error);
+        // Handle stream processing errors
+      });
     }
   } catch (error) {
     // Handle other errors that may occur during the request
