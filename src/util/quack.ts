@@ -233,9 +233,14 @@ export async function postChatMessage(
         while (!done) {
           // Assuming each chunk is a stringified JSON object
           const chunk = new TextDecoder().decode(value);
+          // Safeguard: consecutives chunks are sometimes glued together
+          const chunks = chunk
+            .split("\n")
+            .filter((str) => str.length > 0)
+            .map((str) => str + "\n");
           try {
-            const json = JSON.parse(chunk);
-            onChunkReceived(json.message.content); // Process your chunk here
+            const jsons = chunks.map((str) => JSON.parse(str));
+            jsons.map((payload) => onChunkReceived(payload.message.content));
           } catch (e) {
             console.error("Error parsing JSON from chunk", e);
             // Handle JSON parsing error
