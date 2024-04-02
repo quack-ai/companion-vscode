@@ -234,7 +234,7 @@ export async function postChatMessage(
           // Assuming each chunk is a stringified JSON object
           const chunk = new TextDecoder().decode(value);
           try {
-            const json = JSON.parse(JSON.stringify(chunk));
+            const json = JSON.parse(chunk);
             onChunkReceived(json.message.content); // Process your chunk here
           } catch (e) {
             console.error("Error parsing JSON from chunk", e);
