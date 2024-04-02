@@ -226,34 +226,27 @@ export async function postChatMessage(
 
     if (response.body) {
       const reader = response.body.getReader();
-
-      // @ts-ignore
-      async function processStream(reader) {
+      try {
         let { done, value } = await reader.read();
         while (!done) {
-          // Assuming each chunk is a stringified JSON object
           const chunk = new TextDecoder().decode(value);
           // Safeguard: consecutives chunks are sometimes glued together
           const chunks = chunk
             .split("\n")
             .filter((str) => str.length > 0)
             .map((str) => str + "\n");
-          try {
-            const jsons = chunks.map((str) => JSON.parse(str));
-            jsons.map((payload) => onChunkReceived(payload.message.content));
-          } catch (e) {
-            console.error("Error parsing JSON from chunk", e);
-            // Handle JSON parsing error
-          }
+          // Process the chunk, e.g., assuming JSON content
+          chunks.map((str) => onChunkReceived(JSON.parse(str).message.content));
           // Read the next chunk
           ({ done, value } = await reader.read());
         }
-        onEnd(); // Stream ended
+        // Stream ended
+        onEnd();
+      } catch (error) {
+        console.error(error);
+      } finally {
+        reader.releaseLock();
       }
-      processStream(reader).catch((error) => {
-        console.error("Stream processing error:", error);
-        // Handle stream processing errors
-      });
     }
   } catch (error) {
     // Handle other errors that may occur during the request
