@@ -372,7 +372,7 @@
   },
   "dependencies": {
     "clipboardy": "^4.0.0",
-    "marked": "^12.0.0",
+    "marked": "^13.0.1",
     "node-machine-id": "^1.1.12",
     "posthog-node": "3.6.1",
     "typescript": "^5.1.6",
